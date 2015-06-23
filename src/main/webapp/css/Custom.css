@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2015, ARM Limited, All Rights Reserved
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+body {
+  padding-top: 90px;
+}
+.navbar-custom {
+    color: #000000;
+    background-color: #1B2530;
+}
+.navbar #nav > .active > a {
+    color: #218FD1;
+}
+.myLogo { padding: 5px; }
+
+.form-horizontal .control-label{
+   text-align:left !important; 
+}
+.btn-custom {
+    width: 90px;
+    line-height: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    border: 0 none;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    
+}
+.btn-select {
+    width: 130px;
+}
+.td_center {
+   text-align: center;   
+}
+.differentTable{
+   border-color: black;
+}
+/*
+.ng-hide {
+  display:none!important;
+}
+*/
+.fadein,
+.fadeout {
+  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+  -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+  -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+}
+
+.fadein.ng-hide-remove,
+.fadeout.ng-hide-add.ng-hide-add-active {
+  opacity: 0;
+  display: block !important;
+}
+
+.fadeout.ng-hide-add,
+.fadein.ng-hide-remove.ng-hide-remove-active {
+  opacity: 1;
+  display: block !important;
+}
