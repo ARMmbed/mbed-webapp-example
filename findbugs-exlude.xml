@@ -1,0 +1,31 @@
+<FindBugsFilter>
+    <Match>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <!-- May expose internal representation by returning reference to mutable object -->
+            <Bug pattern="EI_EXPOSE_REP2"/>
+            <!-- May expose internal representation by incorporating reference to mutable object -->
+            <Bug pattern="REC_CATCH_EXCEPTION"/>
+            <!-- Exception is caught when Exception is not thrown -->
+            <Bug pattern="SE_NO_SERIALVERSIONID"/>
+            <!-- Class is Serializable, but doesn't define serialVersionUID -->
+            <Bug pattern="DM_DEFAULT_ENCODING"/>
+            <!-- Reliance on default encoding -->
+            <Bug pattern="EI_EXPOSE_REP2"/>
+            <!-- May expose internal representation by incorporating reference to mutable object -->
+            <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE"/>
+            <!-- Random object created and used only once -->
+
+            <Bug pattern="RR_NOT_CHECKED"/>
+            <!-- This method ignores the return value of one of the variants of java.io.InputStream.read() -->
+            <Bug pattern="OS_OPEN_STREAM"/>
+            <!-- The method creates an IO stream object, does not assign it to any fields, pass it to other methods that might close it, or return it -->
+
+
+            <!-- questionable patterns: -->
+            <Bug pattern="EQ_COMPARETO_USE_OBJECT_EQUALS"/>
+            <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+        </Or>
+    </Match>
+
+</FindBugsFilter>
