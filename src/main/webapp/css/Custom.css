@@ -50,27 +50,69 @@ body {
 .differentTable{
    border-color: black;
 }
-/*
-.ng-hide {
-  display:none!important;
+.btn-small {
+    width: 50px;
+    line-height: 20px;
+    text-align: center;
+    //text-transform: uppercase;
 }
-*/
-.fadein,
-.fadeout {
-  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
-  -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
-  -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+.div_float {
+  background-color: #d9edf7;
+  border-color: #5bc0de;
+  border-style: solid;
+  border-width: 2px;
+  width: 8%;
+  height: 40%;
+  line-height: 50px;
+  position: absolute;
+  top: 30%;
+  left: 90%;
+  right: 2%;
+}
+.success {
+    color:#5cb85c;
+}
+.danger {
+    color:#d9534f;
+}
+.warning {
+    color:#f0ad4e;
+}
+.primary {
+    color:#337ab7;
+}
+/* Popover Header*/
+.popover-title {
+    background-color: #5cb85c;
+    color: #FFFFFF;
+    font-size: 15px;
+    text-align:center;
+}
+.success_popover {
+    border: 2px solid #5cb85c;
 }
 
-.fadein.ng-hide-remove,
-.fadeout.ng-hide-add.ng-hide-add-active {
-  opacity: 0;
-  display: block !important;
+/* Popover Header*/
+.success_popover-title {
+    background-color: #5cb85c;
+    color: #FFFFFF;
+    font-size: 15px;
+    text-align:center;
 }
 
-.fadeout.ng-hide-add,
-.fadein.ng-hide-remove.ng-hide-remove-active {
-  opacity: 1;
-  display: block !important;
+/* Popover Body */
+.success_popover-content {
+    background-color: #FFFFFF;
+    color: #5cb85c;
+    padding: 25px;
 }
+
+/* Popover Arrow */
+.success_popover-arrow {
+    border-top-color: #5cb85c !important;
+}
+.editable-click
+{
+    border:0.5px solid #cccccc !important;
+}
+
