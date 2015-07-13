@@ -130,23 +130,13 @@
                                             ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
                                             aria-hidden="true"></span></td>
                                     <td class="col-md-1 td_center" style="white-space: nowrap">
-                                        <button class=" btn-small btn btn-default btn-xs" type="button" ng-action>
+                                        <button ng-click="action_clicked($event)"
+                                                class=" btn-small btn btn-default btn-xs" type="button" ng-action>
                                         </button>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                        <div ng-hide="hide_write">
-                            <span>{{Resource}}</span>
-                            <textarea class="form-control" ng-model="write_text" rows="3"></textarea>
-
-                            <div style="margin-top:10px">
-                                <button type="submit" class="btn btn-info btn-custom" ng-click="write(write_text)">
-                                    write
-                                </button>
-                                <button class="btn btn-danger btn-custom" ng-click="close()">Close</button>
-                            </div>
                         </div>
                     </div>
                 </div>

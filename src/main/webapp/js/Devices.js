@@ -27,26 +27,27 @@ var app = angular.module('App', ['ngResource']).directive('ngResource', function
                                                         '<div class="popover-content success_popover-content">' +
                                                             '<div class="data-content">' +
                                                             '</div>' +
-                                                            '<span  class="glyphicon glyphicon-ok success" aria-hidden="true"></span>' +
                                                         '</div>' +
                                                    '</div>'
                                                    });
                                                  };
                                                });
+var editable_clicked;
 app.directive('ngAction', function() {
           return function(scope, element, attrs) {
-            var button = angular.element(element);
-            $(button).editable({
+            editable_clicked = angular.element(element);
+            $(editable_clicked).editable({
                  title: 'ENTER YOUR COMMAND',
                  value: '',
+                 pk:1,
                  type: 'textarea',
                  emptytext: 'action',
                  emptyclass: '',
                  rows: 5
              });
-             $(button).removeClass(".editable-click")
           };
         });
+
 app.directive('ngConfirmClick', [
         function(){
             return {
@@ -77,10 +78,11 @@ app.factory('Endpoints', function($resource) {
 app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
 
     //modify buttons style
-    var dynamical_buttons = $compile('<div class="btn-group-vertical"><button ng-click="get()" class="btn btn-info editable-submit btn-mini">Get</button>' +
-       '<button ng-click="post()" class="btn btn-success editable-post btn-mini">Post</button>' +
-       '<button ng-click="put()" class="btn btn-warning editable-put btn-mini">Put</button>' +
-       '<button ng-confirm-click="Are you sure?" ng-click="remove()" class="btn btn-danger editable-delete btn-mini">Delete</i></button></div>')($scope);
+    var dynamical_buttons = $compile('<div class="btn-group-vertical">' +
+                                     '<button ng-click = get($event) type="button" class="btn btn-info">GET</button>'+
+                                     '<button ng-click = post($event) type="button" class="btn btn-success">POST</button>'+
+                                     '<button ng-click = put($event) type="button" class="btn btn-warning">PUT</button>'+
+                                     '<button ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
     $scope.hide_write = true;
@@ -111,26 +113,43 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
         $scope.Resource = path;
     };
 
-    $scope.get = function(name,path,td) {
-    //$resource consider everything as an array which causes problem when the returning value type is a String, so we used $http.
-        $http.get('/example-app/webapi/endpoints/'+name+'/'+path
-            ).success(function(data){
-          td.x.val = data;
-          loader = angular.element(loader);
-          loader.class = "";
-        });
+    $scope.get = function(event,name,path,td) {
+        //$resource consider everything as an array which causes problem when the returning value type is a String, so we used $http.
+        $(parent).editable('toggle');
+//        $http.get('/example-app/webapi/endpoints/'+name+'/'+path
+//            ).success(function(data){
+//          td.x.val = data;
+//          loader = angular.element(loader);
+//          loader.class = "";
+//        });
     };
     $scope.put = function(value){
-        $http({
-            url: '/example-app/webapi/endpoints/' + selected_name+'/' + selected_td.x.uri,
-            method: "PUT",
-            params: {'value': value}
-         }).success(function(data){
-                     selected_td.x.val = data;
-               });
+        $(parent).editable('toggle');
+//        $http({
+//            url: '/example-app/webapi/endpoints/' + selected_name+'/' + selected_td.x.uri,
+//            method: "PUT",
+//            params: {'value': value}
+//         }).success(function(data){
+//                     selected_td.x.val = data;
+//               });
     };
+    $scope.post = function(value){
+            $(parent).editable('toggle');
+    //        $http({
+    //            url: '/example-app/webapi/endpoints/' + selected_name+'/' + selected_td.x.uri,
+    //            method: "PUT",
+    //            params: {'value': value}
+    //         }).success(function(data){
+    //                     selected_td.x.val = data;
+    //               });
+        };
     $scope.close = function(){
             $scope.hide_write = true;
             $scope.write_text = "";
         };
+     var parent;
+    $scope.action_clicked = function(event){
+        parent = event.target;
+
+    };
 });
