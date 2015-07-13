@@ -37,22 +37,24 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Created by mitvah01 on 29.6.2015.
  */
 @Path("/endpoints")
 @Singleton
 public class EndpointResources {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EndpointResources.class);
     private MbedClient client;
 
     @Inject
-    public EndpointResources() {
-        try {
-            this.client = MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret").build(8080);
-        } catch (MbedClientInitializationException e) {
-            e.printStackTrace();
-        }
+    public EndpointResources() throws MbedClientInitializationException {
+        this(MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret").build(8080));
+    }
+
+    EndpointResources(MbedClient mbedClient) {
+        this.client = mbedClient;
     }
 
     @GET
@@ -61,6 +63,7 @@ public class EndpointResources {
         List<Endpoint> endpoints = client.endpoints().readAll();
         for (Endpoint endpoint : endpoints) {
             System.out.println("name: " + endpoint.getName() + " status: " + endpoint.getStatus());
+            LOGGER.debug("name " + endpoint.getName() + " status: " + endpoint.getStatus());
         }
         return endpoints;
     }

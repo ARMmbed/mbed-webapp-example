@@ -88,7 +88,7 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
     $scope.hide_write = true;
     $scope.endpoints = Endpoints.query();
 
-    $scope.toggle = function(name) {
+    $scope.show_resources = function(name) {
         $scope.isHidden = false;
         $scope.panel_show = false;
         $scope.hide_write = true;

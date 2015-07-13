@@ -80,14 +80,15 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
                         <thead class="info">
-                        <tr>
+                        <tr class="info">
                             <th>Name</th>
                             <th>Type</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="x in values = (endpoints | filter:searchText)">
-                            <td ng-model="name"><a href="#" ng-click="toggle(x.name)" aria-label="Toggle ngHide">{{
+                            <td ng-model="name"><a href="#" ng-click="show_resources(x.name)"
+                                                   aria-label="Toggle ngHide">{{
                                 x.name }}</a></td>
                             <td>{{ x.type }}</td>
                         </tr>
@@ -107,7 +108,7 @@
 
                         <div class="table-responsive">
                             <table ng-hide="isHidden"
-                                   class="fade-in square table table-bordered table-striped table-hover">
+                                   class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
                                     <th class="col-md-4">{{device_resource}}</th>
