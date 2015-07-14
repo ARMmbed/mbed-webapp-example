@@ -20,7 +20,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import com.arm.mbed.restclient.MbedClient;
 import com.arm.mbed.restclient.endpoint.EndpointCollection;
+import com.arm.mbed.restclient.endpoint.EndpointTarget;
 import com.arm.mbed.restclient.entity.Endpoint;
+import com.arm.mbed.restclient.entity.ResourceDescription;
 import java.util.Arrays;
 import org.junit.Test;
 
@@ -41,4 +43,16 @@ public class EndpointResourcesTest {
         assertEquals(1, endpointResources.getEndpoints().size());
     }
 
+    @Test
+    public void getEndpointResources() {
+
+        MbedClient mbedClient = mock(MbedClient.class);
+        EndpointTarget endpointTarget = mock(EndpointTarget.class);
+        when(mbedClient.endpoint("dev-01")).thenReturn(endpointTarget);
+        when(endpointTarget.readResourceList())
+                .thenReturn(Arrays.asList(new ResourceDescription("/dev/mac", null, null, null, false)));
+        EndpointResources endpointResources = new EndpointResources(mbedClient);
+
+        assertEquals(1, endpointResources.getEndpointResources("dev-01").size());
+    }
 }

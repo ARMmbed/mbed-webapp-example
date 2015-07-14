@@ -24,9 +24,7 @@ import com.arm.mbed.restclient.entity.Endpoint;
 import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.ResourceDescription;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -62,7 +60,6 @@ public class EndpointResources {
     public List<Endpoint> getEndpoints() {
         List<Endpoint> endpoints = client.endpoints().readAll();
         for (Endpoint endpoint : endpoints) {
-            System.out.println("name: " + endpoint.getName() + " status: " + endpoint.getStatus());
             LOGGER.debug("name " + endpoint.getName() + " status: " + endpoint.getStatus());
         }
         return endpoints;
@@ -71,33 +68,22 @@ public class EndpointResources {
     @GET
     @Path("{endpoint_name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Map<String, String>> getEndpointResources(@PathParam("endpoint_name") String name) {
+    public List getEndpointResources(@PathParam("endpoint_name") String name) {
         List<ResourceDescription> resources = client.endpoint(name).readResourceList();
-        List list = new ArrayList<>();
+        List returnList = new ArrayList<>();
         for (ResourceDescription resourceDescription : resources) {
-            Map map = new HashMap();
-            map.put("uri", resourceDescription.getUriPath());
-            map.put("rt", resourceDescription.getResourceType());
-            map.put("ifDesc", resourceDescription.getInterfaceDescription());
-            map.put("type", resourceDescription.getType());
-            map.put("obs", String.valueOf(resourceDescription.isObservable()));
-            String response = "";
-            try {
-                response = client.endpoint(name).resource(resourceDescription.getUriPath()).get().get().getPayloadAsString();
-                System.out.println("response: " + response);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            map.put("val", response);
-            list.add(map);
+            Resources resource = new Resources();
+            resource.setUri(resourceDescription.getUriPath());
+            resource.setIfDesc(resourceDescription.getInterfaceDescription());
+            //            TODO: Check if it is subscribed or not
+            resource.setRt(resourceDescription.getType());
+            resource.setType(resourceDescription.getType());
+            //            TODO: Get the value of the resources
+            resource.setVal("TODO");
+            returnList.add(resource);
+            LOGGER.debug("resource details: " + resource.toString());
         }
-        for (ResourceDescription resource : resources) {
-            System.out.println("name: " + resource.toString());
-        }
-        System.out.println(list);
-        return list;
+        return returnList;
     }
 
     @GET
