@@ -19,9 +19,7 @@ package org.mbed.example.resources;
 import com.arm.mbed.restclient.MbedClient;
 import com.arm.mbed.restclient.MbedClientBuilder;
 import com.arm.mbed.restclient.MbedClientInitializationException;
-import com.arm.mbed.restclient.endpoint.Entity;
 import com.arm.mbed.restclient.entity.Endpoint;
-import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.ResourceDescription;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,16 +111,14 @@ public class EndpointResources {
     @Produces(MediaType.TEXT_PLAIN)
     public String getResourcesValue(@PathParam("endpoint_name") String name
             , @PathParam("resource-path") String path) {
-        String endpointResponse = "";
         try {
-            endpointResponse = client.endpoint(name).resource(path).get().get().getPayloadAsString();
+            return client.endpoint(name).resource(path).get().get().getPayloadAsString();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println("first: " + endpointResponse);
-        return endpointResponse;
+        return null;
     }
 
     @PUT
@@ -130,18 +126,14 @@ public class EndpointResources {
     @Produces(MediaType.TEXT_PLAIN)
     public String putResourcesValue(@QueryParam("value") String value, @PathParam("endpoint_name") String name
             , @PathParam("resource-path") String path) {
-        EndpointResponse endpointResponse = null;
-        System.out.println("value: " + value + "name:" + name + "path" + path);
-        String response = "";
         try {
-            endpointResponse = client.endpoint(name).resource(path).put(Entity.text(value)).get();
-            response = client.endpoint(name).resource(path).get().get().getPayloadAsString();
+            return client.endpoint(name).resource(path).get().get().getPayloadAsString();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return response;
+        return null;
     }
 
 }

@@ -37,7 +37,7 @@ public class PreSubscriptionEntry {
      * dummy constructor for making Json object
      */
     public PreSubscriptionEntry() {
-
+        //dummy constructor for making Json object
     }
 
     public PreSubscriptionEntry(String endpointName, String endpointType, List<String> uriPathPatterns) {
