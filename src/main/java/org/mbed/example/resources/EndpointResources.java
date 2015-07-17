@@ -24,7 +24,10 @@ import com.arm.mbed.restclient.entity.Endpoint;
 import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.ResourceDescription;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,6 +40,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * Created by mitvah01 on 29.6.2015.
  */
@@ -44,27 +48,40 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class EndpointResources {
     private static final Logger LOGGER = LoggerFactory.getLogger(EndpointResources.class);
-    private MbedClient client;
+    private final MbedClient client;
+    private final EndpointContainer endpointContainer = new EndpointContainer();
+    private final Map<String, Endpoint> endpointsList = new HashMap<>();
 
     @Inject
     public EndpointResources() throws MbedClientInitializationException {
-        this(MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret").build(8080));
+        this.client = MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret")
+                .notifChannelHttpServer(0)
+                .notifListener(endpointContainer).build(8080);
+
+        //todo list = client.endpoints().readAll();
+        for (Endpoint endpoint : client.endpoints().readAll())
+            endpointsList.put(endpoint.getName(), endpoint);
+        endpointContainer.setEndpointsList(endpointsList);
     }
 
     EndpointResources(MbedClient mbedClient) {
         this.client = mbedClient;
     }
 
+    /**
+     * Returns endpoints in Json format
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Endpoint> getEndpoints() {
-        List<Endpoint> endpoints = client.endpoints().readAll();
-        for (Endpoint endpoint : endpoints) {
-            LOGGER.debug("name " + endpoint.getName() + " status: " + endpoint.getStatus());
-        }
-        return endpoints;
+    public Collection<Endpoint> getEndpoints() {
+        return endpointContainer.getEndpointsList().values();
     }
 
+    /**
+     * Returns endpoints resources in Json format
+     *
+     * @param name String name of the endpoint
+     */
     @GET
     @Path("{endpoint_name}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,20 +104,23 @@ public class EndpointResources {
     }
 
     @GET
+    //    @ManagedAsync
     @Path("{endpoint_name}/{resource-path : .+}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getResourcesValue(@PathParam("endpoint_name") String name
             , @PathParam("resource-path") String path) {
-        String response = "";
+        EndpointResponseResponseListener endpointResponseResponseListener = new EndpointResponseResponseListener();
+        String endpointResponse = "";
         try {
-            response = client.endpoint(name).resource(path).get().get().getPayloadAsString();
-            System.out.println("response: " + response);
+            endpointResponse = client.endpoint(name).resource(path).get().get().getPayloadAsString();
+            //            asyncResponse.resume(endpointResponse);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return response;
+        System.out.println("first: " + endpointResponse);
+        return endpointResponse;
     }
 
     @PUT
@@ -122,4 +142,5 @@ public class EndpointResources {
         System.out.println("changed to: " + endpointResponse.getStatus() + "response:");
         return response;
     }
+
 }

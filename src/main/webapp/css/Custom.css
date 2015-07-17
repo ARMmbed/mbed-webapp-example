@@ -81,6 +81,9 @@ body {
 .primary {
     color:#337ab7;
 }
+.infoColor {
+    color:#5bc0de;
+}
 /* Popover Header*/
 .popover-title {
     background-color: #5cb85c;
@@ -115,4 +118,12 @@ body {
 {
     border:0.5px solid #cccccc !important;
 }
+.highlight {
+    background-color: #b2c5d6 !important;
+    color: #FFFFFF;
+}
+.highlight:link{
+    color:#FFFFFF !important;
+}
+
 

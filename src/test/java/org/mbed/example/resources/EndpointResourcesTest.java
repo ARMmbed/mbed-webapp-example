@@ -19,7 +19,6 @@ package org.mbed.example.resources;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import com.arm.mbed.restclient.MbedClient;
-import com.arm.mbed.restclient.endpoint.EndpointCollection;
 import com.arm.mbed.restclient.endpoint.EndpointTarget;
 import com.arm.mbed.restclient.entity.Endpoint;
 import com.arm.mbed.restclient.entity.ResourceDescription;
@@ -34,10 +33,9 @@ public class EndpointResourcesTest {
     @Test
     public void getEndpoints() {
 
-        MbedClient mbedClient = mock(MbedClient.class);
-        EndpointCollection endpointCollection = mock(EndpointCollection.class);
-        when(endpointCollection.readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
-        when(mbedClient.endpoints()).thenReturn(endpointCollection);
+        MbedClient mbedClient = mock(MbedClient.class, RETURNS_DEEP_STUBS);
+        when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
+
         EndpointResources endpointResources = new EndpointResources(mbedClient);
 
         assertEquals(1, endpointResources.getEndpoints().size());

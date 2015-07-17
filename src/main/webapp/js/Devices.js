@@ -116,12 +116,12 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
     $scope.get = function(event,name,path,td) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so we used $http.
         $(parent).editable('toggle');
-//        $http.get('/example-app/webapi/endpoints/'+name+'/'+path
-//            ).success(function(data){
-//          td.x.val = data;
-//          loader = angular.element(loader);
-//          loader.class = "";
-//        });
+        $http.get('/example-app/webapi/endpoints/'+name+'/'+path
+            ).success(function(data){
+          td.x.val = data;
+          loader = angular.element(loader);
+          loader.class = "";
+        });
     };
     $scope.put = function(value){
         $(parent).editable('toggle');
@@ -152,4 +152,9 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
         parent = event.target;
 
     };
+    $scope.selectedIndex = -1;
+    $scope.itemClicked = function ($index) {
+        console.log($index);
+        $scope.selectedIndex = $index;
+      }
 });

@@ -86,10 +86,11 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="x in values = (endpoints | filter:searchText)">
+                        <tr ng-class="{ 'highlight': $index == selectedIndex }"
+                            ng-click="itemClicked($index);show_resources(x.name)"
+                            ng-repeat="x in values = (endpoints | filter:searchText)">
                             <td ng-model="name"><a href="#" ng-click="show_resources(x.name)"
-                                                   aria-label="Toggle ngHide">{{
-                                x.name }}</a></td>
+                                                   aria-label="Toggle ngHide">{{x.name }}</a></td>
                             <td>{{ x.type }}</td>
                         </tr>
                         </tbody>
