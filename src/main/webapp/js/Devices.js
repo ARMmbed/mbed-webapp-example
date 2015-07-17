@@ -85,14 +85,12 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
                                      '<button ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
-    $scope.hide_write = true;
     $scope.endpoints = Endpoints.query();
-
+    $scope.detail = "Details"
     $scope.show_resources = function(name) {
         $scope.isHidden = false;
         $scope.panel_show = false;
-        $scope.hide_write = true;
-        $scope.device_resource = name;
+        $scope.detail = name;
         $scope.endresources = Endpoints.query({'endpoint_name': name })
             .$promise.then(
                //success
@@ -104,17 +102,9 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
                    }
              );
     };
-    var selected_td;
-    var selected_name;
-    $scope.show_write = function(name,path,td) {
-        selected_td = td;
-        selected_name = name;
-        $scope.hide_write = false;
-        $scope.Resource = path;
-    };
 
     $scope.get = function(event,name,path,td) {
-        //$resource consider everything as an array which causes problem when the returning value type is a String, so we used $http.
+        //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
         $http.get('/example-app/webapi/endpoints/'+name+'/'+path
             ).success(function(data){
@@ -143,14 +133,9 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
     //                     selected_td.x.val = data;
     //               });
         };
-    $scope.close = function(){
-            $scope.hide_write = true;
-            $scope.write_text = "";
-        };
      var parent;
     $scope.action_clicked = function(event){
         parent = event.target;
-
     };
     $scope.selectedIndex = -1;
     $scope.itemClicked = function ($index) {

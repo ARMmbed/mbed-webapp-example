@@ -14,46 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mbed.example.resources;
+package org.mbed.example.data;
+
+import com.arm.mbed.restclient.entity.notification.ResourceInfo;
 
 /**
  * Created by mitvah01 on 14.7.2015.
  */
-public class Resources {
-    private String uri;
-    private String rt;
-    private String ifDesc;
-    private String type;
-    private boolean obs;
-    private String val;
+public final class ResourceMetadata {
+    private final String uri;
+    private final String rt;
+    private final String ifDesc;
+    private final String type;
+    private final boolean obs;
+    private final boolean isSubscribed;
 
-    public void setUri(String uri) {
+    public ResourceMetadata(String uri, String rt, String ifDesc, String type, boolean obs, boolean isSubscribed) {
         this.uri = uri;
-    }
-
-    public void setRt(String rt) {
         this.rt = rt;
-    }
-
-    public void setIfDesc(String ifDesc) {
         this.ifDesc = ifDesc;
-    }
-
-    public void setType(String type) {
         this.type = type;
-    }
-
-    public void setObs(boolean obs) {
         this.obs = obs;
-    }
-
-    public void setVal(String val) {
-        this.val = val;
-    }
-
-    public String getUri() {
-
-        return uri;
+        this.isSubscribed = isSubscribed;
     }
 
     public String getRt() {
@@ -72,13 +54,21 @@ public class Resources {
         return obs;
     }
 
-    public String getVal() {
-
-        return val;
+    public boolean isSubscribed() {
+        return isSubscribed;
     }
 
     @Override
     public String toString() {
-        return String.format("Resources [uri='%s', rt='%s', ifDesc='%s', type='%s', obs=%s, val='%s']", uri, rt, ifDesc, type, obs, val);
+        return String.format("Resources [uri='%s', rt='%s', ifDesc='%s', type='%s', obs=%s]", uri, rt, ifDesc, type, obs);
+    }
+
+    public static ResourceMetadata from(ResourceInfo resourceInfo, boolean isSubscribed) {
+        return new ResourceMetadata(resourceInfo.getPath(), resourceInfo.getRt(), resourceInfo.getInterfaceDescription(),
+                resourceInfo.getCt(), resourceInfo.isObs(), isSubscribed);
+    }
+
+    public String getUriPath() {
+        return uri;
     }
 }

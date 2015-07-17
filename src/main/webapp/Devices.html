@@ -34,6 +34,11 @@
     <!-- x-editable (bootstrap version) -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css"
           rel="stylesheet"/>
+    <script src="js/Devices.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 </head>
 <body>
 <div ng-app="App" ng-controller="Ctrl">
@@ -61,7 +66,7 @@
             <!--/.nav-collapse -->
         </div>
     </nav>
-    <div class="div_left container">
+    <div class="container">
 
         <!-- Main component with gray background -->
         <div class="jumbotron">
@@ -94,25 +99,25 @@
                             <td>{{ x.type }}</td>
                         </tr>
                         </tbody>
-                        <em ng-show="!values.length && endpoints.length" class="danger">There are no matching
+                        <em ng-show="!values.length && endpoints.length" class="danger ng-cloak">There are no matching
                             devices.</em>
-                        <em ng-show="!endpoints.length" class="danger">There are no device.</em>
+                        <em ng-show="!endpoints.length" class="danger ng-cloak">There are no device.</em>
                     </table>
                 </div>
                 <!--<a href="#" id="comments" data-type="textarea" data-pk="1">1</a>-->
                 <div ng-hide="panel_show" class="panel panel-info">
-                    <div class="panel-heading">Detail
+                    <div class="panel-heading">{{detail}}
                         <span ng-click="panel_show = true" class="glyphicon glyphicon-remove pull-right"></span>
                     </div>
                     <div class="panel-body">
                         <span ng-show="isHidden">Click on the device name for more detail.</span>
 
-                        <div class="table-responsive">
-                            <table ng-hide="isHidden"
+                        <div class="table-responsive" ng-hide="isHidden">
+                            <table
                                    class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th class="col-md-4">{{device_resource}}</th>
+                                    <th class="col-md-4">Path</th>
                                     <th>Value</th>
                                     <th>Observable</th>
                                     <th></th>
@@ -121,12 +126,12 @@
                                 <tbody>
                                 <tr ng-repeat="x in endresources">
 
-                                    <td class="col-md-2">{{ x.uri}}</td>
+                                    <td class="col-md-2"><span ng-bind="x.uri"></span></td>
                                     <td class="col-md-4" style="white-space: nowrap">
                                         <a ng-resource href="#" ng-click="$event.preventDefault()" id="device_value"
                                            title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
                                            data-placement="top" data-content="Last update at 12:56pm.
-                                            if there is any error it will be shown here.">{{x.val}}</a>
+                                            if there is any error it will be shown here." ng-bind="x.val"></a>
                                     </td>
                                     <td class="col-md-1 td_center"><span
                                             ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
@@ -150,11 +155,7 @@
     <!-- Bootstrap core JavaScript
 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/Devices.js"></script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
 
 </div>
 </body>
