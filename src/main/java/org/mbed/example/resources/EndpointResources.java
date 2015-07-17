@@ -57,7 +57,10 @@ public class EndpointResources {
         this.client = MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret")
                 .notifChannelHttpServer(0)
                 .notifListener(endpointContainer).build(8080);
+        fillEndpointContainer();
+    }
 
+    private void fillEndpointContainer() {
         //todo list = client.endpoints().readAll();
         for (Endpoint endpoint : client.endpoints().readAll())
             endpointsList.put(endpoint.getName(), endpoint);
@@ -66,6 +69,7 @@ public class EndpointResources {
 
     EndpointResources(MbedClient mbedClient) {
         this.client = mbedClient;
+        fillEndpointContainer();
     }
 
     /**
