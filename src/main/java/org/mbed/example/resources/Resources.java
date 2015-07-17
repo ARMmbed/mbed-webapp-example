@@ -76,4 +76,9 @@ public class Resources {
 
         return val;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Resources [uri='%s', rt='%s', ifDesc='%s', type='%s', obs=%s, val='%s']", uri, rt, ifDesc, type, obs, val);
+    }
 }
