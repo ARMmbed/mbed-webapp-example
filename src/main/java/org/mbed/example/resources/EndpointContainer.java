@@ -22,11 +22,13 @@ import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mitvah01 on 15.7.2015.
  */
 class EndpointContainer implements NotificationListener {
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(EndpointResources.class);
     private Map<String, Endpoint> endpointsList = new HashMap<>();
 
     public Map<String, Endpoint> getEndpointsList() {
@@ -68,6 +70,7 @@ class EndpointContainer implements NotificationListener {
 
     @Override
     public void onResourcesUpdated(ResourceNotification[] resourceNotifications) {
+        LOGGER.debug("Receive notification - resource updated: " + resourceNotifications.length);
     }
 
     @Override

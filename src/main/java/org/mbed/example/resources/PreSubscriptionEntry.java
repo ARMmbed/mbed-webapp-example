@@ -33,6 +33,9 @@ public class PreSubscriptionEntry {
     @SerializedName("resource-path")
     private List<String> uriPathPatterns;
 
+    /**
+     * dummy constructor for making Json object
+     */
     public PreSubscriptionEntry() {
 
     }

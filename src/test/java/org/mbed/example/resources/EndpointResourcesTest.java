@@ -44,7 +44,7 @@ public class EndpointResourcesTest {
     @Test
     public void getEndpointResources() {
 
-        MbedClient mbedClient = mock(MbedClient.class);
+        MbedClient mbedClient = mock(MbedClient.class, RETURNS_DEEP_STUBS);
         EndpointTarget endpointTarget = mock(EndpointTarget.class);
         when(mbedClient.endpoint("dev-01")).thenReturn(endpointTarget);
         when(endpointTarget.readResourceList())

@@ -17,11 +17,13 @@ package org.mbed.example.resources;
 
 import com.arm.mbed.restclient.endpoint.ResponseListener;
 import com.arm.mbed.restclient.entity.EndpointResponse;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mitvah01 on 16.7.2015.
  */
 class EndpointResponseResponseListener implements ResponseListener<EndpointResponse> {
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(EndpointResources.class);
     private EndpointResponse endpointResponse;
 
     public EndpointResponse getEndpointResponse() {
@@ -39,10 +41,11 @@ class EndpointResponseResponseListener implements ResponseListener<EndpointRespo
 
     @Override
     public void onError(Exception ex) {
-
+        LOGGER.debug("Received error " + ex.getMessage());
     }
 
     @Override
     public void onAsyncIdResponse() {
+        LOGGER.debug("onAsyncIdResponse ");
     }
 }

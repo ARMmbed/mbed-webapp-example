@@ -62,8 +62,9 @@ public class EndpointResources {
 
     private void fillEndpointContainer() {
         //todo list = client.endpoints().readAll();
-        for (Endpoint endpoint : client.endpoints().readAll())
+        for (Endpoint endpoint : client.endpoints().readAll()) {
             endpointsList.put(endpoint.getName(), endpoint);
+        }
         endpointContainer.setEndpointsList(endpointsList);
     }
 
@@ -108,16 +109,13 @@ public class EndpointResources {
     }
 
     @GET
-    //    @ManagedAsync
     @Path("{endpoint_name}/{resource-path : .+}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getResourcesValue(@PathParam("endpoint_name") String name
             , @PathParam("resource-path") String path) {
-        EndpointResponseResponseListener endpointResponseResponseListener = new EndpointResponseResponseListener();
         String endpointResponse = "";
         try {
             endpointResponse = client.endpoint(name).resource(path).get().get().getPayloadAsString();
-            //            asyncResponse.resume(endpointResponse);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -143,7 +141,6 @@ public class EndpointResources {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println("changed to: " + endpointResponse.getStatus() + "response:");
         return response;
     }
 
