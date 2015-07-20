@@ -38,36 +38,8 @@ public class EndpointContainerTest {
     }
 
     @Test
-    public void testAddingAndRemoving() throws Exception {
-        epContainer.onEndpointsRegistered(new EndpointDescription[]{new EndpointDescription("endpoint1", null, null, null)});
-        assertEquals(1, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsRegistered(new EndpointDescription[]{new EndpointDescription("endpoint2", null, null, null)});
-        assertEquals(2, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsRegistered(new EndpointDescription[]{new EndpointDescription("endpoint1", null, null, null)});
-        assertEquals(2, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsRemoved(new String[]{"endpoint1"});
-        assertEquals(1, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsUpdated(new EndpointDescription[]{new EndpointDescription("endpoint2", null, null, null)});
-        assertEquals(1, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsUpdated(new EndpointDescription[]{new EndpointDescription("notExisted", null, null, null)});
-        assertEquals(2, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsExpired(new String[]{"endpoint2"});
-        assertEquals(1, epContainer.getAllEndpoints().size());
-
-        epContainer.onEndpointsExpired(new String[]{"endpoint1"});
-        assertEquals(1, epContainer.getAllEndpoints().size());
-    }
-
-    @Test
     public void updateResource() throws Exception {
-        epContainer.onEndpointsRegistered(new EndpointDescription[]{new EndpointDescription("dev-01", null, false,
-                new ResourceInfo[]{new ResourceInfo("/temp", null, null, null, null)})});
+        epContainer.putEndpoints(new EndpointDescription[]{new EndpointDescription("dev-01", null, false, new ResourceInfo[]{new ResourceInfo("/temp", null, null, null, null)})});
 
         assertTrue(epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), true));
         assertTrue(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")).isWaitingForResponse());

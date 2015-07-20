@@ -16,13 +16,11 @@
  */
 package org.mbed.example;
 
-import com.arm.mbed.restclient.NotificationListener;
 import com.arm.mbed.restclient.entity.Endpoint;
 import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.ResourceDescription;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceInfo;
-import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by mitvah01 on 15.7.2015.
  */
-public class EndpointContainer implements NotificationListener {
+public class EndpointContainer {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(EndpointsResource.class);
     private final Map<String, EndpointDescription> endpointsList = new ConcurrentHashMap<>();
     private final Map<ResourcePath, ResourceValue> endpointResourceValues = new ConcurrentHashMap<>();
@@ -47,35 +45,14 @@ public class EndpointContainer implements NotificationListener {
         return endpointsList.values();
     }
 
-    @Override
-    public void onEndpointsRegistered(EndpointDescription[] endpoints) {
+    public void putEndpoints(EndpointDescription[] endpoints) {
         for (EndpointDescription endpointDescription : endpoints) {
             endpointsList.put(endpointDescription.getName(), endpointDescription);
         }
     }
 
-    @Override
-    public void onEndpointsUpdated(EndpointDescription[] endpoints) {
-        for (EndpointDescription endpointDescription : endpoints) {
-            endpointsList.put(endpointDescription.getName(), endpointDescription);
-        }
-    }
-
-    @Override
-    public void onEndpointsRemoved(String[] endpointsRemoved) {
+    public void removeEndpoints(String[] endpointsRemoved) {
         for (String endpoint : endpointsRemoved) {
-            endpointsList.remove(endpoint);
-        }
-    }
-
-    @Override
-    public void onResourcesUpdated(ResourceNotification[] resourceNotifications) {
-        LOGGER.debug("Receive notification - resource updated: " + resourceNotifications.length);
-    }
-
-    @Override
-    public void onEndpointsExpired(String[] endpointsExpired) {
-        for (String endpoint : endpointsExpired) {
             endpointsList.remove(endpoint);
         }
     }

@@ -29,6 +29,7 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mbed.example.MbedClientService;
 import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ResourceValue;
 import org.mockito.ArgumentCaptor;
@@ -39,44 +40,49 @@ import org.mockito.ArgumentCaptor;
 public class EndpointsResourceTest {
 
     private MbedClient mbedClient;
+    private EndpointsResource rest;
+    private MbedClientService mbedClientService;
 
     @Before
     public void setUp() throws Exception {
         mbedClient = mock(MbedClient.class, RETURNS_DEEP_STUBS);
+
+        mbedClientService = new MbedClientService(mbedClient);
+        rest = new EndpointsResource(mbedClientService);
     }
 
     @Test
     public void getEndpoints() {
         when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
-        EndpointsResource endpointsResource = new EndpointsResource(mbedClient);
+        mbedClientService.readAllEndpoints();
 
-        assertEquals(1, endpointsResource.getEndpoints().size());
+        assertEquals(1, rest.getEndpoints().size());
     }
 
     @Test
     public void getEndpointResources() {
         when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
         when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/dev/mac", null, null, null, false)));
-        EndpointsResource endpointsResource = new EndpointsResource(mbedClient);
+        mbedClientService.readAllEndpoints();
 
-        assertEquals(1, endpointsResource.getEndpointResources("dev-01").size());
-        assertEquals("/dev/mac", endpointsResource.getEndpointResources("dev-01").get(0).getUriPath());
+        assertEquals(1, rest.getEndpointResources("dev-01").size());
+        assertEquals("/dev/mac", rest.getEndpointResources("dev-01").get(0).getUriPath());
 
         //non existing
-        assertThatThrownBy(() -> endpointsResource.getEndpointResources("non-existing")).isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> rest.getEndpointResources("non-existing")).isInstanceOf(NotFoundException.class);
     }
 
     @Test
     public void invokeProxyRequest_success() throws Exception {
         when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
         when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/temp", null, null, null, false)));
-        EndpointsResource rest = new EndpointsResource(mbedClient);
+        mbedClientService.readAllEndpoints();
 
         //read resources
         assertEquals(1, rest.getEndpointResources("dev-01").size());
 
         //invoke GET proxy request
-        rest.invokeProxyRequest("dev-01", "/temp");
+        rest.invokeProxyRequest("dev-01", "temp");
 
         //read values, no response available
         assertTrue(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")).isWaitingForResponse());
@@ -93,29 +99,29 @@ public class EndpointsResourceTest {
     public void invokeProxyRequest_duplicate() throws Exception {
         when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
         when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/temp", null, null, null, false)));
-        EndpointsResource rest = new EndpointsResource(mbedClient);
+        mbedClientService.readAllEndpoints();
 
         //read resources
         assertEquals(1, rest.getEndpointResources("dev-01").size());
 
         //invoke GET proxy request
-        rest.invokeProxyRequest("dev-01", "/temp");
+        rest.invokeProxyRequest("dev-01", "temp");
 
         //again invoke GET proxy request for same resource
-        assertThatThrownBy(() -> rest.invokeProxyRequest("dev-01", "/temp")).isInstanceOf(ClientErrorException.class);
+        assertThatThrownBy(() -> rest.invokeProxyRequest("dev-01", "temp")).isInstanceOf(ClientErrorException.class);
     }
 
     @Test
     public void invokeProxyRequest_withError() throws Exception {
         when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
         when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/temp", null, null, null, false)));
-        EndpointsResource rest = new EndpointsResource(mbedClient);
+        mbedClientService.readAllEndpoints();
 
         //read resources
         assertEquals(1, rest.getEndpointResources("dev-01").size());
 
         //invoke GET proxy request
-        rest.invokeProxyRequest("dev-01", "/temp");
+        rest.invokeProxyRequest("dev-01", "temp");
 
         //response returns from mDS
         mockResponseListener_onResponse("dev-01", "/temp", new Exception("Error while reading!"));

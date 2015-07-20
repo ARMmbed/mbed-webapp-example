@@ -16,9 +16,6 @@
  */
 package org.mbed.example.resources;
 
-import com.arm.mbed.restclient.MbedClient;
-import com.arm.mbed.restclient.MbedClientBuilder;
-import com.arm.mbed.restclient.MbedClientInitializationException;
 import com.arm.mbed.restclient.endpoint.ResponseListener;
 import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
@@ -37,7 +34,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.mbed.example.EndpointContainer;
+import org.mbed.example.MbedClientService;
 import org.mbed.example.data.EndpointMetadata;
 import org.mbed.example.data.ResourceMetadata;
 import org.mbed.example.data.ResourcePath;
@@ -52,20 +49,11 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public final class EndpointsResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(EndpointsResource.class);
-    private final MbedClient client;
-    private final EndpointContainer endpointContainer = new EndpointContainer();
+    private final MbedClientService clientCtr;
 
     @Inject
-    public EndpointsResource() throws MbedClientInitializationException {
-        this.client = MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret")
-                .notifChannelHttpServer(0)
-                .notifListener(endpointContainer).build(8080);
-        endpointContainer.updateEndpointsList(client.endpoints().readAll());
-    }
-
-    EndpointsResource(MbedClient mbedClient) {
-        this.client = mbedClient;
-        endpointContainer.updateEndpointsList(client.endpoints().readAll());
+    public EndpointsResource(MbedClientService mbedClientService) {
+        this.clientCtr = mbedClientService;
     }
 
     /**
@@ -75,7 +63,7 @@ public final class EndpointsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<EndpointMetadata> getEndpoints() {
         //return only list with endpoint name and type
-        return endpointContainer.getAllEndpoints().stream().map(EndpointMetadata::from).collect(Collectors.toList());
+        return clientCtr.endpointContainer().getAllEndpoints().stream().map(EndpointMetadata::from).collect(Collectors.toList());
     }
 
     /**
@@ -87,7 +75,7 @@ public final class EndpointsResource {
     @Path("{endpoint_name}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ResourceMetadata> getEndpointResources(@PathParam("endpoint_name") String name) {
-        EndpointDescription endpoint = endpointContainer.getEndpoint(name);
+        EndpointDescription endpoint = clientCtr.endpointContainer().getEndpoint(name);
         if (endpoint == null) {
             //endpoint does not exists
             throw new NotFoundException();
@@ -96,7 +84,7 @@ public final class EndpointsResource {
         ResourceInfo[] resourceList = endpoint.getResources();
         if (resourceList == null) {
             //resource list is missing, try to reload it
-            resourceList = endpointContainer.updateResourceList(name, client.endpoint(name).readResourceList());
+            resourceList = clientCtr.endpointContainer().updateResourceList(name, clientCtr.client().endpoint(name).readResourceList());
             if (resourceList == null) {
                 //still missing
                 return Collections.emptyList();
@@ -116,20 +104,20 @@ public final class EndpointsResource {
     public void invokeProxyRequest(@PathParam("endpoint_name") String name, @PathParam("resource-path") String path) throws ClientErrorException {
         //initiate request
         final ResourcePath resourcePath = new ResourcePath(name, "/" + path);
-        if (!endpointContainer.updateResource(resourcePath, true)) {
+        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
             throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
         }
 
         LOGGER.debug("Making request GET {}", resourcePath);
-        client.endpoint(name).resource("/" + path).get(new ResponseListener<EndpointResponse>() {
+        clientCtr.client().endpoint(name).resource("/" + path).get(new ResponseListener<EndpointResponse>() {
             @Override
             public void onResponse(EndpointResponse response) {
-                endpointContainer.updateResource(resourcePath, response);
+                clientCtr.endpointContainer().updateResource(resourcePath, response);
             }
 
             @Override
             public void onError(Exception ex) {
-                endpointContainer.updateResource(resourcePath, ex.getMessage());
+                clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
             }
 
             @Override
@@ -143,7 +131,7 @@ public final class EndpointsResource {
     @Path("/{endpoint-name}/values")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<ResourcePath, ResourceValue> getResourceValues(@PathParam("endpoint-name") String endpointName) {
-        return endpointContainer.getEndpointResourceValues(endpointName);
+        return clientCtr.endpointContainer().getEndpointResourceValues(endpointName);
     }
 
     //TODO: add PUT, POST, DELETE
