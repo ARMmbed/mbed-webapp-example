@@ -35,5 +35,16 @@
     <welcome-file-list>
         <welcome-file>Devices.html</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>Notification Servlet</servlet-name>
+        <servlet-class>com.arm.mbed.restclient.servlet.NotificationPushServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <!-- Change org.mbed.example.MbedClientService.SERVLET_URL when server's port or context changes -->
+    <servlet-mapping>
+        <servlet-name>Notification Servlet</servlet-name>
+        <url-pattern>/mds-notifications</url-pattern>
+    </servlet-mapping>
 </web-app>
 

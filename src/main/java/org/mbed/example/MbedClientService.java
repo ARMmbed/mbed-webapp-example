@@ -22,6 +22,7 @@ import com.arm.mbed.restclient.MbedClientInitializationException;
 import com.arm.mbed.restclient.NotificationListener;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceNotification;
+import com.arm.mbed.restclient.servlet.HttpServletChannel;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Path;
@@ -33,6 +34,8 @@ import javax.ws.rs.Path;
 @Path("mbed-client-service") //it's a DI hack
 public class MbedClientService {
 
+    //change this server url when server's port or context changes
+    public static final String SERVLET_URL = "http://REMOTE_HOST:8082/example-app/mds-notifications";
     private MbedClient client;
     private EndpointContainer endpointContainer;
 
@@ -54,8 +57,10 @@ public class MbedClientService {
     private void createConnection(String domain, String clientName, String clientSecret) {
         try {
             this.endpointContainer = new EndpointContainer();
+            HttpServletChannel httpServletChannel = new HttpServletChannel(SERVLET_URL, 30, 2000);
+
             this.client = MbedClientBuilder.newBuilder().domain(domain).credentials(clientName, clientSecret)
-                    .notifChannelHttpServer(0)
+                    .notifChannel(httpServletChannel)
                     .notifListener(new NotificationListenerImpl(endpointContainer)).build(8080);
 
             readAllEndpoints();
