@@ -34,8 +34,6 @@ import javax.ws.rs.Path;
 @Path("mbed-client-service") //it's a DI hack
 public class MbedClientService {
 
-    //change this server url when server's port or context changes
-    public static final String SERVLET_URL = "http://REMOTE_HOST:8082/example-app/mds-notifications";
     private MbedClient client;
     private EndpointContainer endpointContainer;
 
@@ -57,7 +55,7 @@ public class MbedClientService {
     private void createConnection(String domain, String clientName, String clientSecret) {
         try {
             this.endpointContainer = new EndpointContainer();
-            HttpServletChannel httpServletChannel = new HttpServletChannel(SERVLET_URL, 30, 2000);
+            HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
 
             this.client = MbedClientBuilder.newBuilder().domain(domain).credentials(clientName, clientSecret)
                     .notifChannel(httpServletChannel)

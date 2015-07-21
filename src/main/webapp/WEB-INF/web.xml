@@ -40,8 +40,11 @@
         <servlet-name>Notification Servlet</servlet-name>
         <servlet-class>com.arm.mbed.restclient.servlet.NotificationPushServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
+        <init-param>
+            <param-name>servlet-url</param-name>
+            <param-value>http://REMOTE_HOST:8082/CONTEXT_PATH/mds-notifications</param-value>
+        </init-param>
     </servlet>
-    <!-- Change org.mbed.example.MbedClientService.SERVLET_URL when server's port or context changes -->
     <servlet-mapping>
         <servlet-name>Notification Servlet</servlet-name>
         <url-pattern>/mds-notifications</url-pattern>
