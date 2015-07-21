@@ -67,7 +67,6 @@
         </div>
     </nav>
     <div class="container">
-
         <!-- Main component with gray background -->
         <div class="jumbotron">
             <h2>Devices</h2>
@@ -92,7 +91,7 @@
                         </thead>
                         <tbody>
                         <tr ng-class="{ 'highlight': $index == selectedIndex }"
-                            ng-click="itemClicked($index);show_resources(x.name)"
+                            ng-click="itemClicked($index,x.name);show_resources(x.name)"
                             ng-repeat="x in values = (endpoints | filter:searchText)">
                             <td ng-model="name"><a href="#" ng-click="show_resources(x.name)"
                                                    aria-label="Toggle ngHide">{{x.name }}</a></td>
@@ -101,7 +100,7 @@
                         </tbody>
                         <em ng-show="!values.length && endpoints.length" class="danger ng-cloak">There are no matching
                             devices.</em>
-                        <em ng-show="!endpoints.length" class="danger ng-cloak">There are no device.</em>
+                        <em ng-show="!endpoints.length" class="danger ng-cloak">There are no devices.</em>
                     </table>
                 </div>
                 <!--<a href="#" id="comments" data-type="textarea" data-pk="1">1</a>-->
@@ -126,18 +125,18 @@
                                 <tbody>
                                 <tr ng-repeat="x in endresources">
 
-                                    <td class="col-md-2"><span ng-bind="x.uri"></span></td>
+                                    <td class="col-md-2"><span ng-bind="x.uriPath"></span></td>
                                     <td class="col-md-4" style="white-space: nowrap">
                                         <a ng-resource href="#" ng-click="$event.preventDefault()" id="device_value"
                                            title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
-                                           data-placement="top" data-content="Last update at 12:56pm.
-                                            if there is any error it will be shown here." ng-bind="x.val"></a>
+                                           data-placement="top">TODO</a>
+                                        <img src="img/loading.gif" index="{{$index}}" style="display:none">
                                     </td>
                                     <td class="col-md-1 td_center"><span
                                             ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
                                             aria-hidden="true"></span></td>
                                     <td class="col-md-1 td_center" style="white-space: nowrap">
-                                        <button ng-click="action_clicked($event)"
+                                        <button ng-click="action_clicked($event,x.uriPath)"
                                                 class=" btn-small btn btn-default btn-xs" type="button" ng-action>
                                         </button>
                                     </td>

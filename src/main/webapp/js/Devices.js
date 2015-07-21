@@ -28,7 +28,8 @@ var app = angular.module('App', ['ngResource']).directive('ngResource', function
                                                             '<div class="data-content">' +
                                                             '</div>' +
                                                         '</div>' +
-                                                   '</div>'
+                                                   '</div>',
+                                                   content:"Last update at 12:56pm. If there is any error it will be shown here."
                                                    });
                                                  };
                                                });
@@ -75,16 +76,17 @@ app.factory('Endpoints', function($resource) {
     });
 
 
-app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
+app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile,$interval) {
 
     //modify buttons style
     var dynamical_buttons = $compile('<div class="btn-group-vertical">' +
-                                     '<button ng-click = get($event) type="button" class="btn btn-info">GET</button>'+
+                                     '<button ng-click = get($event,detail) type="button" class="btn btn-info">GET</button>'+
                                      '<button ng-click = post($event) type="button" class="btn btn-success">POST</button>'+
                                      '<button ng-click = put($event) type="button" class="btn btn-warning">PUT</button>'+
                                      '<button ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
+    $scope.isLoading = false;
     $scope.endpoints = Endpoints.query();
     $scope.detail = "Details"
     $scope.show_resources = function(name) {
@@ -103,14 +105,17 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
              );
     };
 
-    $scope.get = function(event,name,path,td) {
+    $scope.get = function(event,name) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
-        $http.get('/example-app/webapi/endpoints/'+name+'/'+path
+        var loadingBar = parent.parentNode.previousElementSibling
+                    .previousElementSibling.lastElementChild;
+        var popover = $(parent.parentNode.previousElementSibling
+                            .previousElementSibling.firstElementChild).data('bs.popover');
+        popover.options.content = "NEW TEXT TEST";
+        $http.get('/example-app/webapi/endpoints/'+name+'/request'+path
             ).success(function(data){
-          td.x.val = data;
-          loader = angular.element(loader);
-          loader.class = "";
+            $(loadingBar).show();
         });
     };
     $scope.put = function(value){
@@ -134,12 +139,26 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile) {
     //               });
         };
      var parent;
-    $scope.action_clicked = function(event){
+     var path;
+    $scope.action_clicked = function(event,selected_path){
         parent = event.target;
+        path = selected_path;
     };
     $scope.selectedIndex = -1;
-    $scope.itemClicked = function ($index) {
+    var endpoint_name="none";
+    $scope.itemClicked = function ($index,name) {
         console.log($index);
+        endpoint_name = name;
         $scope.selectedIndex = $index;
       }
+    setInterval(function(){
+    if(endpoint_name != "none")
+    {
+        $http.get('/example-app/webapi/endpoints/'+endpoint_name+'/values'
+                    ).success(function(data){
+                    $scope.values = data;
+                    var h = JSON.stringify(data);
+                });
+    }
+    },1000)
 });

@@ -108,5 +108,5 @@ app.controller('Ctrl', function($scope,Subscriptions) {
         $scope.subscriptions = Subscriptions.query();
         $scope.subscriptions.refresh();
         $scope.refresh();
-};
+    };
 });
