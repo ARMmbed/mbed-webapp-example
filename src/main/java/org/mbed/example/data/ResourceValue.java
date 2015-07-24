@@ -21,15 +21,21 @@ package org.mbed.example.data;
  */
 public final class ResourceValue {
     private final String value;
+    private final long timestamp;
     private final boolean isWaitingForResponse;
     private final int statusCode;
     private final String errorMessage;
 
     public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage) {
+        this(value, isWaitingForResponse, statusCode, errorMessage, System.currentTimeMillis());
+    }
+
+    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, long timestamp) {
         this.value = value;
         this.isWaitingForResponse = isWaitingForResponse;
         this.statusCode = statusCode;
         this.errorMessage = errorMessage;
+        this.timestamp = timestamp;
     }
 
     public String getValue() {
@@ -48,6 +54,10 @@ public final class ResourceValue {
         return isWaitingForResponse;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,6 +69,9 @@ public final class ResourceValue {
 
         ResourceValue that = (ResourceValue) o;
 
+        if (timestamp != that.timestamp) {
+            return false;
+        }
         if (isWaitingForResponse != that.isWaitingForResponse) {
             return false;
         }
@@ -75,6 +88,7 @@ public final class ResourceValue {
     @Override
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
+        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
         result = 31 * result + (isWaitingForResponse ? 1 : 0);
         result = 31 * result + statusCode;
         result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
