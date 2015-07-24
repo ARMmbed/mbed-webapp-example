@@ -129,15 +129,17 @@
                                     <td class="col-md-4" style="white-space: nowrap">
                                         <a ng-resource href="#" ng-click="$event.preventDefault()" id="device_value"
                                            title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
-                                           data-placement="top">TODO</a>
-                                        <img src="img/loading.gif" index="{{$index}}" style="display:none">
+                                           data-content={{x.lastUpdate|date:'medium'}}
+                                           data-placement="top" ng-bind="x.val"></a>
+                                        <img ng-show="x.show" src="img/loading.gif" index="{{$index}}">
                                     </td>
                                     <td class="col-md-1 td_center"><span
                                             ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
                                             aria-hidden="true"></span></td>
                                     <td class="col-md-1 td_center" style="white-space: nowrap">
-                                        <button ng-click="action_clicked($event,x.uriPath)"
-                                                class=" btn-small btn btn-default btn-xs" type="button" ng-action>
+                                        <button ng-click="action_clicked($event,x.uriPath,x)"
+                                                class=" btn-small btn btn-default btn-xs" id="salam" type="button"
+                                                ng-action>
                                         </button>
                                     </td>
                                 </tr>

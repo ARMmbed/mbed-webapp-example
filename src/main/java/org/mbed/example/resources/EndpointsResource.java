@@ -138,16 +138,34 @@ public final class EndpointsResource {
     //    @PUT
     //    @Path("{endpoint_name}/{resource-path: .+}")
     //    @Produces(MediaType.TEXT_PLAIN)
+    ////    @Consumes(MediaType.APPLICATION_JSON)
     //    public String putResourcesValue(@QueryParam("value") String value, @PathParam("endpoint_name") String name
     //            , @PathParam("resource-path") String path) {
-    //        try {
-    //            return clientCtr.client().endpoint(name).resource(path).get().get().getPayloadAsString();
-    //        } catch (InterruptedException e) {
-    //            e.printStackTrace();
-    //        } catch (ExecutionException e) {
-    //            e.printStackTrace();
+    //        //initiate request
+    //        final ResourcePath resourcePath = new ResourcePath(name, "/" + path);
+    //        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
+    //            throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
     //        }
-    //        return null;
+    //
+    //        LOGGER.debug("Making request PUT {}", resourcePath);
+    //        clientCtr.client().endpoint(name).resource(path).put(Entity.text("salam"));
+    ////        clientCtr.client().endpoint(name).resource(path).put(new ResponseListener<EndpointResponse>() {
+    ////            @Override
+    ////            public void onResponse(EndpointResponse response) {
+    ////                clientCtr.endpointContainer().updateResource(resourcePath, response);
+    ////                System.out.println("onResponse"+response);
+    ////            }
+    ////
+    ////            @Override
+    ////            public void onError(Exception ex) {
+    ////                clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
+    ////            }
+    ////
+    ////            @Override
+    ////            public void onAsyncIdResponse() {
+    ////                //ignore
+    ////            }
+    ////        });
+    //        return "t";
     //    }
-
 }

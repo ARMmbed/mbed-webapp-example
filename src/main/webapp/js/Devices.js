@@ -29,11 +29,10 @@ var app = angular.module('App', ['ngResource']).directive('ngResource', function
                                                             '</div>' +
                                                         '</div>' +
                                                    '</div>',
-                                                   content:"Last update at 12:56pm. If there is any error it will be shown here."
+                                                   content:""
                                                    });
                                                  };
                                                });
-var editable_clicked;
 app.directive('ngAction', function() {
           return function(scope, element, attrs) {
             editable_clicked = angular.element(element);
@@ -44,7 +43,8 @@ app.directive('ngAction', function() {
                  type: 'textarea',
                  emptytext: 'action',
                  emptyclass: '',
-                 rows: 5
+                 rows: 5,
+                 tpl: '<textarea id="commandValue"></textarea>'
              });
           };
         });
@@ -74,15 +74,27 @@ app.factory('Endpoints', function($resource) {
         }
       });
     });
+app.factory('GetValues', function($http,$q) {
+                            return {
+                                    getValues: function(endpoint_name) {
+                                    var deferred = $q.defer();
+                                    $http.get('/example-app/webapi/endpoints/'+endpoint_name+'/values')
+                                        .success(function (data){
+                                            deferred.resolve(data);
+                                        });
+                                    return deferred.promise;
+                                    }
+                                };
 
+                        });
 
-app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile,$interval) {
+app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$compile,$interval,$filter) {
 
     //modify buttons style
     var dynamical_buttons = $compile('<div class="btn-group-vertical">' +
                                      '<button ng-click = get($event,detail) type="button" class="btn btn-info">GET</button>'+
                                      '<button ng-click = post($event) type="button" class="btn btn-success">POST</button>'+
-                                     '<button ng-click = put($event) type="button" class="btn btn-warning">PUT</button>'+
+                                     '<button ng-click = put($event,detail,commandValue) type="button" class="btn btn-warning">PUT</button>'+
                                      '<button ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
@@ -104,29 +116,29 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile,$inter
                    }
              );
     };
-
+//    var newUpdate = false;
     $scope.get = function(event,name) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
-        var loadingBar = parent.parentNode.previousElementSibling
-                    .previousElementSibling.lastElementChild;
-        var popover = $(parent.parentNode.previousElementSibling
-                            .previousElementSibling.firstElementChild).data('bs.popover');
-        popover.options.content = "NEW TEXT TEST";
         $http.get('/example-app/webapi/endpoints/'+name+'/request'+path
             ).success(function(data){
-            $(loadingBar).show();
+            selected_record.show = true;
+//            newUpdate = name + path;
+            selected_record.lastUpdate = "";
+
         });
     };
-    $scope.put = function(value){
+    $scope.put = function(event,name,value){
+        console.log($('#commandValue')[0].value);
         $(parent).editable('toggle');
-//        $http({
-//            url: '/example-app/webapi/endpoints/' + selected_name+'/' + selected_td.x.uri,
-//            method: "PUT",
-//            params: {'value': value}
-//         }).success(function(data){
-//                     selected_td.x.val = data;
-//               });
+
+        $http({
+            url: '/example-app/webapi/endpoints/' + name+'/' + path,
+            method: "PUT",
+            params: {'value': value}
+         }).success(function(data){
+                     console.log("done");
+               });
     };
     $scope.post = function(value){
             $(parent).editable('toggle');
@@ -140,25 +152,47 @@ app.controller('Ctrl', function($scope, Endpoints,$http,$element,$compile,$inter
         };
      var parent;
      var path;
-    $scope.action_clicked = function(event,selected_path){
+     var selected_record;
+    $scope.action_clicked = function(event,selected_path,record){
         parent = event.target;
         path = selected_path;
+        selected_record = record;
     };
     $scope.selectedIndex = -1;
     var endpoint_name="none";
     $scope.itemClicked = function ($index,name) {
-        console.log($index);
         endpoint_name = name;
         $scope.selectedIndex = $index;
       }
     setInterval(function(){
     if(endpoint_name != "none")
     {
-        $http.get('/example-app/webapi/endpoints/'+endpoint_name+'/values'
-                    ).success(function(data){
-                    $scope.values = data;
-                    var h = JSON.stringify(data);
-                });
-    }
-    },1000)
+                GetValues.getValues(endpoint_name).then(
+                    function(results){
+                     angular.forEach(results, function (value,key) {
+                        var single_object = $filter('filter')($scope.endresources, function (d)
+                            {
+                                    var splited_data = key.toString().split("'");
+                                    var endpoint = splited_data[1];
+                                    var path = splited_data[3];
+                                    if(endpoint_name == endpoint && d.uriPath == path && !value.waitingForResponse)
+                                    {
+                                        d.val = value.value;
+                                        d.show = false;
+                                        if(d.lastUpdate == null || d.lastUpdate == ''){
+                                            d.lastUpdate = "Last update: " + $filter('date')(new Date(),"MM/dd/yyyy 'at' h:mma");
+                                        }
+
+                                    }
+                            })[0];
+                                        });
+
+                    })
+//                    .error(function(data, status) {
+//                                          console.error('Repos error', status, data);
+//                                        });
+
+              }
+
+    },1000);
 });

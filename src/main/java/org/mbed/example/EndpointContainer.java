@@ -115,7 +115,9 @@ public class EndpointContainer {
     }
 
     public ResourceInfo[] updateResourceList(String epName, List<ResourceDescription> resourceList) {
-        ResourceInfo[] resources = resourceList.stream().map(resourceDescription -> new ResourceInfo(resourceDescription.getUriPath(), resourceDescription.getInterfaceDescription(), resourceDescription.getResourceType(), resourceDescription.getType(), resourceDescription.isObservable())).collect(Collectors.toList()).toArray(new ResourceInfo[resourceList.size()]);
+        ResourceInfo[] resources = resourceList.stream().map(resourceDescription ->
+                new ResourceInfo(resourceDescription.getUriPath(), resourceDescription.getInterfaceDescription(), resourceDescription.getResourceType(),
+                        resourceDescription.getType(), resourceDescription.isObservable())).collect(Collectors.toList()).toArray(new ResourceInfo[resourceList.size()]);
 
         EndpointDescription endpointDescription = endpointsList.compute(epName, (s, old) -> {
             if (old != null) {
