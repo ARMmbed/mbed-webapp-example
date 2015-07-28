@@ -141,12 +141,12 @@
         <dependency>
             <groupId>com.arm.mbed</groupId>
             <artifactId>mbed-client</artifactId>
-            <version>2.5.0-SNAPSHOT</version>
+            <version>2.5.0-226</version>
         </dependency>
         <dependency>
             <groupId>com.arm.mbed</groupId>
             <artifactId>mbed-client-servlet</artifactId>
-            <version>2.5.0-SNAPSHOT</version>
+            <version>2.5.0-226</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -227,4 +227,14 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>mbed repository</id>
+            <url>http://prod-mvn-repo.cloudapp.net</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 </project>
