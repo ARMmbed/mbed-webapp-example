@@ -6,6 +6,7 @@ It shows devices, its resources and read/update resource values.
 
 Development
 -----------
+[![Build Status](https://magnum.travis-ci.com/ARMmbed/mbed-webapp-example.svg?token=dwQ5RVGhwvjYBMfR1k6t&branch=master)](https://magnum.travis-ci.com/ARMmbed/mbed-webapp-example)
 
 ### Requirements
 - Java 8
