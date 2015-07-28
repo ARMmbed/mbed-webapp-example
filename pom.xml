@@ -81,6 +81,22 @@
                     </rulesets>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <formats>
+                        <format>xml</format>
+                        <format>html</format>
+                    </formats>
+                    <instrumentation>
+                        <ignoreTrivial>true</ignoreTrivial>
+                    </instrumentation>
+                    <check/>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -178,7 +194,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>cobertura-maven-plugin</artifactId>
-                        <version>2.7</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -187,17 +202,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <aggregate>true</aggregate>
-                            <formats>
-                                <format>xml</format>
-                                <format>html</format>
-                            </formats>
-                            <instrumentation>
-                                <ignoreTrivial>true</ignoreTrivial>
-                            </instrumentation>
-                            <check/>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -219,6 +223,56 @@
                                 <goals>
                                     <goal>pmd</goal>
                                     <goal>cpd</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>static-code-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <check>
+                                <totalLineRate>57</totalLineRate>
+                                <haltOnFailure>true</haltOnFailure>
+                                <packageLineRate>60</packageLineRate>
+                            </check>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                    <goal>cpd-check</goal>
                                 </goals>
                             </execution>
                         </executions>
