@@ -1,0 +1,14 @@
+.classpath
+.project
+.settings
+classes/
+target/
+log/
+nbactions.xml
+.idea/*
+!.idea/codeStyleSettings.xml
+!.idea/copyright
+*.iml
+*.uml
+*.state
+*~
