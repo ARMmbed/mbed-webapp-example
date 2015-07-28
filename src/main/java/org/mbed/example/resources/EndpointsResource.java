@@ -16,6 +16,7 @@
  */
 package org.mbed.example.resources;
 
+import com.arm.mbed.restclient.endpoint.Entity;
 import com.arm.mbed.restclient.endpoint.ResponseListener;
 import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
@@ -30,9 +31,11 @@ import javax.inject.Singleton;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.mbed.example.MbedClientService;
 import org.mbed.example.data.EndpointMetadata;
@@ -107,7 +110,6 @@ public final class EndpointsResource {
         if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
             throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
         }
-
         LOGGER.debug("Making request GET {}", resourcePath);
         clientCtr.client().endpoint(name).resource("/" + path).get(new ResponseListener<EndpointResponse>() {
             @Override
@@ -135,37 +137,31 @@ public final class EndpointsResource {
     }
 
     //TODO: add PUT, POST, DELETE
-    //    @PUT
-    //    @Path("{endpoint_name}/{resource-path: .+}")
-    //    @Produces(MediaType.TEXT_PLAIN)
-    ////    @Consumes(MediaType.APPLICATION_JSON)
-    //    public String putResourcesValue(@QueryParam("value") String value, @PathParam("endpoint_name") String name
-    //            , @PathParam("resource-path") String path) {
-    //        //initiate request
-    //        final ResourcePath resourcePath = new ResourcePath(name, "/" + path);
-    //        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
-    //            throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
-    //        }
-    //
-    //        LOGGER.debug("Making request PUT {}", resourcePath);
-    //        clientCtr.client().endpoint(name).resource(path).put(Entity.text("salam"));
-    ////        clientCtr.client().endpoint(name).resource(path).put(new ResponseListener<EndpointResponse>() {
-    ////            @Override
-    ////            public void onResponse(EndpointResponse response) {
-    ////                clientCtr.endpointContainer().updateResource(resourcePath, response);
-    ////                System.out.println("onResponse"+response);
-    ////            }
-    ////
-    ////            @Override
-    ////            public void onError(Exception ex) {
-    ////                clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
-    ////            }
-    ////
-    ////            @Override
-    ////            public void onAsyncIdResponse() {
-    ////                //ignore
-    ////            }
-    ////        });
-    //        return "t";
-    //    }
+    @PUT
+    @Path("{endpoint_name}/{resource-path: .+}")
+    public void putResourcesValue(@QueryParam("value") String value, @PathParam("endpoint_name") String name
+            , @PathParam("resource-path") String path) throws ClientErrorException {
+        //initiate request
+        final ResourcePath resourcePath = new ResourcePath(name, "/" + path);
+        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
+            throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
+        }
+        LOGGER.debug("Making request PUT {}", resourcePath);
+        clientCtr.client().endpoint(name).resource("/" + path).put(Entity.text(value), new ResponseListener<EndpointResponse>() {
+            @Override
+            public void onResponse(EndpointResponse response) {
+                clientCtr.endpointContainer().updateResource(resourcePath, response, value);
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
+            }
+
+            @Override
+            public void onAsyncIdResponse() {
+                //ignore
+            }
+        });
+    }
 }

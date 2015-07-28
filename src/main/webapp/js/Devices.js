@@ -116,29 +116,29 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                    }
              );
     };
-//    var newUpdate = false;
     $scope.get = function(event,name) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
         $http.get('/example-app/webapi/endpoints/'+name+'/request'+path
             ).success(function(data){
             selected_record.show = true;
-//            newUpdate = name + path;
-            selected_record.lastUpdate = "";
-
-        });
+        }).error(function(data, status) {
+                             console.error('Repos error', status, data);
+                           });;
     };
-    $scope.put = function(event,name,value){
-        console.log($('#commandValue')[0].value);
+    $scope.put = function(event,name){
+        var value = $('#commandValue')[0].value;
         $(parent).editable('toggle');
-
         $http({
-            url: '/example-app/webapi/endpoints/' + name+'/' + path,
+            url: '/example-app/webapi/endpoints/' + name + path,
             method: "PUT",
             params: {'value': value}
          }).success(function(data){
                      console.log("done");
-               });
+                     selected_record.show = true;
+               }).error(function(data, status) {
+                   console.error('Repos error', status, data);
+                 });
     };
     $scope.post = function(value){
             $(parent).editable('toggle');
@@ -179,10 +179,7 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                                     {
                                         d.val = value.value;
                                         d.show = false;
-                                        if(d.lastUpdate == null || d.lastUpdate == ''){
-                                            d.lastUpdate = "Last update: " + $filter('date')(new Date(),"MM/dd/yyyy 'at' h:mma");
-                                        }
-
+                                        d.lastUpdate = "Last update: " + $filter('date')(value.timestamp,"MM/dd/yyyy 'at' h:mma");
                                     }
                             })[0];
                                         });

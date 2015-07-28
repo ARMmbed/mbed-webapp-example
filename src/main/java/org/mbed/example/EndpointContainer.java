@@ -84,10 +84,17 @@ public class EndpointContainer {
         endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null));
     }
 
+    public void updateResource(ResourcePath resourcePath, EndpointResponse response, String value) {
+        if (response.getPayloadAsString().isEmpty()) {
+            endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(value, false, response.getStatus(), null));
+        } else {
+            endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null));
+        }
+    }
+
     public void updateResource(ResourcePath resourcePath, String errorMessage) {
         endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(null, false, 0, errorMessage));
     }
-
     public Map<ResourcePath, ResourceValue> getEndpointResourceValues(String endpointName) {
         EndpointDescription endpointDescription = endpointsList.get(endpointName);
         if (endpointDescription == null) {
