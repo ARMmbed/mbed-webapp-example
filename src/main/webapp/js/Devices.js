@@ -15,24 +15,48 @@
  * limitations under the License.
  */
 
-var app = angular.module('App', ['ngResource']).directive('ngResource', function() {
+
+var app = angular.module('App', ['ngResource']).directive('ngSuccess', function() {
                                                  return function(scope, element, attrs) {
                                                    var button = angular.element(element);
                                                    $(button).popover({
                                                    template: '<div class="popover success_popover" role="tooltip" style="width: 500px;">' +
-                                                        '<div class="arrow success_popover-arrow">' +
-                                                        '</div>' +
-                                                        '<h3 class="popover-title">' +
-                                                        '</h3>' +
-                                                        '<div class="popover-content success_popover-content">' +
-                                                            '<div class="data-content">' +
-                                                            '</div>' +
-                                                        '</div>' +
-                                                   '</div>',
+                                                              '<div class="arrow success_popover-arrow">' +
+                                                              '</div>' +
+                                                              '<h3 class="popover-title success_popover-title">' +
+                                                              '</h3>' +
+                                                              '<div class="popover-content success_popover-content">' +
+                                                                  '<div class="data-content">' +
+                                                                  '</div>' +
+                                                              '</div>' +
+                                                         '</div>',
                                                    content:""
                                                    });
                                                  };
+
                                                });
+app.directive('ngError', function() {
+                            return function(scope, element, attrs) {
+                              var button = angular.element(element);
+                              $(button).popover({
+                              template: '<div class="popover error_popover" role="tooltip" style="width: 500px;">' +
+                                       '<div class="arrow error_popover-arrow">' +
+                                       '</div>' +
+                                       '<h3 class="popover-title error_popover-title">' +
+                                       '</h3>' +
+                                       '<div class="popover-content error_popover-content">' +
+                                           '<div class="data-content">' +
+                                           '</div>' +
+                                       '</div>' +
+                                  '</div>',
+                              content:""
+                              });
+//                                                   scope.$watch('popoverTemplate', function(newValue, oldValue){
+//                                                       console.log('popoverTemplate has changed', newValue);
+//                                                    });
+                            };
+
+                          });
 app.directive('ngAction', function() {
           return function(scope, element, attrs) {
             editable_clicked = angular.element(element);
@@ -96,6 +120,7 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                                      '<button ng-click = post($event) type="button" class="btn btn-success">POST</button>'+
                                      '<button ng-click = put($event,detail,commandValue) type="button" class="btn btn-warning">PUT</button>'+
                                      '<button ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
+
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
     $scope.isLoading = false;
@@ -177,9 +202,22 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                                     var path = splited_data[3];
                                     if(endpoint_name == endpoint && d.uriPath == path && !value.waitingForResponse)
                                     {
-                                        d.val = value.value;
-                                        d.show = false;
-                                        d.lastUpdate = "Last update: " + $filter('date')(value.timestamp,"MM/dd/yyyy 'at' h:mma");
+                                        if(value.statusCode == 200)
+                                        {
+                                            d.val = value.value;
+                                            d.show = false;
+                                            d.lastUpdate = "Last update: " + $filter('date')(value.timestamp,"MM/dd/yyyy HH:mm")
+                                                 + "\nContent Type: "+ value.contentType
+                                                 + "\nMaximum age: " + value.maxAge;
+                                            d.success = true;
+                                        }
+                                        else
+                                        {
+                                            d.val = "Error";
+                                            d.show = false;
+                                            d.lastUpdate = value.errorMessage;
+                                            d.success = false;
+                                        }
                                     }
                             })[0];
                                         });

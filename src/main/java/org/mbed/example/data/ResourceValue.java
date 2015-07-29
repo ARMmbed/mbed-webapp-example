@@ -25,17 +25,21 @@ public final class ResourceValue {
     private final boolean isWaitingForResponse;
     private final int statusCode;
     private final String errorMessage;
+    private final String contentType;
+    private final int maxAge;
 
-    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage) {
-        this(value, isWaitingForResponse, statusCode, errorMessage, System.currentTimeMillis());
+    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, String contentType, int maxAge) {
+        this(value, isWaitingForResponse, statusCode, errorMessage, System.currentTimeMillis(), contentType, maxAge);
     }
 
-    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, long timestamp) {
+    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, long timestamp, String contentType, int maxAge) {
         this.value = value;
         this.isWaitingForResponse = isWaitingForResponse;
         this.statusCode = statusCode;
         this.errorMessage = errorMessage;
         this.timestamp = timestamp;
+        this.contentType = contentType;
+        this.maxAge = maxAge;
     }
 
     public String getValue() {
@@ -56,6 +60,14 @@ public final class ResourceValue {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public int getMaxAge() {
+        return maxAge;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     @Override
@@ -82,6 +94,12 @@ public final class ResourceValue {
         if (value != null ? !value.equals(that.value) : that.value != null) {
             return false;
         }
+        if(contentType != that.contentType) {
+            return false;
+        }
+        if (maxAge != that.maxAge) {
+            return false;
+        }
         return !(errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null);
 
     }
@@ -92,6 +110,8 @@ public final class ResourceValue {
         result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
         result = 31 * result + (isWaitingForResponse ? 1 : 0);
         result = 31 * result + statusCode;
+        result = 31 * result + maxAge;
+        result = 31 * result + contentType.hashCode();
         result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
         return result;
     }

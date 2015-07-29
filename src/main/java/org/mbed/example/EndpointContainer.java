@@ -72,28 +72,33 @@ public class EndpointContainer {
                     success.set(false);
                     return old;
                 }
-                return new ResourceValue(old.getValue(), isWaitingForResponse, 0, null);
+                return new ResourceValue(old.getValue(), isWaitingForResponse, 0, null, null, 0);
             } else {
-                return new ResourceValue(null, isWaitingForResponse, 0, null);
+                return new ResourceValue(null, isWaitingForResponse, 0, null, null, 0);
             }
         });
         return success.get();
     }
 
     public void updateResource(ResourcePath resourcePath, EndpointResponse response) {
-        endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null));
+        endpointResourceValues.put(resourcePath, new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null, response.getContentType(), response.getMaxAge()));
     }
 
     public void updateResource(ResourcePath resourcePath, EndpointResponse response, String value) {
-        if (response.getPayloadAsString().isEmpty()) {
-            endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(value, false, response.getStatus(), null));
+        String payloadAsString = response.getPayloadAsString();
+        if (payloadAsString != null && !payloadAsString.isEmpty()) {
+            if (response.getStatus()==200) {
+                endpointResourceValues.put(resourcePath, new ResourceValue(payloadAsString, false, response.getStatus(), null, response.getContentType(), response.getMaxAge()));
+            } else {
+                endpointResourceValues.put(resourcePath, new ResourceValue(null, false, response.getStatus(), payloadAsString, response.getContentType(), response.getMaxAge()));
+            }
         } else {
-            endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null));
+            endpointResourceValues.put(resourcePath, new ResourceValue(value, false, response.getStatus(), null, response.getContentType(), response.getMaxAge()));
         }
     }
 
     public void updateResource(ResourcePath resourcePath, String errorMessage) {
-        endpointResourceValues.compute(resourcePath, (resourcePath1, old) -> new ResourceValue(null, false, 0, errorMessage));
+        endpointResourceValues.put(resourcePath, new ResourceValue(null, false, 0, errorMessage, null, 0));
     }
     public Map<ResourcePath, ResourceValue> getEndpointResourceValues(String endpointName) {
         EndpointDescription endpointDescription = endpointsList.get(endpointName);

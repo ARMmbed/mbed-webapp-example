@@ -20,6 +20,7 @@ import static org.assertj.core.api.StrictAssertions.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import com.arm.mbed.restclient.MbedClient;
+import com.arm.mbed.restclient.endpoint.Entity;
 import com.arm.mbed.restclient.endpoint.ResponseListener;
 import com.arm.mbed.restclient.entity.Endpoint;
 import com.arm.mbed.restclient.entity.EndpointResponse;
@@ -92,7 +93,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue("24C", false, 200, null));
+                new ResourceValue("24C", false, 200, null, null, 0));
     }
 
     @Test
@@ -128,13 +129,22 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue(null, false, 0, "Error while reading!"));
+                new ResourceValue(null, false, 0, "Error while reading!", null , 0));
 
     }
 
     private void mockResponseListener_onResponse(String endpointName, String path, String payload, int status) {
         ArgumentCaptor<ResponseListener> respCapture = ArgumentCaptor.forClass(ResponseListener.class);
         verify(mbedClient.endpoint(endpointName).resource(path)).get(respCapture.capture());
+        respCapture.getValue().onAsyncIdResponse();
+
+        respCapture.getValue().onResponse(mockEndpointResponse(payload, status));
+    }
+
+    private void mockResponseListener_put_onResponse(String endpointName, String path, String payload, int status) {
+        ArgumentCaptor<ResponseListener> respCapture = ArgumentCaptor.forClass(ResponseListener.class);
+        ArgumentCaptor<Entity> entCapture = ArgumentCaptor.forClass(Entity.class);
+        verify(mbedClient.endpoint(endpointName).resource(path)).put(entCapture.capture(), respCapture.capture());
         respCapture.getValue().onAsyncIdResponse();
 
         respCapture.getValue().onResponse(mockEndpointResponse(payload, status));
@@ -151,5 +161,62 @@ public class EndpointsResourceTest {
         ArgumentCaptor<ResponseListener> respCapture = ArgumentCaptor.forClass(ResponseListener.class);
         verify(mbedClient.endpoint(endpointName).resource(path)).get(respCapture.capture());
         respCapture.getValue().onError(exception);
+    }
+    @Test
+    public void putResourcesValue_success() throws Exception {
+        when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
+        when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/temp", null, null, null, false)));
+        mbedClientService.readAllEndpoints();
+
+        //read resources
+        assertEquals(1, rest.getEndpointResources("dev-01").size());
+
+        //invoke PUT request
+        rest.putResourcesValue("32C", "dev-01", "temp");
+
+        //get values, no response available
+        assertTrue(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")).isWaitingForResponse());
+
+        //response returns from mDS
+        mockResponseListener_put_onResponse("dev-01", "/temp", "32C", 200);
+
+        //read values
+        assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
+                new ResourceValue("32C", false, 200, null, null, 0));
+    }
+
+    @Test
+    public void putResourcesValue_withError() throws Exception {
+        when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
+        when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/temp", null, null, null, false)));
+        mbedClientService.readAllEndpoints();
+
+        //read resources
+        assertEquals(1, rest.getEndpointResources("dev-01").size());
+
+        //invoke PUT request
+        rest.putResourcesValue("32C", "dev-01", "temp");
+
+        //response returns from mDS
+        mockResponseListener_put_onResponse("dev-01", "/temp", "error", 405);
+
+        //read values
+        assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
+                new ResourceValue(null, false, 405, "error", null, 0));
+    }
+    @Test
+    public void putResourcesValue_duplicate() throws Exception {
+        when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
+        when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/temp", null, null, null, false)));
+        mbedClientService.readAllEndpoints();
+
+        //read resources
+        assertEquals(1, rest.getEndpointResources("dev-01").size());
+
+        //invoke PUT proxy request
+        rest.putResourcesValue("32C", "dev-01", "temp");
+
+        //again invoke GET proxy request for same resource
+        assertThatThrownBy(() -> rest.putResourcesValue("32C", "dev-01", "temp")).isInstanceOf(ClientErrorException.class);
     }
 }

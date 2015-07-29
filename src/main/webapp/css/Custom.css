@@ -94,10 +94,19 @@ body {
 .success_popover {
     border: 2px solid #5cb85c;
 }
+.error_popover {
+    border: 2px solid #d9534f;
+}
 
 /* Popover Header*/
 .success_popover-title {
     background-color: #5cb85c;
+    color: #FFFFFF;
+    font-size: 15px;
+    text-align:center;
+}
+.error_popover-title {
+    background-color: #d9534f;
     color: #FFFFFF;
     font-size: 15px;
     text-align:center;
@@ -109,10 +118,18 @@ body {
     color: #5cb85c;
     padding: 25px;
 }
+.error_popover-content {
+    background-color: #FFFFFF;
+    color: #d9534f;
+    padding: 25px;
+}
 
 /* Popover Arrow */
 .success_popover-arrow {
     border-top-color: #5cb85c !important;
+}
+.error_popover-arrow {
+    border-top-color: #d9534f !important;
 }
 .editable-click
 {

@@ -50,10 +50,10 @@ public class EndpointContainerTest {
 
         epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), mockEndpointResponse("25 C", 200));
         assertEquals(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")),
-                new ResourceValue("25 C", false, 200, null));
+                new ResourceValue("25 C", false, 200, null, null, 0));
 
         epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), "Some error");
         assertEquals(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")),
-                new ResourceValue(null, false, 0, "Some error"));
+                new ResourceValue(null, false, 0, "Some error", null, 0));
     }
 }
