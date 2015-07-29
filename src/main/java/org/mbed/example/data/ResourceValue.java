@@ -94,24 +94,24 @@ public final class ResourceValue {
         if (value != null ? !value.equals(that.value) : that.value != null) {
             return false;
         }
-        if(contentType != that.contentType) {
-            return false;
-        }
         if (maxAge != that.maxAge) {
             return false;
         }
-        return !(errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null);
-
+        if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) {
+            return false;
+        }
+        return !(contentType != null ? !contentType.equals(that.contentType) : that.contentType != null);
     }
 
     @Override
+    @SuppressWarnings("PMD.NPathComplexity")
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
         result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
         result = 31 * result + (isWaitingForResponse ? 1 : 0);
         result = 31 * result + statusCode;
         result = 31 * result + maxAge;
-        result = 31 * result + contentType.hashCode();
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
         result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
         return result;
     }
