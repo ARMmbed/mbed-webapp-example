@@ -20,10 +20,20 @@ var app = angular.module('App', ['ngResource']);
 app.factory('Subscriptions', function($resource) {
           return $resource('/example-app/webapi/subscriptions',{},{
               update:{
-                method: 'PUT'
-              }
-            });
+            method: 'PUT'
+        }
+    });
+});
+
+app.controller('ConfCtrl',
+    function ConfCtrl ($scope, $http) {
+        $scope.save = function() {
+           $http.post('/example-app/webapi/configuration', $scope.data);  
+        };
+        $http.get('/example-app/webapi/configuration').success(function(incoming){
+            $scope.data = incoming;
         });
+});
 
 app.controller('Ctrl', function($scope,Subscriptions) {
     $scope.show_close = true;

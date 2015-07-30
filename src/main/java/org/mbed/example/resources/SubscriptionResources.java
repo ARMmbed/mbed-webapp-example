@@ -16,7 +16,6 @@
  */
 package org.mbed.example.resources;
 
-import com.arm.mbed.restclient.MbedClient;
 import com.arm.mbed.restclient.MbedClientBuilder;
 import com.arm.mbed.restclient.MbedClientInitializationException;
 import com.arm.mbed.restclient.endpoint.PreSubscriptionEntry;
@@ -29,6 +28,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.mbed.example.MbedClientService;
 
 /**
  * Created by mitvah01 on 30.6.2015.
@@ -36,15 +36,11 @@ import javax.ws.rs.core.MediaType;
 @Path("/subscriptions")
 @Singleton
 public class SubscriptionResources {
-    private MbedClient client;
+    private final MbedClientService clientCtr;
 
     @Inject
-    SubscriptionResources() {
-        try {
-            client = MbedClientBuilder.newBuilder().domain("domain").credentials("app2", "secret").build(8080);
-        } catch (MbedClientInitializationException e) {
-            e.printStackTrace();
-        }
+    SubscriptionResources(MbedClientService clientCtr) {
+        this.clientCtr = clientCtr;
     }
 
     @GET
@@ -52,8 +48,7 @@ public class SubscriptionResources {
     public List<PreSubscriptionEntry> getSubscriptions() {
         //client.preSubscriptions().builder().endpointType("Light").path("/3/0/1").path("/3/0/2").create();
         List<PreSubscriptionEntry> entries = null;
-        entries = client.preSubscriptions().read();
-        System.out.print("presubscription: ");
+        entries = clientCtr.client().preSubscriptions().read();
         return entries;
     }
 
@@ -61,7 +56,7 @@ public class SubscriptionResources {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public org.mbed.example.resources.PreSubscriptionEntry putSubscription(org.mbed.example.resources.PreSubscriptionEntry preSubscriptionEntry) {
-        client.preSubscriptions().builder().endpointName(preSubscriptionEntry.getEndpointName()).
+        clientCtr.client().preSubscriptions().builder().endpointName(preSubscriptionEntry.getEndpointName()).
                 endpointType(preSubscriptionEntry.getEndpointType());//.path(preSubscriptionEntry.getUriPathPatterns()).create();
         System.out.print("preSubscriptionEntry" + preSubscriptionEntry.getEndpointName() + ' ' + preSubscriptionEntry.getEndpointType());
         return preSubscriptionEntry;
