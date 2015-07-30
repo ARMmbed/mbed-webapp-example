@@ -23,9 +23,13 @@ import com.arm.mbed.restclient.NotificationListener;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import com.arm.mbed.restclient.servlet.HttpServletChannel;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Path;
+import org.mbed.example.data.ServerConfiguration;
 
 /**
  * @author szymon
@@ -35,6 +39,7 @@ import javax.ws.rs.Path;
 public class MbedClientService {
 
     private MbedClient client;
+    private boolean connected = false;
     private EndpointContainer endpointContainer;
 
     @Inject
@@ -45,31 +50,53 @@ public class MbedClientService {
     public MbedClientService(MbedClient mbedClient) {
         if (mbedClient == null) {
             //TODO: change this hardcoded connection
-            createConnection("domain", "app2", "secret");
+            createConnection("http://localhost:8080", "domain/app2", "secret");
         } else {
             this.client = mbedClient;
             this.endpointContainer = new EndpointContainer();
+            this.connected = true;
         }
     }
 
-    private void createConnection(String domain, String clientName, String clientSecret) {
+    public final void createConnection(ServerConfiguration configuration) {
+        createConnection(configuration.getAddress(), configuration.getUsername(), configuration.getPassword());
+    }
+    
+    public final void createConnection(String address, String clientName, String clientSecret) {
+        connected = false;
         try {
             this.endpointContainer = new EndpointContainer();
             HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
+            
+            String[] clientCreds = clientName.split("/");
+            if (clientCreds.length != 2) {
+                throw new IllegalArgumentException("Invalid user credentials");
+            }
+            boolean isSecure = false; //TODO use this
+            URI uri = new URI(address);
+            if (uri.getScheme().equals("https")) {
+                isSecure = true;
+            }
 
-            this.client = MbedClientBuilder.newBuilder().domain(domain).credentials(clientName, clientSecret)
+            this.client = MbedClientBuilder.newBuilder().domain(clientCreds[0]).credentials(clientCreds[1], clientSecret)
                     .notifChannel(httpServletChannel)
-                    .notifListener(new NotificationListenerImpl(endpointContainer)).build(8080);
+                    .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
 
             readAllEndpoints();
-
-        } catch (MbedClientInitializationException e) {
-            e.printStackTrace();
+            connected = true;
+        } catch (MbedClientInitializationException | URISyntaxException e) {
+            e.printStackTrace(); //TODO handle properly
         }
     }
 
+    
+
     public MbedClient client() {
         return client;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 
     public void readAllEndpoints() {
@@ -81,6 +108,7 @@ public class MbedClientService {
     }
 
     static class NotificationListenerImpl implements NotificationListener {
+
         private final EndpointContainer endpointContainer;
 
         NotificationListenerImpl(EndpointContainer endpointContainer) {

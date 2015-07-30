@@ -43,24 +43,30 @@ public final class ConfigurationResource {
     @Inject
     public ConfigurationResource(MbedClientService mbedClientService) {
         this.clientCtr = mbedClientService;
-        this.serverConfiguration = new ServerConfiguration("http://localhost:8080","app2","secret", null);
+        this.serverConfiguration = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
+        mbedClientService.createConnection(serverConfiguration);
     }
 
     /**
-     * Returns Server Configuration 
+     * Returns Server Configuration
+     * @return server configuration
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ServerConfiguration getConfiguration() {
+        LOGGER.debug("Reading server configuration.");
         return serverConfiguration;
     }
 
     /**
+     * Sets configuration 
+     * @param newConf new configuration
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void setConfiguration(ServerConfiguration newConf) {
-//        System.out.println("XX");
+        LOGGER.debug("Writing server configuration.");
         this.serverConfiguration = newConf;
+        clientCtr.createConnection(serverConfiguration);
     }
 }

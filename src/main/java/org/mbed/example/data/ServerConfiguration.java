@@ -28,6 +28,7 @@ public class ServerConfiguration {
     private String token;
 
     public ServerConfiguration() {
+        //empty constructor for JSON parsing
     }
 
     
