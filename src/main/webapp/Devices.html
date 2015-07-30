@@ -131,10 +131,11 @@
                                            title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
                                            data-content="{{x.lastUpdate|date:'medium'}}"
                                            data-placement="top" ng-bind="x.val"></a>
-                                        <a ng-error ng-show="!x.success" href="#" ng-click="$event.preventDefault()"
+                                        <a ng-error  href="#" ng-click="$event.preventDefault()"
+                                           ng-class="{'glyphicon glyphicon-exclamation-sign danger':x.success == false,'':x.success == true}"
                                            title="ERROR" data-toggle="popover" data-trigger="focus"
                                            data-content="{{x.lastUpdate|date:'medium'}}"
-                                           data-placement="top" ng-bind="x.val"></a>
+                                           data-placement="top"></a>
                                         <img ng-show="x.show" src="img/loading.gif" index="{{$index}}">
                                     </td>
                                     <td class="col-md-1 td_center"><span

@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
 public final class EndpointsResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(EndpointsResource.class);
     private final MbedClientService clientCtr;
+    private final static String RESOURCEPATH = "resource-path";
+    private final static String ENDPOINTNAME = "endpoint-name";
 
     @Inject
     public EndpointsResource(MbedClientService mbedClientService) {
@@ -77,9 +79,9 @@ public final class EndpointsResource {
      * @param name String name of the endpoint
      */
     @GET
-    @Path("{endpoint_name}")
+    @Path("{endpoint-name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ResourceMetadata> getEndpointResources(@PathParam("endpoint_name") String name) {
+    public List<ResourceMetadata> getEndpointResources(@PathParam(ENDPOINTNAME) String name) {
         EndpointDescription endpoint = clientCtr.endpointContainer().getEndpoint(name);
         if (endpoint == null) {
             //endpoint does not exists
@@ -105,65 +107,82 @@ public final class EndpointsResource {
     }
 
     @GET
-    @Path("/{endpoint_name}/request/{resource-path : .+}")
-    public void invokeProxyRequest(@PathParam("endpoint_name") String name, @PathParam("resource-path") String path) throws ClientErrorException {
+    @Path("/{endpoint-name}/request/{resource-path : .+}")
+    public void invokeProxyRequest(@PathParam(ENDPOINTNAME) String name, @PathParam(RESOURCEPATH) String path) throws ClientErrorException {
         //initiate request
-        final ResourcePath resourcePath = new ResourcePath(name, "/" + path);
-        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
-            throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
-        }
+        final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request GET {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).get(new ResponseListener<EndpointResponse>() {
-            @Override
-            public void onResponse(EndpointResponse response) {
-                clientCtr.endpointContainer().updateResource(resourcePath, response);
-            }
-
-            @Override
-            public void onError(Exception ex) {
-                clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
-            }
-
-            @Override
-            public void onAsyncIdResponse() {
-                //ignore
-            }
-        });
+        clientCtr.client().endpoint(name).resource("/" + path).get(new EndpointResponseResponseListener(resourcePath, null));
     }
 
     @GET
     @Path("/{endpoint-name}/values")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<ResourcePath, ResourceValue> getResourceValues(@PathParam("endpoint-name") String endpointName) {
+    public Map<ResourcePath, ResourceValue> getResourceValues(@PathParam(ENDPOINTNAME) String endpointName) {
         return clientCtr.endpointContainer().getEndpointResourceValues(endpointName);
     }
 
-    //TODO: add PUT, POST, DELETE
     @PUT
-    @Path("{endpoint_name}/{resource-path: .+}")
-    public void putResourcesValue(@QueryParam("value") String value, @PathParam("endpoint_name") String name
-            , @PathParam("resource-path") String path) throws ClientErrorException {
+    @Path("{endpoint-name}/{resource-path: .+}")
+    public void putResourcesValue(@QueryParam("value") String value, @PathParam(ENDPOINTNAME) String name
+            , @PathParam(RESOURCEPATH) String path) throws ClientErrorException {
         //initiate request
-        final ResourcePath resourcePath = new ResourcePath(name, "/" + path);
-        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
-            throw new ClientErrorException("Only one reqeust at a time allowed.", 409);
-        }
+        final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request PUT {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).put(Entity.text(value), new ResponseListener<EndpointResponse>() {
-            @Override
-            public void onResponse(EndpointResponse response) {
-                clientCtr.endpointContainer().updateResource(resourcePath, response, value);
-            }
+        clientCtr.client().endpoint(name).resource("/" + path).put(Entity.text(value), new EndpointResponseResponseListener(resourcePath, value));
+    }
+    @DELETE
+    @Path("{endpoint-name}/{resource-path: .+}")
+    public void deleteResourcesValue(@PathParam(ENDPOINTNAME) String name
+            , @PathParam(RESOURCEPATH) String path) throws ClientErrorException {
+        //initiate request
+        final ResourcePath resourcePath = checkConcurrency(name, path);
+        LOGGER.debug("Making request DELETE {}", resourcePath);
+        clientCtr.client().endpoint(name).resource(path).delete(new EndpointResponseResponseListener(resourcePath, null));
+    }
 
-            @Override
-            public void onError(Exception ex) {
-                clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
-            }
+    @POST
+    @Path("{endpoint-name}/{resource-path: .+}")
+    public void postResourcesValue(@QueryParam("value") String value, @PathParam(ENDPOINTNAME) String name
+            , @PathParam(RESOURCEPATH) String path) throws ClientErrorException {
+        //initiate request
+        final ResourcePath resourcePath = checkConcurrency(name, path);
+        LOGGER.debug("Making request POST {}", resourcePath);
+        clientCtr.client().endpoint(name).resource("/" + path).post(Entity.text(value), new EndpointResponseResponseListener(resourcePath, value));
+    }
+    private ResourcePath checkConcurrency(String name, String path) {
+        if (path.charAt(0) != '/') {
+            path = "/" + path;
+        }
+        final ResourcePath resourcePath = new ResourcePath(name, path);
+        if (!clientCtr.endpointContainer().updateResource(resourcePath, true)) {
+            throw new ClientErrorException("Only one request at a time allowed.", 409);
+        }
+        return resourcePath;
+    }
 
-            @Override
-            public void onAsyncIdResponse() {
-                //ignore
-            }
-        });
+    private class EndpointResponseResponseListener implements ResponseListener<EndpointResponse> {
+        private final ResourcePath resourcePath;
+        private final String value;
+
+        public EndpointResponseResponseListener(ResourcePath resourcePath, String value) {
+            this.resourcePath = resourcePath;
+            this.value = value;
+        }
+
+        @Override
+        public void onResponse(EndpointResponse response) {
+            clientCtr.endpointContainer().updateResource(resourcePath, response, value);
+        }
+
+        @Override
+        public void onError(Exception ex) {
+            clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
+        }
+
+        @Override
+        public void onAsyncIdResponse() {
+            //ignore
+        }
     }
 }

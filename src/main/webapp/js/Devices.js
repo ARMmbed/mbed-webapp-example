@@ -95,7 +95,10 @@ app.factory('Endpoints', function($resource) {
         },
         set:{
             method: 'POST'
-        }
+        },
+        delete:{
+                    method: 'DELETE'
+                }
       });
     });
 app.factory('GetValues', function($http,$q) {
@@ -117,9 +120,9 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
     //modify buttons style
     var dynamical_buttons = $compile('<div class="btn-group-vertical">' +
                                      '<button ng-click = get($event,detail) type="button" class="btn btn-info">GET</button>'+
-                                     '<button ng-click = post($event) type="button" class="btn btn-success">POST</button>'+
-                                     '<button ng-click = put($event,detail,commandValue) type="button" class="btn btn-warning">PUT</button>'+
-                                     '<button ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
+                                     '<button ng-click = post($event,detail) type="button" class="btn btn-success">POST</button>'+
+                                     '<button ng-click = put($event,detail) type="button" class="btn btn-warning">PUT</button>'+
+                                     '<button ng-click = delete($event,detail) ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
 
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
@@ -149,7 +152,7 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
             selected_record.show = true;
         }).error(function(data, status) {
                              console.error('Repos error', status, data);
-                           });;
+                           });
     };
     $scope.put = function(event,name){
         var value = $('#commandValue')[0].value;
@@ -165,16 +168,24 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                    console.error('Repos error', status, data);
                  });
     };
-    $scope.post = function(value){
+    $scope.post = function(event,name){
+            var value = $('#commandValue')[0].value;
             $(parent).editable('toggle');
-    //        $http({
-    //            url: '/example-app/webapi/endpoints/' + selected_name+'/' + selected_td.x.uri,
-    //            method: "PUT",
-    //            params: {'value': value}
-    //         }).success(function(data){
-    //                     selected_td.x.val = data;
-    //               });
+            $http({
+                url: '/example-app/webapi/endpoints/' + name + path,
+                method: "POST",
+                params: {'value': value}
+             }).success(function(data){
+                         selected_record.show = true;
+                   }).error(function(data, status) {
+                       console.error('Repos error', status, data);
+                     });
         };
+    $scope.delete = function(event,name) {
+        $(parent).editable('toggle');
+        Endpoints.delete({ endpoint_name : name, url_path : path});
+
+    };
      var parent;
      var path;
      var selected_record;
@@ -215,7 +226,7 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                                         {
                                             d.val = "Error";
                                             d.show = false;
-                                            d.lastUpdate = value.errorMessage;
+                                            d.lastUpdate = "Error number " + value.statusCode + ": " + (value.errorMessage == null ? "" : value.errorMessage) ;
                                             d.success = false;
                                         }
                                     }
