@@ -142,7 +142,13 @@ body {
 .highlight:link{
     color:#FFFFFF !important;
 }
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
-}
 
+body { background: url("../img/bg.jpg") no-repeat center center fixed !important;
+       /* http://motivamemes.com/t/imagenes/17130172/Wallpapers-Minimalistas/*/
+       -webkit-background-size: cover;
+       -moz-background-size: cover;
+       background-size: cover;
+       -o-background-size: cover;}
+/*.jumbotron {
+    background-color: #FFFFFF !important;
+}*/

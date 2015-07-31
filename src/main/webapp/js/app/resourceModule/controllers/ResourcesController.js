@@ -14,108 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-var app = angular.module('App', ['ngResource']).directive('ngSuccess', function() {
-                                                 return function(scope, element, attrs) {
-                                                   var button = angular.element(element);
-                                                   $(button).popover({
-                                                   template: '<div class="popover success_popover" role="tooltip" style="width: 500px;">' +
-                                                              '<div class="arrow success_popover-arrow">' +
-                                                              '</div>' +
-                                                              '<h3 class="popover-title success_popover-title">' +
-                                                              '</h3>' +
-                                                              '<div class="popover-content success_popover-content">' +
-                                                                  '<div class="data-content">' +
-                                                                  '</div>' +
-                                                              '</div>' +
-                                                         '</div>',
-                                                   content:""
-                                                   });
-                                                 };
-
-                                               });
-app.directive('ngError', function() {
-                            return function(scope, element, attrs) {
-                              var button = angular.element(element);
-                              $(button).popover({
-                              template: '<div class="popover error_popover" role="tooltip" style="width: 500px;">' +
-                                       '<div class="arrow error_popover-arrow">' +
-                                       '</div>' +
-                                       '<h3 class="popover-title error_popover-title">' +
-                                       '</h3>' +
-                                       '<div class="popover-content error_popover-content">' +
-                                           '<div class="data-content">' +
-                                           '</div>' +
-                                       '</div>' +
-                                  '</div>',
-                              content:""
-                              });
-//                                                   scope.$watch('popoverTemplate', function(newValue, oldValue){
-//                                                       console.log('popoverTemplate has changed', newValue);
-//                                                    });
-                            };
-
-                          });
-app.directive('ngAction', function() {
-          return function(scope, element, attrs) {
-            editable_clicked = angular.element(element);
-            $(editable_clicked).editable({
-                 title: 'ENTER YOUR COMMAND',
-                 value: '',
-                 pk:1,
-                 type: 'textarea',
-                 emptytext: 'action',
-                 emptyclass: '',
-                 rows: 5,
-                 tpl: '<textarea id="commandValue"></textarea>'
-             });
-          };
-        });
-
-app.directive('ngConfirmClick', [
-        function(){
-            return {
-                link: function (scope, element, attr) {
-                    var msg = attr.ngConfirmClick || "Are you sure?";
-                    var clickAction = attr.confirmedClick;
-                    element.bind('click',function (event) {
-                        if ( window.confirm(msg) ) {
-                            scope.$eval(clickAction)
-                        }
-                    });
-                }
-            };
-    }])
-
-app.factory('Endpoints', function($resource) {
-        return $resource('/example-app/webapi/endpoints/:endpoint_name/:url_path',{endpoint_name:'@endpoint_name',url_path:'@url_path'},{
-         update:{
-            method: 'PUT'
-        },
-        set:{
-            method: 'POST'
-        },
-        delete:{
-                    method: 'DELETE'
-                }
-      });
-    });
-app.factory('GetValues', function($http,$q) {
-                            return {
-                                    getValues: function(endpoint_name) {
-                                    var deferred = $q.defer();
-                                    $http.get('/example-app/webapi/endpoints/'+endpoint_name+'/values')
-                                        .success(function (data){
-                                            deferred.resolve(data);
-                                        });
-                                    return deferred.promise;
-                                    }
-                                };
-
-                        });
-
-app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$compile,$interval,$filter) {
+angular.module('App.controllers', []);
+angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$compile,$interval,$filter,$location) {
 
     //modify buttons style
     var dynamical_buttons = $compile('<div class="btn-group-vertical">' +
@@ -123,27 +23,24 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
                                      '<button ng-click = post($event,detail) type="button" class="btn btn-success">POST</button>'+
                                      '<button ng-click = put($event,detail) type="button" class="btn btn-warning">PUT</button>'+
                                      '<button ng-click = delete($event,detail) ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
-
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
     $scope.isLoading = false;
-    $scope.endpoints = Endpoints.query();
-    $scope.detail = "Details"
-    $scope.show_resources = function(name) {
-        $scope.isHidden = false;
-        $scope.panel_show = false;
-        $scope.detail = name;
-        $scope.endresources = Endpoints.query({'endpoint_name': name })
-            .$promise.then(
-               //success
-               function( value ){
-                    $scope.endresources = value;
-                    },
-               //error
-               function( error ){
-                   }
-             );
-    };
+    //$scope.endpoints = Endpoints.query();
+    var endpoint_name = $location.search().endpoint;
+    $scope.detail = endpoint_name;
+    $scope.endresources = Endpoints.query({'endpoint_name': endpoint_name })
+        .$promise.then(
+           //success
+           function( value ){
+                $scope.endresources = value;
+
+                },
+           //error
+           function( error ){
+               }
+         );
+
     $scope.get = function(event,name) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
@@ -195,7 +92,6 @@ app.controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$co
         selected_record = record;
     };
     $scope.selectedIndex = -1;
-    var endpoint_name="none";
     $scope.itemClicked = function ($index,name) {
         endpoint_name = name;
         $scope.selectedIndex = $index;
