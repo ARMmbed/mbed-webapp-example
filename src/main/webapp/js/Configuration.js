@@ -26,14 +26,22 @@ app.factory('Subscriptions', function($resource) {
 });
 
 app.controller('ConfCtrl',
-    function ConfCtrl ($scope, $http) {
-        $scope.save = function() {
-           $http.post('/example-app/webapi/configuration', $scope.data);  
-        };
-        $http.get('/example-app/webapi/configuration').success(function(incoming){
-            $scope.data = incoming;
+        function ConfCtrl($scope, $http) {
+            $scope.save = function () {
+                $scope.error = null;
+                $scope.ok = null;
+                $http.post('/example-app/webapi/configuration', $scope.data).then(
+                        function success(response) {
+                            $scope.ok = "Success!";
+                        },
+                        function error(response) {
+                            $scope.error = "Error occurred!";
+                        });
+            };
+            $http.get('/example-app/webapi/configuration').success(function (incoming) {
+                $scope.data = incoming;
+            });
         });
-});
 
 app.controller('Ctrl', function($scope,Subscriptions) {
     $scope.show_close = true;

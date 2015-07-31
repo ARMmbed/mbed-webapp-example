@@ -16,8 +16,11 @@
  */
 package org.mbed.example.resources;
 
+import com.arm.mbed.restclient.MbedClientInitializationException;
+import java.net.URISyntaxException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,8 +46,7 @@ public final class ConfigurationResource {
     @Inject
     public ConfigurationResource(MbedClientService mbedClientService) {
         this.clientCtr = mbedClientService;
-        this.serverConfiguration = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
-        mbedClientService.createConnection(serverConfiguration);
+        this.serverConfiguration = MbedClientService.defaultServerConfiguration;
     }
 
     /**
@@ -67,6 +69,10 @@ public final class ConfigurationResource {
     public void setConfiguration(ServerConfiguration newConf) {
         LOGGER.debug("Writing server configuration.");
         this.serverConfiguration = newConf;
-        clientCtr.createConnection(serverConfiguration);
+        try {
+            clientCtr.createConnection(serverConfiguration);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 }

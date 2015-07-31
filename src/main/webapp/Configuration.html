@@ -96,8 +96,12 @@
                         </div>
                         
                         <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
+                            <div class="col-sm-offset-3 col-sm-1">
                                 <button ng-click="save()" type="submit" class="btn btn-info btn-custom">Save</button>
+                            </div>
+                            <div class="col-sm-offset-5">
+                                <div ng-show="error">{{error}}</div>
+                                <div ng-show="ok">{{ok}}</div>
                             </div>
                         </div>
                     </form>
