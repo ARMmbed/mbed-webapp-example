@@ -46,7 +46,7 @@ public final class ConfigurationResource {
     @Inject
     public ConfigurationResource(MbedClientService mbedClientService) {
         this.clientCtr = mbedClientService;
-        this.serverConfiguration = MbedClientService.defaultServerConfiguration;
+        this.serverConfiguration = MbedClientService.DEFAULT_SERVER_CONFIGURATION;
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ConfigurationResource {
         try {
             clientCtr.createConnection(serverConfiguration);
         } catch (Exception e) {
-            throw new BadRequestException(e.getMessage());
+            throw new BadRequestException(e.getMessage(), e);
         }
     }
 }

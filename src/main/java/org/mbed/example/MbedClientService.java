@@ -42,7 +42,7 @@ public class MbedClientService {
     private MbedClient client;
     private boolean connected;
     private EndpointContainer endpointContainer;
-    public static final ServerConfiguration defaultServerConfiguration = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
+    public static final ServerConfiguration DEFAULT_SERVER_CONFIGURATION = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
 
     @Inject
     public MbedClientService() {
@@ -56,12 +56,9 @@ public class MbedClientService {
             this.connected = true;
         } else {
             try {
-                createConnection(defaultServerConfiguration);
+                createConnection(DEFAULT_SERVER_CONFIGURATION);
             } catch (MbedClientInitializationException | URISyntaxException | MbedClientRuntimeException e) {
                 // cannot create connection
-            } catch (Throwable ex) {
-                System.out.println("ex");
-                ex.printStackTrace();
             }
         }
     }
