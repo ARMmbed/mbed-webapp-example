@@ -16,10 +16,13 @@ Build:
 
     mvn clean install
     
-Run:
+Run (jetty):
     
     mvn jetty:run
 
+Run (tomcat):
+
+    mvn tomcat7:run
 
 Build with static code analyses check:
 
