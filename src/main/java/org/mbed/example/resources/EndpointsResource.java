@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.mbed.example.resources;
 
 import com.arm.mbed.restclient.endpoint.Entity;
@@ -112,7 +113,7 @@ public final class EndpointsResource {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request GET {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).get(new EndpointResponseResponseListener(resourcePath, null));
+        clientCtr.client().endpoint(name).resource("/" + path).get(new EndpointResponseListener(resourcePath, null));
     }
 
     @GET
@@ -129,8 +130,9 @@ public final class EndpointsResource {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request PUT {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).put(Entity.text(value), new EndpointResponseResponseListener(resourcePath, value));
+        clientCtr.client().endpoint(name).resource("/" + path).put(Entity.text(value), new EndpointResponseListener(resourcePath, value));
     }
+
     @DELETE
     @Path("{endpoint-name}/{resource-path: .+}")
     public void deleteResourcesValue(@PathParam(ENDPOINTNAME) String name
@@ -138,7 +140,7 @@ public final class EndpointsResource {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request DELETE {}", resourcePath);
-        clientCtr.client().endpoint(name).resource(path).delete(new EndpointResponseResponseListener(resourcePath, null));
+        clientCtr.client().endpoint(name).resource(path).delete(new EndpointResponseListener(resourcePath, null));
     }
 
     @POST
@@ -148,8 +150,9 @@ public final class EndpointsResource {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request POST {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).post(Entity.text(value), new EndpointResponseResponseListener(resourcePath, value));
+        clientCtr.client().endpoint(name).resource("/" + path).post(Entity.text(value), new EndpointResponseListener(resourcePath, value));
     }
+
     private ResourcePath checkConcurrency(String name, String path) {
         if (path.charAt(0) != '/') {
             path = "/" + path;
@@ -161,22 +164,24 @@ public final class EndpointsResource {
         return resourcePath;
     }
 
-    private class EndpointResponseResponseListener implements ResponseListener<EndpointResponse> {
+    private class EndpointResponseListener implements ResponseListener<EndpointResponse> {
         private final ResourcePath resourcePath;
         private final String value;
 
-        public EndpointResponseResponseListener(ResourcePath resourcePath, String value) {
+        public EndpointResponseListener(ResourcePath resourcePath, String requestedPayload) {
             this.resourcePath = resourcePath;
-            this.value = value;
+            this.value = requestedPayload;
         }
 
         @Override
         public void onResponse(EndpointResponse response) {
+            LOGGER.trace("Response for {} with status: {}", resourcePath, response.getStatus());
             clientCtr.endpointContainer().updateResource(resourcePath, response, value);
         }
 
         @Override
         public void onError(Exception ex) {
+            LOGGER.trace("Response - error: " + ex.getMessage());
             clientCtr.endpointContainer().updateResource(resourcePath, ex.getMessage());
         }
 

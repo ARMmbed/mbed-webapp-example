@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.mbed.example.data;
 
 /**
@@ -71,6 +72,12 @@ public final class ResourceValue {
     }
 
     @Override
+    public String toString() {
+        return String.format("ResourceValue [value='%s', isWaitingForResponse=%s, statusCode=%d, errorMessage='%s', contentType='%s', maxAge=%d, timestamp=%d]",
+                value, isWaitingForResponse, statusCode, errorMessage, contentType, maxAge, timestamp);
+    }
+
+    @Override
     @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(Object o) {
         if (this == o) {
@@ -82,9 +89,6 @@ public final class ResourceValue {
 
         ResourceValue that = (ResourceValue) o;
 
-        if (timestamp != that.timestamp) {
-            return false;
-        }
         if (isWaitingForResponse != that.isWaitingForResponse) {
             return false;
         }
@@ -107,7 +111,6 @@ public final class ResourceValue {
     @SuppressWarnings("PMD.NPathComplexity")
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
-        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
         result = 31 * result + (isWaitingForResponse ? 1 : 0);
         result = 31 * result + statusCode;
         result = 31 * result + maxAge;
