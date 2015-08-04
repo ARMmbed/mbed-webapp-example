@@ -15,17 +15,8 @@
  * limitations under the License.
  */
 
-var app = angular.module('App', ['ngResource']);
-
-app.factory('Subscriptions', function($resource) {
-    return $resource('webapi/subscriptions', {}, {
-              update:{
-            method: 'PUT'
-        }
-    });
-});
-
-app.controller('ConfCtrl',
+angular.module('App.controllers', []);
+angular.module('App.controllers').controller('ConfCtrl',
         function ConfCtrl($scope, $http) {
             $scope.save = function () {
                 $scope.error = null;
@@ -42,8 +33,21 @@ app.controller('ConfCtrl',
                 $scope.data = incoming;
             });
         });
+angular.module('App.controllers').controller('Ctrl',
+        function Ctrl($scope, $http) {
+        $http.get('webapi/mbedclient'
+                        ).success(function(data){
+                        $scope.isConnected  = data == "true";
+                        console.log(data);
+                    }).error(function(data, status) {
+                         console.error('error', status, data);
+                       });
+        $http.get('webapi/configuration').success(function (incoming) {
+                        $scope.address = incoming.address;
+                    });
+        });
 
-app.controller('Ctrl', function($scope,Subscriptions) {
+angular.module('App.controllers').controller('subCtrl', function($scope,Subscriptions) {
     $scope.show_close = true;
     $scope.subscriptions = Subscriptions.query();
     $scope.btn_text = 'add';

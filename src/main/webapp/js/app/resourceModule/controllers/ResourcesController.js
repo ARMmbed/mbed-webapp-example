@@ -20,10 +20,9 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
 
     //modify buttons style
     var dynamical_buttons = $compile('<div class="btn-group-vertical">' +
-                                     '<button ng-click = get($event,detail) type="button" class="btn btn-info">GET</button>'+
-                                     '<button ng-click = post($event,detail) type="button" class="btn btn-success">POST</button>'+
-                                     '<button ng-click = put($event,detail) type="button" class="btn btn-warning">PUT</button>'+
-                                     '<button ng-click = delete($event,detail) ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
+                                     '<button ng-click = post($event,detail) type="button" class="btn btn-success">&nbsp;&nbsp;POST&nbsp;&nbsp;</button>'+
+                                     '<button ng-click = put($event,detail) type="button" class="btn btn-warning">PUT</button></div>'+
+                                     '<div style="margin-top:25px;"><button ng-click = delete($event,detail) ng-confirm-click="Are you sure?" type="button" class="btn btn-danger">DELETE</button></div>')($scope);
     $.fn.editableform.buttons = dynamical_buttons;
     $scope.isHidden = true;
     $scope.isLoading = false;
@@ -42,7 +41,7 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
                }
          );
 
-    $scope.get = function(event,name) {
+    $scope.get = function(event,name,path,selected_record) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
         $http.get('webapi/endpoints/' + name + '/request' + path
@@ -78,10 +77,15 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
                    }).error(function(data, status) {
                        console.error('Repos error', status, data);
                      });
+//            Endpoints.set({params : value, endpoint_name : name, url_path : path}).$promise.then(function(data){
+//                        selected_record.show = true;
+//                    });
         };
     $scope.delete = function(event,name) {
         $(parent).editable('toggle');
-        Endpoints.delete({ endpoint_name : name, url_path : path});
+        Endpoints.delete({ endpoint_name : name, url_path : path}).$promise.then(function(data){
+            selected_record.show = true;
+        });
 
     };
      var parent;
@@ -92,11 +96,6 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
         path = selected_path;
         selected_record = record;
     };
-    $scope.selectedIndex = -1;
-    $scope.itemClicked = function ($index,name) {
-        endpoint_name = name;
-        $scope.selectedIndex = $index;
-      }
     setInterval(function(){
     if(endpoint_name != "none")
     {
@@ -114,9 +113,9 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
                                         {
                                             d.val = value.value;
                                             d.show = false;
-                                            d.lastUpdate = "Last update: " + $filter('date')(value.timestamp,"MM/dd/yyyy HH:mm")
+                                            d.lastUpdate = "Last update: " + $filter('date')(value.timestamp,"MM/dd/yyyy EEEE HH:mm")
                                                  + "\nContent Type: "+ value.contentType
-                                                 + "\nMaximum age: " + value.maxAge;
+                                                 + "\nmaxAge: " + value.maxAge;
                                             d.success = true;
                                         }
                                         else
@@ -126,6 +125,10 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
                                             d.lastUpdate = "Error number " + value.statusCode + ": " + (value.errorMessage == null ? "" : value.errorMessage) ;
                                             d.success = false;
                                         }
+                                    }
+                                    else if(endpoint_name == endpoint && d.uriPath == path && value.waitingForResponse)
+                                    {
+                                        d.show = true;
                                     }
                             })[0];
                                         });

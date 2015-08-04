@@ -15,10 +15,20 @@
  * limitations under the License.
  */
 angular.module('App.controllers', []);
-angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints, $http,$filter,$window) {
+angular.module('App.controllers').controller('Ctrl', function($scope, Connection, Endpoints, $http,$filter,$window) {
 
     $scope.endpoints = Endpoints.query();
+    $http.get('webapi/mbedclient'
+                ).success(function(data){
+                $scope.isConnected  = data == "true";
+                console.log(data);
+            }).error(function(data, status) {
+                 console.error('error', status, data);
+               });
+   $http.get('webapi/configuration').success(function (incoming) {
+                   $scope.address = incoming.address;
+               });
     $scope.show_resources = function(name) {
-        $window.open('Resources.html#/?endpoint='+name, '_blank');
+        $window.open('Resources.html#/?endpoint='+name,"_self");
     };
 });

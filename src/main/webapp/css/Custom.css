@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
 body {
   padding-top: 90px;
 }
@@ -86,7 +88,7 @@ body {
 }
 /* Popover Header*/
 .popover-title {
-    background-color: #5cb85c;
+    background-color: #5bc0de;
     color: #FFFFFF;
     font-size: 15px;
     text-align:center;

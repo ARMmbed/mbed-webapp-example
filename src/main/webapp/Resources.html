@@ -16,7 +16,7 @@
   ~ limitations under the License.
   -->
 
-<html  lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,8 +34,8 @@
     <link href="lib/x-editable-v1.5.1/css/bootstrap-editable.css"
           rel="stylesheet"/>
 </head>
-<body >
-<div ng-app="App" ng-controller="Ctrl" >
+<body>
+<div ng-app="App" ng-controller="Ctrl">
     <!-- Fixed navbar -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -64,69 +64,72 @@
         <!-- Main component with gray background -->
         <div class="jumbotron">
             <h2>{{detail}}</h2>
+
             <div>
-                    <div class="panel-body">
+                <div class="table-responsive">
+                    <table
+                            class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr class="info">
+                            <th class="col-md-4">Path</th>
+                            <th>Value</th>
+                            <th>Observable</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="x in endresources">
 
-
-                        <div class="table-responsive" >
-                            <table
-                                    class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr class="info">
-                                    <th class="col-md-4">Path</th>
-                                    <th>Value</th>
-                                    <th>Observable</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="x in endresources">
-
-                                    <td class="col-md-2"><span ng-bind="x.uriPath"></span></td>
-                                    <td class="col-md-4" style="white-space: nowrap">
-                                        <a ng-success ng-show="x.success" href="#" ng-click="$event.preventDefault()"
-                                           title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
-                                           data-content="{{x.lastUpdate|date:'medium'}}"
-                                           data-placement="top" ng-bind="x.val"></a>
-                                        <a ng-error  href="#" ng-click="$event.preventDefault()"
-                                           ng-class="{'glyphicon glyphicon-exclamation-sign danger':x.success == false,'':x.success == true}"
-                                           title="ERROR" data-toggle="popover" data-trigger="focus"
-                                           data-content="{{x.lastUpdate|date:'medium'}}"
-                                           data-placement="top"></a>
-                                        <img ng-show="x.show" src="img/loading.gif" index="{{$index}}">
-                                    </td>
-                                    <td class="col-md-1 td_center"><span
-                                            ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
-                                            aria-hidden="true"></span></td>
-                                    <td class="col-md-1 td_center" style="white-space: nowrap">
-                                        <button ng-click="action_clicked($event,x.uriPath,x)"
-                                                class=" btn-small btn btn-default btn-xs" type="button"
-                                                ng-action>
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                            <td class="col-md-2"><span ng-bind="x.uriPath"></span></td>
+                            <td class="col-md-4" style="white-space: nowrap">
+                                <a ng-success class="glyphicon glyphicon-ok-circle success" ng-show="x.success"
+                                   href="#"
+                                   ng-click="$event.preventDefault()"
+                                   title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
+                                   data-content="{{x.lastUpdate|date:'medium'}}"
+                                   data-placement="top"></a>
+                                <t ng-show="x.success" ng-bind="x.val"></t>
+                                <a ng-error href="#" ng-click="$event.preventDefault()"
+                                   ng-class="{'glyphicon glyphicon-exclamation-sign danger':x.success == false,'':x.success == true}"
+                                   title="ERROR" data-toggle="popover" data-trigger="focus"
+                                   data-content="{{x.lastUpdate|date:'medium'}}"
+                                   data-placement="top"></a>
+                                <img ng-show="x.show" src="img/loading.gif" index="{{$index}}">
+                            </td>
+                            <td class="col-md-1 td_center"><span
+                                    ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
+                                    aria-hidden="true"></span></td>
+                            <td class="col-md-1 td_center" style="white-space: nowrap">
+                                <button ng-click="get($event,detail,x.uriPath,x)"
+                                        class=" btn-small btn btn-default btn-xs btn-info" type="button">GET
+                                </button>
+                                <button ng-click="action_clicked($event,x.uriPath,x)"
+                                        class=" btn-small btn btn-default btn-xs" type="button"
+                                        ng-action>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
             </div>
-
         </div>
-        <!-- /container -->
     </div>
-    <!-- Bootstrap core JavaScript
+    <!-- /container -->
+</div>
+<!-- Bootstrap core JavaScript
 ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="lib/bootstrap-v3.3.5/js/bootstrap.min.js"></script>
-    <script src="lib/x-editable-v1.5.1/js/bootstrap-editable.min.js"></script>
+<!-- Placed at the end of the document so the pages load faster -->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="lib/bootstrap-v3.3.5/js/bootstrap.min.js"></script>
+<script src="lib/x-editable-v1.5.1/js/bootstrap-editable.min.js"></script>
 
-    <script src="js/app/resourceModule/app.js"></script>
-    <script src="js/app/resourceModule/directives/ResourcesDirective.js"></script>
-    <script src="js/app/resourceModule/services/ResourcesService.js"></script>
-    <script src="js/app/resourceModule/controllers/ResourcesController.js"></script>
+<script src="js/app/resourceModule/app.js"></script>
+<script src="js/app/resourceModule/directives/ResourcesDirective.js"></script>
+<script src="js/app/resourceModule/services/ResourcesService.js"></script>
+<script src="js/app/resourceModule/controllers/ResourcesController.js"></script>
 </div>
 </body>
 </html>

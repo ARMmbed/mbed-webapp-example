@@ -15,13 +15,30 @@
  * limitations under the License.
  */
 
-angular.module('App.services', ['ngResource']);
-angular.module('App.services').factory('Endpoints', function($resource) {
-        return $resource('webapi/endpoints/:endpoint_name/:url_path',{endpoint_name:'@endpoint_name',url_path:'@url_path'});
-    });
-angular.module('App.services').factory('Connection', function($resource) {
-    return $resource('webapi/mbedclient',{},
-     {
-      yes: {method:'GET', isArray: false}
-     });
- });
+package org.mbed.example.resources;
+
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import org.mbed.example.MbedClientService;
+
+/**
+ * Created by mitvah01 on 3.8.2015.
+ */
+@Path("/mbedclient")
+public class MbedClientResource {
+    private final MbedClientService clientCtr;
+
+    @Inject
+    public MbedClientResource(MbedClientService mbedClientService) {
+        this.clientCtr = mbedClientService;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public boolean isConnected() {
+        return clientCtr.isConnected();
+    }
+}

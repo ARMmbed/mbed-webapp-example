@@ -53,6 +53,23 @@
                     <li class="active"><a href="Devices.html">Devices</a></li>
                     <li><a href="Configuration.html">Configuration</a></li>
                 </ul>
+                <ul ng-cloak class="nav navbar-nav navbar-right">
+                    <li>
+                        <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
+                             style="padding:10px" ng-show="isConnected" class="navbar-right myLogo text-center">
+                            <img src="img/connected.png"/>
+                            <t class="success">Connected</t>
+                        </div>
+                    </li>
+                    <li>
+                        <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
+                             style="padding:10px" ng-show="!isConnected" class="navbar-right myLogo">
+                            <img style="margin-right:5px" src="img/disconnected.png"/>
+                            <t class="danger">Disconnected
+                            </t>
+                        </div>
+                    </li>
+                </ul>
             </div>
             <!--/.nav-collapse -->
         </div>

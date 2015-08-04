@@ -35,7 +35,6 @@ angular.module('App').directive('ngError', function() {
                               content:""
                               });
                             };
-
                           });
 angular.module('App').directive('ngAction', function() {
           return function(scope, element, attrs) {
@@ -47,7 +46,7 @@ angular.module('App').directive('ngAction', function() {
                  type: 'textarea',
                  emptytext: 'action',
                  emptyclass: '',
-                 rows: 5,
+                 rows: 2,
                  tpl: '<textarea id="commandValue"></textarea>'
              });
           };
