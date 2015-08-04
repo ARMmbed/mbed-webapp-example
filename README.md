@@ -2,7 +2,14 @@ mbed web application - example
 ==============================
 
 This is a simple web application that connects to mbed Device Server. 
-It shows devices, its resources and read/update resource values. 
+
+### Features
+
+- Configure connection to device server
+- List all devices
+- List device resources
+- Invoke proxy requests (GET, PUT, POST, DELETE) 
+ 
 
 Development
 -----------
@@ -12,19 +19,22 @@ Development
 - Java 8
 - Maven 3.x
 
-Build:
-
-    mvn clean install
-    
-Run (jetty):
+### Run
+Jetty:
     
     mvn jetty:run
 
-Run (tomcat):
+Tomcat:
 
     mvn tomcat7:run
+    
+Open from browser: http://localhost:8082/example-app    
 
-Build with static code analyses check:
+### Build:
+
+    mvn clean install
+
+With static code analyses check (findbugs, pmd, cobertura):
 
     mvn clean install -P static-code-check
     
