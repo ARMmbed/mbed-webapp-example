@@ -69,11 +69,14 @@ public class MbedClientService {
 
     public final void createConnection(String address, String clientName, String clientSecret) throws MbedClientInitializationException, URISyntaxException {
         connected = false;
+        if (client != null) {
+            client.close();
+        }
         String[] clientCreds = clientName.split("/");
         if (clientCreds.length != 2) {
             throw new MbedClientInitializationException("Invalid user credentials");
         }
-        boolean isSecure = false; //TODO use this
+        boolean isSecure = false;
         URI uri = new URI(address);
         if (uri.getScheme().equals("https")) {
             isSecure = true;
