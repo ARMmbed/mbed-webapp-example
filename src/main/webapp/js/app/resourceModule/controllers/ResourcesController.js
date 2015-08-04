@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 angular.module('App.controllers', []);
 angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$compile,$interval,$filter,$location) {
 
@@ -44,7 +45,7 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
     $scope.get = function(event,name) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
-        $http.get('/example-app/webapi/endpoints/'+name+'/request'+path
+        $http.get('webapi/endpoints/' + name + '/request' + path
             ).success(function(data){
             selected_record.show = true;
         }).error(function(data, status) {
@@ -55,7 +56,7 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
         var value = $('#commandValue')[0].value;
         $(parent).editable('toggle');
         $http({
-            url: '/example-app/webapi/endpoints/' + name + path,
+            url: 'webapi/endpoints/' + name + path,
             method: "PUT",
             params: {'value': value}
          }).success(function(data){
@@ -69,7 +70,7 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
             var value = $('#commandValue')[0].value;
             $(parent).editable('toggle');
             $http({
-                url: '/example-app/webapi/endpoints/' + name + path,
+                url: 'webapi/endpoints/' + name + path,
                 method: "POST",
                 params: {'value': value}
              }).success(function(data){

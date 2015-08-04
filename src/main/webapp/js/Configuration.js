@@ -18,7 +18,7 @@
 var app = angular.module('App', ['ngResource']);
 
 app.factory('Subscriptions', function($resource) {
-          return $resource('/example-app/webapi/subscriptions',{},{
+    return $resource('webapi/subscriptions', {}, {
               update:{
             method: 'PUT'
         }
@@ -30,7 +30,7 @@ app.controller('ConfCtrl',
             $scope.save = function () {
                 $scope.error = null;
                 $scope.ok = null;
-                $http.post('/example-app/webapi/configuration', $scope.data).then(
+                $http.post('webapi/configuration', $scope.data).then(
                         function success(response) {
                             $scope.ok = "Success!";
                         },
@@ -38,7 +38,7 @@ app.controller('ConfCtrl',
                             $scope.error = "Error occurred!";
                         });
             };
-            $http.get('/example-app/webapi/configuration').success(function (incoming) {
+            $http.get('webapi/configuration').success(function (incoming) {
                 $scope.data = incoming;
             });
         });
