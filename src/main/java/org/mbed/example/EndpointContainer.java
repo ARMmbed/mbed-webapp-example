@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.mbed.example;
 
 import com.arm.mbed.restclient.entity.Endpoint;
@@ -40,6 +41,9 @@ public class EndpointContainer {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(EndpointsResource.class);
     private final Map<String, EndpointDescription> endpointsList = new ConcurrentHashMap<>();
     private final Map<ResourcePath, ResourceValue> endpointResourceValues = new ConcurrentHashMap<>();
+
+
+
 
     public Collection<EndpointDescription> getAllEndpoints() {
         return endpointsList.values();
