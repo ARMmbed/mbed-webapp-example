@@ -29,7 +29,8 @@
     <properties>
         <jersey.version>2.18</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mbed-client.version>2.5.0-283</mbed-client.version>
+        <mbed-client.version>2.5.0-299</mbed-client.version>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
     <build>
@@ -58,6 +59,12 @@
                     <httpConnector>
                         <port>8082</port>
                     </httpConnector>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>com.arm.mbed.restclient.servlet.server-port</name>
+                            <value>8082</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -66,6 +73,9 @@
                 <version>2.2</version>
                 <configuration>
                     <port>8082</port>
+                    <systemProperties>
+                        <com.arm.mbed.restclient.servlet.server-port>8082</com.arm.mbed.restclient.servlet.server-port>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -175,9 +185,9 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet-core</artifactId>
+            <!--<artifactId>jersey-container-servlet-core</artifactId>-->
             <!-- use the following artifactId if you don't need servlet 2.x compatibility -->
-            <!-- artifactId>jersey-container-servlet</artifactId -->
+            <artifactId>jersey-container-servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>

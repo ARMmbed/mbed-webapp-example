@@ -20,11 +20,11 @@ Development
 - Maven 3.x
 
 ### Run
-Jetty:
+Jetty (embedded):
     
     mvn jetty:run
 
-Tomcat:
+Tomcat (embedded):
 
     mvn tomcat7:run
     
