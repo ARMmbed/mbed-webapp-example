@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-angular.module('App.controllers', []);
+angular.module('App.controllers', ['angularMoment']);
 angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints, GetValues, $http,$element,$compile,$interval,$filter,$location) {
 
     //modify buttons style
@@ -27,6 +27,19 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
     $scope.isHidden = true;
     $scope.isLoading = false;
     //$scope.endpoints = Endpoints.query();
+     $scope.isConnected = false;
+    $scope.isDisonnected = false;
+    $http.get('webapi/mbedclient'
+                    ).success(function(data){
+                    $scope.isConnected  = data == "true";
+                    $scope.isDisonnected  = data == "true";
+                    console.log(data);
+                }).error(function(data, status) {
+                     console.error('error', status, data);
+                   });
+    $http.get('webapi/configuration').success(function (incoming) {
+                   $scope.address = incoming.address;
+               });
     var endpoint_name = $location.search().endpoint;
     $scope.detail = endpoint_name;
     $scope.endresources = Endpoints.query({'endpoint_name': endpoint_name })
@@ -40,13 +53,17 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
            function( error ){
                }
          );
-
+    var waiting_endpoint;
+    var waiting_uri;
     $scope.get = function(event,name,path,selected_record) {
         //$resource consider everything as an array which causes problem when the returning value type is a String, so $http is used.
         $(parent).editable('toggle');
         $http.get('webapi/endpoints/' + name + '/request' + path
             ).success(function(data){
             selected_record.show = true;
+            $scope.isDisabled = "true";
+            waiting_endpoint = name;
+            waiting_uri = path;
         }).error(function(data, status) {
                              console.error('Repos error', status, data);
                            });
@@ -112,31 +129,34 @@ angular.module('App.controllers').controller('Ctrl', function($scope, Endpoints,
                                         if(value.statusCode == 200)
                                         {
                                             d.val = value.value;
-                                            d.show = false;
-                                            d.lastUpdate = "Last update: " + $filter('date')(value.timestamp,"MM/dd/yyyy EEEE HH:mm")
-                                                 + "\nContent Type: "+ value.contentType
-                                                 + "\nmaxAge: " + value.maxAge;
+                                            d.lastUpdate = value.timestamp;
+                                            d.content = "<br />Content Type: "+ value.contentType
+                                                 + "<br />maxAge: " + value.maxAge;
                                             d.success = true;
                                         }
                                         else
                                         {
                                             d.val = "Error";
-                                            d.show = false;
                                             d.lastUpdate = "Error number " + value.statusCode + ": " + (value.errorMessage == null ? "" : value.errorMessage) ;
                                             d.success = false;
+                                        }
+                                        d.show = false;
+                                        if(waiting_endpoint == endpoint && waiting_uri == path)
+                                        {
+                                            $scope.isDisabled = "false";
                                         }
                                     }
                                     else if(endpoint_name == endpoint && d.uriPath == path && value.waitingForResponse)
                                     {
                                         d.show = true;
                                     }
+
                             })[0];
                                         });
 
-                    })
-//                    .error(function(data, status) {
-//                                          console.error('Repos error', status, data);
-//                                        });
+                    },function(data, status) {
+                                          console.log('Repos error', status, data);
+                                        });
 
               }
 

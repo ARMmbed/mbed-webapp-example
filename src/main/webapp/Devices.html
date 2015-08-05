@@ -63,7 +63,7 @@
                     </li>
                     <li>
                         <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="!isConnected" class="navbar-right myLogo">
+                             style="padding:10px" ng-show="isDisconnected" class="navbar-right myLogo">
                             <img style="margin-right:5px" src="img/disconnected.png"/>
                             <t class="danger">Disconnected
                             </t>
@@ -123,8 +123,8 @@
     <script src="lib/bootstrap-v3.3.5/js/bootstrap.min.js"></script>
 
     <script src="js/app/deviceModule/app.js"></script>
-    <script src="js/app/deviceModule/services/DevicesService.js"></script>
-    <script src="js/app/deviceModule/controllers/DevicesController.js"></script>
+    <script src="js/app/deviceModule/DevicesService.js"></script>
+    <script src="js/app/deviceModule/DevicesController.js"></script>
 </div>
 </body>
 

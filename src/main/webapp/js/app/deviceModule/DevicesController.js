@@ -18,9 +18,12 @@ angular.module('App.controllers', []);
 angular.module('App.controllers').controller('Ctrl', function($scope, Connection, Endpoints, $http,$filter,$window) {
 
     $scope.endpoints = Endpoints.query();
+    $scope.isConnected = false;
+    $scope.isDisonnected = false;
     $http.get('webapi/mbedclient'
                 ).success(function(data){
                 $scope.isConnected  = data == "true";
+                $scope.isDisonnected  = data == "true";
                 console.log(data);
             }).error(function(data, status) {
                  console.error('error', status, data);

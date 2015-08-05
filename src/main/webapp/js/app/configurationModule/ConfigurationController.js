@@ -35,9 +35,12 @@ angular.module('App.controllers').controller('ConfCtrl',
         });
 angular.module('App.controllers').controller('Ctrl',
         function Ctrl($scope, $http) {
+        $scope.isConnected = false;
+        $scope.isDisonnected = false;
         $http.get('webapi/mbedclient'
                         ).success(function(data){
                         $scope.isConnected  = data == "true";
+                        $scope.isDisonnected  = data == "true";
                         console.log(data);
                     }).error(function(data, status) {
                          console.error('error', status, data);

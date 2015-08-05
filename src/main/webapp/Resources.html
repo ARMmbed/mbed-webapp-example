@@ -26,6 +26,13 @@
     <!-- Angularjs -->
     <script src="lib/angularjs-v1.4.3/angular.min.js"></script>
     <script src="lib/angularjs-v1.4.3/angular-resource.min.js"></script>
+
+    <!-- load momentJS (required for angular-moment) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+
+    <!-- load angular-moment -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
+
     <!-- Bootstrap -->
     <link href="lib/bootstrap-v3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
@@ -55,6 +62,23 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="Devices.html">Devices</a></li>
                     <li><a href="Configuration.html">Configuration</a></li>
+                </ul>
+                <ul ng-cloak class="nav navbar-nav navbar-right">
+                    <li>
+                        <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
+                             style="padding:10px" ng-show="isConnected" class="navbar-right myLogo text-center">
+                            <img src="img/connected.png"/>
+                            <t class="success">Connected</t>
+                        </div>
+                    </li>
+                    <li>
+                        <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
+                             style="padding:10px" ng-show="isDisconnected" class="navbar-right myLogo">
+                            <img style="margin-right:5px" src="img/disconnected.png"/>
+                            <t class="danger">Disconnected
+                            </t>
+                        </div>
+                    </li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -86,13 +110,13 @@
                                    href="#"
                                    ng-click="$event.preventDefault()"
                                    title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
-                                   data-content="{{x.lastUpdate|date:'medium'}}"
+                                   data-content="{{x.lastUpdate|amCalendar}}{{x.content}}"
                                    data-placement="top"></a>
                                 <t ng-show="x.success" ng-bind="x.val"></t>
                                 <a ng-error href="#" ng-click="$event.preventDefault()"
                                    ng-class="{'glyphicon glyphicon-exclamation-sign danger':x.success == false,'':x.success == true}"
                                    title="ERROR" data-toggle="popover" data-trigger="focus"
-                                   data-content="{{x.lastUpdate|date:'medium'}}"
+                                   data-content="{{x.lastUpdate}}"
                                    data-placement="top"></a>
                                 <img ng-show="x.show" src="img/loading.gif" index="{{$index}}">
                             </td>
@@ -100,13 +124,15 @@
                                     ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
                                     aria-hidden="true"></span></td>
                             <td class="col-md-1 td_center" style="white-space: nowrap">
-                                <button ng-click="get($event,detail,x.uriPath,x)"
+                                <!--<div ng-app="" ng-init="isDisabled=false">-->
+                                <button ng-disabled="isDisabled== 'true'" ng-click="get($event,detail,x.uriPath,x)"
                                         class=" btn-small btn btn-default btn-xs btn-info" type="button">GET
                                 </button>
-                                <button ng-click="action_clicked($event,x.uriPath,x)"
+                                <button ng-disabled="isDisabled== 'true'" ng-click="action_clicked($event,x.uriPath,x)"
                                         class=" btn-small btn btn-default btn-xs" type="button"
                                         ng-action>
                                 </button>
+                                <!--</div>-->
                             </td>
                         </tr>
                         </tbody>
@@ -127,9 +153,9 @@
 <script src="lib/x-editable-v1.5.1/js/bootstrap-editable.min.js"></script>
 
 <script src="js/app/resourceModule/app.js"></script>
-<script src="js/app/resourceModule/directives/ResourcesDirective.js"></script>
-<script src="js/app/resourceModule/services/ResourcesService.js"></script>
-<script src="js/app/resourceModule/controllers/ResourcesController.js"></script>
+<script src="js/app/resourceModule/ResourcesDirective.js"></script>
+<script src="js/app/resourceModule/ResourcesService.js"></script>
+<script src="js/app/resourceModule/ResourcesController.js"></script>
 </div>
 </body>
 </html>

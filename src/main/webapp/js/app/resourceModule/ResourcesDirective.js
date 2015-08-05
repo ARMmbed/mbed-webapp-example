@@ -13,7 +13,8 @@ angular.module('App.directives').directive('ngSuccess', function() {
                                                                   '</div>' +
                                                               '</div>' +
                                                          '</div>',
-                                                   content:""
+                                                   content:"",
+                                                   html: true
                                                    });
                                                  };
 
