@@ -16,8 +16,8 @@
  */
 package org.mbed.example.resources;
 
-import com.arm.mbed.restclient.MbedClientInitializationException;
-import java.net.URISyntaxException;
+import com.arm.mbed.restclient.MbedClientRuntimeException;
+import java.net.ConnectException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
@@ -26,7 +26,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.mbed.example.MbedClientService;
 import org.mbed.example.data.ServerConfiguration;
 import org.slf4j.Logger;
@@ -72,7 +75,13 @@ public final class ConfigurationResource {
         try {
             clientCtr.createConnection(serverConfiguration);
         } catch (Exception e) {
-            throw new BadRequestException(e.getMessage(), e);
+            String message;
+            if (e.getCause() instanceof ConnectException) {
+                message = "Cannot connect to Server";
+            } else {
+                message = e.getMessage();
+            }
+            throw new BadRequestException(Response.status(Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build());
         }
     }
 }

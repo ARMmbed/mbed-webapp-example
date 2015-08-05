@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Path;
 import org.mbed.example.data.ServerConfiguration;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author szymon
@@ -38,11 +39,12 @@ import org.mbed.example.data.ServerConfiguration;
 @Singleton
 @Path("mbed-client-service") //it's a DI hack
 public class MbedClientService {
-
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MbedClientService.class);
+    public static final ServerConfiguration DEFAULT_SERVER_CONFIGURATION = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
     private MbedClient client;
     private boolean connected;
     private EndpointContainer endpointContainer;
-    public static final ServerConfiguration DEFAULT_SERVER_CONFIGURATION = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
+    
 
     @Inject
     public MbedClientService() {
@@ -70,7 +72,11 @@ public class MbedClientService {
     public final void createConnection(String address, String clientName, String clientSecret) throws MbedClientInitializationException, URISyntaxException {
         connected = false;
         if (client != null) {
-            client.close();
+            try {
+                client.close();
+            } catch (Exception e) {
+                LOGGER.warn("Connection did not close properly: " + e.getMessage());
+            }
         }
         String[] clientCreds = clientName.split("/");
         if (clientCreds.length != 2) {

@@ -26,7 +26,7 @@ angular.module('App.controllers').controller('ConfCtrl',
                             $scope.ok = "Success!";
                         },
                         function error(response) {
-                            $scope.error = "Error occurred!";
+                            $scope.error = response.data;
                         });
             };
             $http.get('webapi/configuration').success(function (incoming) {
