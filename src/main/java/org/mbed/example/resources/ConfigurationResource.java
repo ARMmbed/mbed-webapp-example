@@ -81,7 +81,7 @@ public final class ConfigurationResource {
             } else {
                 message = e.getMessage();
             }
-            throw new BadRequestException(Response.status(Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build());
+            throw new BadRequestException(Response.status(Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build(), e);
         }
     }
 }
