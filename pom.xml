@@ -29,7 +29,7 @@
     <properties>
         <jersey.version>2.18</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mbed-client.version>2.5.0-299</mbed-client.version>
+        <mbed-client.version>2.5.0-307</mbed-client.version>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
@@ -185,8 +185,6 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
-            <!--<artifactId>jersey-container-servlet-core</artifactId>-->
-            <!-- use the following artifactId if you don't need servlet 2.x compatibility -->
             <artifactId>jersey-container-servlet</artifactId>
         </dependency>
         <dependency>
@@ -304,10 +302,13 @@
     <repositories>
         <repository>
             <id>mbed repository</id>
-            <url>http://prod-mvn-repo.cloudapp.net</url>
+            <url>http://maven.mbed.com</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 </project>
