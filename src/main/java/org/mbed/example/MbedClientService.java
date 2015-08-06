@@ -89,7 +89,7 @@ public class MbedClientService {
         }
 
         this.endpointContainer = new EndpointContainer();
-        HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
+        HttpServletChannel httpServletChannel = new HttpServletChannel(3, 2000);
         if (isSecure) {
             this.client = MbedClientBuilder.newBuilder().domain(clientCreds[0]).credentials(clientCreds[1], clientSecret)
                     .secure()
