@@ -37,7 +37,7 @@ public class MbedClientResource {
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public boolean isConnected() {
         return clientCtr.isConnected();
     }

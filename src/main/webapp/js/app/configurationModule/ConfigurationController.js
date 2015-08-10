@@ -15,42 +15,47 @@
  * limitations under the License.
  */
 
-angular.module('App.controllers', []);
+angular.module('App.controllers', ['ngAnimate']);
 angular.module('App.controllers').controller('ConfCtrl',
-        function ConfCtrl($scope, $http) {
-            $scope.save = function () {
-                $scope.error = null;
-                $scope.ok = null;
-                $http.post('webapi/configuration', $scope.data).then(
-                        function success(response) {
-                            $scope.ok = "Success!";
-                        },
-                        function error(response) {
-                            $scope.error = response.data;
-                        });
-            };
-            $http.get('webapi/configuration').success(function (incoming) {
-                $scope.data = incoming;
+    function ConfCtrl($scope, $http, Configuration) {
+        $scope.save = function () {
+            $scope.error = null;
+            $scope.ok = null;
+            $scope.done = false;
+            if ($scope.selection == "userPass") {
+                $scope.data.token = null;
+            }
+            else {
+                $scope.data.username = null;
+                $scope.data.password = null;
+            }
+            Configuration.set({}, $scope.data).$promise.then(function (data) {
+                $scope.ok = "Success!";
+            }, function (data, status) {
+                $scope.error = data.data;
+            }).finally(function () {
+                $scope.done = true;
             });
-        });
+        };
+    });
 angular.module('App.controllers').controller('Ctrl',
-        function Ctrl($scope, $http) {
-        $scope.isConnected = false;
-        $scope.isDisonnected = false;
-        $http.get('webapi/mbedclient'
-                        ).success(function(data){
-                        $scope.isConnected  = data == "true";
-                        $scope.isDisonnected  = data == "true";
-                        console.log(data);
-                    }).error(function(data, status) {
-                         console.error('error', status, data);
-                       });
-        $http.get('webapi/configuration').success(function (incoming) {
-                        $scope.address = incoming.address;
-                    });
+    function Ctrl($scope, $http, ConnectionStatus, Configuration) {
+        ConnectionStatus.getStatus().then(
+            function (data) {
+                $scope.isConnected = data.data == true;
+                $scope.isDisonnected = data.data == true;
+                console.log('data', data);
+            }, function (data, status) {
+                console.log('Error!!', status, data);
+            });
+        Configuration.get().$promise.then(function (data) {
+            $scope.address = data.address;
+            $scope.data = data;
+        }, function (data, status) {
+            console.log('Error!!', status, data);
         });
-
-angular.module('App.controllers').controller('subCtrl', function($scope,Subscriptions) {
+    });
+angular.module('App.controllers').controller('subCtrl', function ($scope, Subscriptions) {
     $scope.show_close = true;
     $scope.subscriptions = Subscriptions.query();
     $scope.btn_text = 'add';
@@ -67,45 +72,42 @@ angular.module('App.controllers').controller('subCtrl', function($scope,Subscrip
     var i = 1;
     var j = 1;
     var k = 1;
-    $scope.active = function() {
+    $scope.active = function () {
         $scope.endpoint_name.state = $scope.states[i % 2];
         i++;
     };
-    $scope.active_type = function() {
+    $scope.active_type = function () {
         $scope.endpoint_type.state = $scope.states[j % 2];
         j++;
     };
-    $scope.active_path = function() {
+    $scope.active_path = function () {
         $scope.endpoint_path.state = $scope.states[k % 2];
         k++;
     };
-    $scope.addRow = function(){
+    $scope.addRow = function () {
         var pre_subscription = {};
         pre_subscription['endpointName'] = ($scope.txt_name == undefined || $scope.txt_name == '') ? null : $scope.txt_name;
         pre_subscription['endpointType'] = ($scope.txt_type == undefined || $scope.txt_type == '') ? null : $scope.txt_type;
         pre_subscription['uriPathPatterns'] = ($scope.txt_path == undefined || $scope.txt_path == '') ? null : $scope.txt_path;
-        if(pre_subscription['endpointName'] != null || pre_subscription['endpointType'] != null || pre_subscription['uriPathPatterns'] != null)
-        {
-            if(update_index != -1)
-            {
-                $scope.subscriptions.splice( update_index, 1 );
+        if (pre_subscription['endpointName'] != null || pre_subscription['endpointType'] != null || pre_subscription['uriPathPatterns'] != null) {
+            if (update_index != -1) {
+                $scope.subscriptions.splice(update_index, 1);
             }
             $scope.subscriptions.push(pre_subscription);
             $scope.refresh();
         }
     };
-    var update_index =-1;
-    $scope.update = function(text,row_number){
+    var update_index = -1;
+    $scope.update = function (text, row_number) {
         $scope.refresh();
         var pre_subscription = text.split(',');
-        for(item in pre_subscription)
-        {
-            if(pre_subscription[item].startsWith("endpoint-name"))
-                $scope.txt_name = pre_subscription[item].substring(14,pre_subscription[item].length);
-            else if(pre_subscription[item].startsWith("endpoint-type"))
-                $scope.txt_type= pre_subscription[item].substring(14,pre_subscription[item].length);
-            else if(pre_subscription[item].startsWith("resource-path"))
-                $scope.txt_path= pre_subscription[item].substring(14,pre_subscription[item].length);
+        for (item in pre_subscription) {
+            if (pre_subscription[item].startsWith("endpoint-name"))
+                $scope.txt_name = pre_subscription[item].substring(14, pre_subscription[item].length);
+            else if (pre_subscription[item].startsWith("endpoint-type"))
+                $scope.txt_type = pre_subscription[item].substring(14, pre_subscription[item].length);
+            else if (pre_subscription[item].startsWith("resource-path"))
+                $scope.txt_path = pre_subscription[item].substring(14, pre_subscription[item].length);
             else // because it is possible that we have commas in the path too
             {
                 $scope.txt_path += "," + pre_subscription[item];
@@ -116,7 +118,7 @@ angular.module('App.controllers').controller('subCtrl', function($scope,Subscrip
         $scope.btn_text = 'Update';
 
     };
-    $scope.refresh = function(){
+    $scope.refresh = function () {
         $scope.txt_name = '';
         $scope.txt_type = '';
         $scope.txt_path = '';
@@ -124,12 +126,12 @@ angular.module('App.controllers').controller('subCtrl', function($scope,Subscrip
         $scope.show_close = true;
         $scope.btn_text = 'Add';
     };
-    $scope.delete = function(row_number){
-        $scope.subscriptions.splice( row_number, 1 );
+    $scope.delete = function (row_number) {
+        $scope.subscriptions.splice(row_number, 1);
         $scope.refresh();
     };
-    $scope.push = function(){
-        Subscriptions.update({"endpointName":"kkS","endpointType":"Light"});
+    $scope.push = function () {
+        Subscriptions.update({"endpointName": "kkS", "endpointType": "Light"});
         $scope.subscriptions = Subscriptions.query();
         $scope.subscriptions.refresh();
         $scope.refresh();

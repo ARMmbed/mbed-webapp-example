@@ -26,8 +26,7 @@
     <title>ARM</title>
     <script src="lib/angularjs-v1.4.3/angular.min.js"></script>
     <script src="lib/angularjs-v1.4.3/angular-resource.min.js"></script>
-    <!-- Optional Bootstrap Theme -->
-    <!--<link href="data:text/css;charset=utf-8," data-href="css/bootstrap-theme.min.css" rel="stylesheet" id="bs-theme-stylesheet">-->
+    <script src="lib/angularjs-v1.4.3/angular-animate.min.js"></script>
     <!-- Bootstrap -->
     <link href="lib/bootstrap-v3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
@@ -56,16 +55,16 @@
                     <li><a href="Devices.html">Devices</a></li>
                     <li class="active"><a href="Configuration.html">Configuration</a></li>
                 </ul>
-                <ul ng-cloak class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
+                        <div data-toggle="tooltip" data-placement="right" title={{address}}
                              style="padding:10px" ng-show="isConnected" class="navbar-right myLogo text-center">
                             <img src="img/connected.png"/>
                             <t class="success">Connected</t>
                         </div>
                     </li>
                     <li>
-                        <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
+                        <div data-toggle="tooltip" data-placement="right" title={{address}}
                              style="padding:10px" ng-show="isDisconnected" class="navbar-right myLogo">
                             <img style="margin-right:5px" src="img/disconnected.png"/>
                             <t class="danger">Disconnected
@@ -87,8 +86,10 @@
                 <li class=""><a href="#subscription" data-toggle="tab">Pre-Subscription</a></li>
             </ul>
             <div id="myTabContent" class="tab-content" ng-controller="ConfCtrl">
+
                 <div class="tab-pane fade active in" id="server" style="margin-top:15px">
-                    <form class="form-horizontal">
+
+                    <form class="form-horizontal" ng-submit="save()">
                         <div class="form-group">
                             <label for="address" class="col-sm-3 control-label">Device server address</label>
 
@@ -96,38 +97,59 @@
                                 <input ng-model="data.address" type="url" class="form-control" id="address" required>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="text-center radio alert alert-info" ng-init="selection='userPass'">
+                            <label class="radio-inline">
+                                <input type="radio" class="active" name="inlineRadioOptions" id="inlineRadio1"
+                                       value="userPass" ng-model="selection"> Basic Authentication
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="inlineRadioOptions" ng-model="selection" id="inlineRadio2"
+                                       value="token"> Token Authentication
+                            </label>
+                        </div>
+                        <div style="margin-top: 15px; height: 100px">
+                            <div class="form-group" ng-show="selection == 'userPass'">
                             <label for="username" class="col-sm-3 control-label">Username</label>
 
                             <div class="col-sm-9">
-                                <input ng-model="data.username" type="text" class="form-control" id="username" placeholder="Username" required>
+                                <input ng-model="data.username" type="text" class="form-control" id="username"
+                                       placeholder="Username" ng-required="selection == 'userPass'">
                             </div>
                         </div>
-                        <div class="form-group">
+                            <div class="form-group" ng-show="selection == 'userPass'">
                             <label for="password" class="col-sm-3 control-label">Password</label>
 
                             <div class="col-sm-9">
-                                <input ng-model="data.password" type="password" class="form-control" id="password" placeholder="Password"
-                                       required>
+                                <input ng-model="data.password" type="password" class="form-control" id="password"
+                                       placeholder="Password"
+                                       ng-required="selection == 'userPass'">
                             </div>
                         </div>
+                            <div class="form-group" ng-show="selection == 'token'">
+                                <label for="token" class="col-sm-3 control-label">Token</label>
 
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-1">
-                                <button ng-click="save()" type="submit" class="btn btn-info btn-custom">Save</button>
+                                <div class="col-sm-9">
+                                    <input ng-model="data.token" type="text" class="form-control" id="token"
+                                           placeholder="Token"
+                                           ng-required="selection == 'token'">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <div ng-show="ok" class="alert alert-success fade in">
-                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                    <strong>Success!</strong>
-                                </div>
-                                <div ng-show="error" class="alert alert-danger fade in">
-                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                    <div ng-bind="error"></div>
-                                </div>
+                        </div>
+                        <div class="form-group" ng-init="ok=false;error=false;done='false'">
+                            <div class="col-sm-offset-3 col-sm-1">
+                                <button type="submit" id="submits" class="btn btn-info btn-custom">Save
+                                    <span ng-hide="done"><i class="glyphicon glyphicon-refresh spin"></i></span>
+                                </button>
                             </div>
+                            <div ng-show="ok" style="margin-left: 5px; line-height: 35px" class="col-sm-4 success">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                <strong ng-bind="ok"></strong>
+                            </div>
+                            <div ng-show="error" style="margin-left: 5px;line-height: 35px" class="col-sm-4 danger">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                <strong ng-bind="error"></strong>
+                            </div>
+
                         </div>
                     </form>
 

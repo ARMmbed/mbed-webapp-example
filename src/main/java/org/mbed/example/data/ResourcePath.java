@@ -35,6 +35,10 @@ public final class ResourcePath {
         this.path = path;
     }
 
+    public String getPath(){
+        return path;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

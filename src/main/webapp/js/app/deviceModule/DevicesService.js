@@ -16,12 +16,23 @@
  */
 
 angular.module('App.services', ['ngResource']);
-angular.module('App.services').factory('Endpoints', function($resource) {
-        return $resource('webapi/endpoints/:endpoint_name/:url_path',{endpoint_name:'@endpoint_name',url_path:'@url_path'});
+angular.module('App.services').factory('Endpoints', function ($resource) {
+    return $resource('webapi/endpoints/:endpoint_name/:url_path', {
+        endpoint_name: '@endpoint_name',
+        url_path: '@url_path'
     });
-angular.module('App.services').factory('Connection', function($resource) {
-    return $resource('webapi/mbedclient',{},
-     {
-      yes: {method:'GET', isArray: false}
-     });
- });
+});
+angular.module('App.services').factory('Configuration', function ($http) {
+    return {
+        getConfiguration: function () {
+            return $http.get('webapi/configuration');
+        }
+    };
+});
+angular.module('App.services').factory('ConnectionStatus', function ($http) {
+    return {
+        getStatus: function () {
+            return $http.get('webapi/mbedclient');
+        }
+    };
+});

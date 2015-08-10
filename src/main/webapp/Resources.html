@@ -28,10 +28,9 @@
     <script src="lib/angularjs-v1.4.3/angular-resource.min.js"></script>
 
     <!-- load momentJS (required for angular-moment) -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-
+    <script src="lib/moment-v2.10.6/moment.min.js"></script>
     <!-- load angular-moment -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
+    <script src="lib/angular-moment-v0.10.2/angular-moment.min.js"></script>
 
     <!-- Bootstrap -->
     <link href="lib/bootstrap-v3.3.5/css/bootstrap.min.css" rel="stylesheet">
@@ -118,7 +117,8 @@
                                    title="ERROR" data-toggle="popover" data-trigger="focus"
                                    data-content="{{x.lastUpdate}}"
                                    data-placement="top"></a>
-                                <img ng-show="x.show" src="img/loading.gif" index="{{$index}}">
+                                <!--<img ng-show="x.show" src="img/loading.gif" index="{{$index}}">-->
+                                <span ng-show="x.show"><i class="glyphicon glyphicon-refresh spin infoColor"></i></span>
                             </td>
                             <td class="col-md-1 td_center"><span
                                     ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"

@@ -151,6 +151,64 @@ body { background: url("../img/bg.jpg") no-repeat center center fixed !important
        -moz-background-size: cover;
        background-size: cover;
        -o-background-size: cover;}
-/*.jumbotron {
-    background-color: #FFFFFF !important;
-}*/
+
+.animate-hide {
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s;
+    line-height: 35px;
+    opacity: 1;
+}
+
+.animate-hide.ng-hide {
+    line-height: 0px;
+    opacity: 0;
+}
+
+.ng-hide.only-hide {
+
+    visibility: hidden !important;
+    display: block !important;
+}
+
+.spin {
+    -webkit-animation: spin .5s infinite linear;
+    -moz-animation: spin .5s infinite linear;
+    -o-animation: spin .5s infinite linear;
+    animation: spin .5s infinite linear;
+    -webkit-transform-origin: 50% 58%;
+    transform-origin: 50% 58%;
+    -ms-transform-origin: 50% 58%; /* IE 9 */
+}
+
+@-moz-keyframes spin {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}

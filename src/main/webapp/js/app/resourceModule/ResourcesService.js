@@ -16,31 +16,54 @@
  */
 
 angular.module('App.services', ['ngResource']);
-angular.module('App.services').factory('Endpoints', function($resource) {
+angular.module('App.services').factory('Endpoints', function ($resource) {
     return $resource('webapi/endpoints/:endpoint_name/:url_path', {
         endpoint_name: '@endpoint_name',
         url_path: '@url_path'
     }, {
-         update:{
-            method: 'PUT'
+        update: {
+            method: 'PUT',
+            headers: {'Content-Type': 'text/plain'}
         },
-        set:{
-            method: 'POST'
+        set: {
+            method: 'POST',
+            headers: {'Content-Type': 'text/plain'}
         },
-        delete:{
-                    method: 'DELETE'
-                }
-      });
+        remove: {
+            method: 'DELETE'
+        }
     });
-angular.module('App.services').factory('GetValues', function($http,$q) {
-                            return {
-                                    getValues: function(endpoint_name) {
-                                    var deferred = $q.defer();
-                                        $http.get('webapi/endpoints/' + endpoint_name + '/values')
-                                        .success(function (data){
-                                            deferred.resolve(data);
-                                        });
-                                    return deferred.promise;
-                                    }
-                                };
-                        });
+});
+angular.module('App.services').factory('GetValues', function ($http, $q) {
+    return {
+        getValues: function (endpoint_name) {
+            var deferred = $q.defer();
+            $http.get('webapi/endpoints/' + endpoint_name + '/values')
+                .success(function (data) {
+                    deferred.resolve(data);
+                });
+            return deferred.promise;
+        }
+    };
+});
+angular.module('App.services').factory('Configuration', function ($http) {
+    return {
+        getConfiguration: function () {
+            return $http.get('webapi/configuration');
+        }
+    };
+});
+angular.module('App.services').factory('ConnectionStatus', function ($http) {
+    return {
+        getStatus: function () {
+            return $http.get('webapi/mbedclient');
+        }
+    };
+});
+angular.module('App.services').factory('Request', function ($http) {
+    return {
+        sendRequest: function (name, path) {
+            return $http.get('webapi/endpoints/' + name + '/request' + path);
+        }
+    };
+});

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -38,7 +39,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.mbed.example.MbedClientService;
 import org.mbed.example.data.EndpointMetadata;
@@ -113,7 +113,7 @@ public final class EndpointsResource {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request GET {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).get(new EndpointResponseListener(resourcePath, null));
+        clientCtr.client().endpoint(name).resource(resourcePath.getPath()).get(new EndpointResponseListener(resourcePath, null));
     }
 
     @GET
@@ -125,12 +125,13 @@ public final class EndpointsResource {
 
     @PUT
     @Path("{endpoint-name}/{resource-path: .+}")
-    public void putResourcesValue(@QueryParam("value") String value, @PathParam(ENDPOINTNAME) String name
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void putResourcesValue(String value, @PathParam(ENDPOINTNAME) String name
             , @PathParam(RESOURCEPATH) String path) throws ClientErrorException {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request PUT {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).put(Entity.text(value), new EndpointResponseListener(resourcePath, value));
+        clientCtr.client().endpoint(name).resource(resourcePath.getPath()).put(Entity.text(value), new EndpointResponseListener(resourcePath, value));
     }
 
     @DELETE
@@ -140,17 +141,18 @@ public final class EndpointsResource {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request DELETE {}", resourcePath);
-        clientCtr.client().endpoint(name).resource(path).delete(new EndpointResponseListener(resourcePath, null));
+        clientCtr.client().endpoint(name).resource(resourcePath.getPath()).delete(new EndpointResponseListener(resourcePath, null));
     }
 
     @POST
     @Path("{endpoint-name}/{resource-path: .+}")
-    public void postResourcesValue(@QueryParam("value") String value, @PathParam(ENDPOINTNAME) String name
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void postResourcesValue(String value, @PathParam(ENDPOINTNAME) String name
             , @PathParam(RESOURCEPATH) String path) throws ClientErrorException {
         //initiate request
         final ResourcePath resourcePath = checkConcurrency(name, path);
         LOGGER.debug("Making request POST {}", resourcePath);
-        clientCtr.client().endpoint(name).resource("/" + path).post(Entity.text(value), new EndpointResponseListener(resourcePath, value));
+        clientCtr.client().endpoint(name).resource(resourcePath.getPath()).post(Entity.text(value), new EndpointResponseListener(resourcePath, value));
     }
 
     private ResourcePath checkConcurrency(String name, String path) {
