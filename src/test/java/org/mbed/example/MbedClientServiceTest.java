@@ -55,7 +55,7 @@ public class MbedClientServiceTest {
         notificationListener.onEndpointsExpired(new String[]{"endpoint1"});
         assertEquals(1, epContainer.getAllEndpoints().size());
 
-        notificationListener.onResourcesUpdated(new ResourceNotification[]{new ResourceNotification("endpoint1", null, null, null, new byte[]{2, 3, 4}, 0, 0)});
+        notificationListener.onResourcesUpdated(new ResourceNotification[]{new ResourceNotification("endpoint1", null, "/dev/mac", null, new byte[]{2, 3, 4}, 0, 0)});
         assertEquals(1, epContainer.getAllEndpoints().size());
     }
 
