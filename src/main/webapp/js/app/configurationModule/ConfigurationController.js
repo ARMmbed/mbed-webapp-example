@@ -22,16 +22,16 @@ angular.module('App.controllers').controller('ConfCtrl',
             $scope.error = null;
             $scope.ok = null;
             $scope.done = false;
-            if ($scope.selection == "userPass") {
+            if ($scope.selection.valueOf() == "userPass") {
                 $scope.data.token = null;
             }
             else {
                 $scope.data.username = null;
                 $scope.data.password = null;
             }
-            Configuration.set({}, $scope.data).$promise.then(function (data) {
+            Configuration.set({}, $scope.data).$promise.then(function () {
                 $scope.ok = "Success!";
-            }, function (data, status) {
+            }, function (data) {
                 $scope.error = data.data;
             }).finally(function () {
                 $scope.done = true;
@@ -55,40 +55,17 @@ angular.module('App.controllers').controller('Ctrl',
             console.log('Error!!', status, data);
         });
     });
-angular.module('App.controllers').controller('subCtrl', function ($scope, Subscriptions) {
+angular.module('App.controllers').controller('subCtrl', function ($scope, $filter, Subscriptions) {
     $scope.show_close = true;
     $scope.subscriptions = Subscriptions.query();
+    console.log($scope.subscriptions);
     $scope.btn_text = 'add';
-    $scope.states = ['One', 'Two'];
-    $scope.endpoint_name = {
-        state: $scope.states[0]
-    };
-    $scope.endpoint_type = {
-        state: $scope.states[0]
-    };
-    $scope.endpoint_path = {
-        state: $scope.states[0]
-    };
-    var i = 1;
-    var j = 1;
-    var k = 1;
-    $scope.active = function () {
-        $scope.endpoint_name.state = $scope.states[i % 2];
-        i++;
-    };
-    $scope.active_type = function () {
-        $scope.endpoint_type.state = $scope.states[j % 2];
-        j++;
-    };
-    $scope.active_path = function () {
-        $scope.endpoint_path.state = $scope.states[k % 2];
-        k++;
-    };
+
     $scope.addRow = function () {
         var pre_subscription = {};
         pre_subscription['endpointName'] = ($scope.txt_name == undefined || $scope.txt_name == '') ? null : $scope.txt_name;
         pre_subscription['endpointType'] = ($scope.txt_type == undefined || $scope.txt_type == '') ? null : $scope.txt_type;
-        pre_subscription['uriPathPatterns'] = ($scope.txt_path == undefined || $scope.txt_path == '') ? null : $scope.txt_path;
+        pre_subscription['uriPathPatterns'] = ($scope.txt_path == undefined || $scope.txt_path == '') ? null : [$scope.txt_path];
         if (pre_subscription['endpointName'] != null || pre_subscription['endpointType'] != null || pre_subscription['uriPathPatterns'] != null) {
             if (update_index != -1) {
                 $scope.subscriptions.splice(update_index, 1);
@@ -98,25 +75,15 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, Subscr
         }
     };
     var update_index = -1;
-    $scope.update = function (text, row_number) {
+    $scope.update = function (endpointName, endpointType, uriPathPatterns, row_number) {
         $scope.refresh();
-        var pre_subscription = text.split(',');
-        for (item in pre_subscription) {
-            if (pre_subscription[item].startsWith("endpoint-name"))
-                $scope.txt_name = pre_subscription[item].substring(14, pre_subscription[item].length);
-            else if (pre_subscription[item].startsWith("endpoint-type"))
-                $scope.txt_type = pre_subscription[item].substring(14, pre_subscription[item].length);
-            else if (pre_subscription[item].startsWith("resource-path"))
-                $scope.txt_path = pre_subscription[item].substring(14, pre_subscription[item].length);
-            else // because it is possible that we have commas in the path too
-            {
-                $scope.txt_path += "," + pre_subscription[item];
-            }
-        }
+        $scope.txt_name = endpointName;
+        $scope.txt_type = endpointType;
+        $scope.txt_path = uriPathPatterns;
+
         update_index = row_number;
         $scope.show_close = false;
         $scope.btn_text = 'Update';
-
     };
     $scope.refresh = function () {
         $scope.txt_name = '';
@@ -131,9 +98,27 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, Subscr
         $scope.refresh();
     };
     $scope.push = function () {
-        Subscriptions.update({"endpointName": "kkS", "endpointType": "Light"});
-        $scope.subscriptions = Subscriptions.query();
-        $scope.subscriptions.refresh();
+        $scope.successfulPush = false;
+        $scope.ok = null;
+        $scope.error = null;
+        var preSubscriptionList = [];
+        $filter('filter')($scope.subscriptions, function (d) {
+            var item = {
+                "endpointName": d.endpointName,
+                "endpointType": d.endpointType,
+                "uriPathPatterns": d.uriPathPatterns
+            };
+            preSubscriptionList.push(item);
+        });
+        Subscriptions.update({}, preSubscriptionList).$promise.then(function (data) {
+            //$scope.subscriptions = Subscriptions.query();
+            $scope.ok = "Pushed successfully!";
+        }, function (data, status) {
+            console.log("error in pushing pre-subscription ", data.status, data.statusText);
+            $scope.error = data.statusText;
+        }).finally(function () {
+            $scope.successfulPush = true;
+        });
         $scope.refresh();
     };
 });

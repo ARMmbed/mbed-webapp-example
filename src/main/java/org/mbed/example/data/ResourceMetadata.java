@@ -58,17 +58,17 @@ public final class ResourceMetadata {
         return isSubscribed;
     }
 
+    public String getUriPath() {
+        return uri;
+    }
+
     @Override
     public String toString() {
-        return String.format("Resources [uri='%s', rt='%s', ifDesc='%s', type='%s', obs=%s]", uri, rt, ifDesc, type, obs);
+        return String.format("Resources [uri='%s', rt='%s', ifDesc='%s', type='%s', obs=%s, subscribed=%s]", uri, rt, ifDesc, type, obs, isSubscribed);
     }
 
     public static ResourceMetadata from(ResourceInfo resourceInfo, boolean isSubscribed) {
         return new ResourceMetadata(resourceInfo.getPath(), resourceInfo.getRt(), resourceInfo.getInterfaceDescription(),
                 resourceInfo.getCt(), resourceInfo.isObs(), isSubscribed);
-    }
-
-    public String getUriPath() {
-        return uri;
     }
 }

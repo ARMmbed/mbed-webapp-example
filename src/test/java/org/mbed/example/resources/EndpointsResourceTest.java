@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import com.arm.mbed.restclient.MbedClient;
 import com.arm.mbed.restclient.endpoint.Entity;
+import com.arm.mbed.restclient.endpoint.PreSubscriptionEntry;
 import com.arm.mbed.restclient.endpoint.ResponseListener;
 import com.arm.mbed.restclient.entity.Endpoint;
 import com.arm.mbed.restclient.entity.EndpointResponse;
@@ -62,15 +63,85 @@ public class EndpointsResourceTest {
 
     @Test
     public void getEndpointResources() {
-        when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", null, null, false)));
-        when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/dev/mac", null, null, null, false)));
+
+        when(mbedClient.endpoints().readAll()).thenReturn(Arrays.asList(new Endpoint("dev-01", "light", null, false),
+                new Endpoint("dev-02", "light", null, false)));
+
+        //test subscription by endpoint name
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry("dev-01", null, Arrays.asList())));
+        when(mbedClient.endpoint("dev-01").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/dev/mac", null, null, null, true),
+                new ResourceDescription("/s/temp", null, null, null, true)));
+        when(mbedClient.endpoint("dev-02").readResourceList()).thenReturn(Arrays.asList(new ResourceDescription("/dev/mac", null, null, null, true),
+                new ResourceDescription("/s/temp", null, null, null, true)));
+
         mbedClientService.readAllEndpoints();
-
-        assertEquals(1, rest.getEndpointResources("dev-01").size());
         assertEquals("/dev/mac", rest.getEndpointResources("dev-01").get(0).getUriPath());
-
+        assertEquals(2, rest.getEndpointResources("dev-01").size());
+        assertEquals(2, rest.getEndpointResources("dev-02").size());
         //non existing
         assertThatThrownBy(() -> rest.getEndpointResources("non-existing")).isInstanceOf(NotFoundException.class);
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by endpoint type
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry(null, "light", Arrays.asList())));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by endpoint path
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry(null, null, Arrays.asList("/dev/mac"))));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by endpoint name, type and path
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry("dev-01", "light", Arrays.asList("/dev/mac"))));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by asterisk endpoint name
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry("dev*", null, Arrays.asList())));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by asterisk endpoint type
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry(null, "li*", Arrays.asList())));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by asterisk endpoint path
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry(null, null, Arrays.asList("/dev/*"))));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(false, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
+        //test subscription by two asterisk endpoint path
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry(null, null, Arrays.asList("/dev/*,/s/*"))));
+
+        assertEquals(true, rest.getEndpointResources("dev-01").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-01").get(1).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(0).isSubscribed());
+        assertEquals(true, rest.getEndpointResources("dev-02").get(1).isSubscribed());
+
     }
 
     @Test
@@ -93,7 +164,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue("24C", false, 200, null, null, 0));
+                new ResourceValue("24C", false, 200, null, null, 0, false));
     }
 
     @Test
@@ -129,7 +200,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue(null, false, 0, "Error while reading!", null, 0));
+                new ResourceValue(null, false, 0, "Error while reading!", null, 0, false));
 
     }
 
@@ -203,7 +274,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue("32C", false, 200, null, null, 0));
+                new ResourceValue("32C", false, 200, null, null, 0, false));
     }
 
     @Test
@@ -223,7 +294,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue(null, false, 405, "error", null, 0));
+                new ResourceValue(null, false, 405, "error", null, 0, false));
     }
     @Test
     public void putResourcesValue_duplicate() throws Exception {
@@ -260,7 +331,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue("32C", false, 200, null, null, 0));
+                new ResourceValue("32C", false, 200, null, null, 0, false));
     }
 
     @Test
@@ -280,7 +351,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue(null, false, 405, "error", null, 0));
+                new ResourceValue(null, false, 405, "error", null, 0, false));
     }
     @Test
     public void postResourcesValue_duplicate() throws Exception {
@@ -317,7 +388,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue(null, false, 200, null, null, 0));
+                new ResourceValue(null, false, 200, null, null, 0, false));
     }
     @Test
     public void deleteResourcesValue_withError() throws Exception {
@@ -336,7 +407,7 @@ public class EndpointsResourceTest {
 
         //read values
         assertEquals(rest.getResourceValues("dev-01").get(new ResourcePath("dev-01", "/temp")),
-                new ResourceValue(null, false, 0, "Error while reading!", null, 0));
+                new ResourceValue(null, false, 0, "Error while reading!", null, 0, false));
     }
     @Test
     public void deleteResourcesValue_duplicate() throws Exception {
@@ -352,5 +423,21 @@ public class EndpointsResourceTest {
 
         //again invoke GET proxy request for same resource
         assertThatThrownBy(() -> rest.deleteResourcesValue("dev-01", "temp")).isInstanceOf(ClientErrorException.class);
+    }
+
+    @Test
+    public void isSubscribed() throws Exception {
+        when(mbedClient.preSubscriptions().read()).thenReturn(Arrays.asList(new PreSubscriptionEntry("dev-01", null, Arrays.asList("/s/*")),
+                new PreSubscriptionEntry("dev-01", null, Arrays.asList("power*"))));
+        SubscriptionResources subscriptionResources = new SubscriptionResources(mbedClientService);
+        assertEquals(2, subscriptionResources.getSubscriptions().size());
+
+
+        //        assertEquals(1, rest.getEndpointResources("dev-01").size());
+        //        System.out.println("rest.getEndpointResources(\"dev-01\") = " + rest.getEndpointResources("dev-01"));
+        //        assertEquals("/dev/mac", rest.getEndpointResources("dev-01").get(0).getUriPath());
+        //
+        //        //non existing
+        //        assertThatThrownBy(() -> rest.getEndpointResources("non-existing")).isInstanceOf(NotFoundException.class);
     }
 }

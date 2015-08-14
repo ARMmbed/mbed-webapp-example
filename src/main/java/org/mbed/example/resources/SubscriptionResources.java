@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.mbed.example.resources;
 
-import com.arm.mbed.restclient.MbedClientBuilder;
-import com.arm.mbed.restclient.MbedClientInitializationException;
 import com.arm.mbed.restclient.endpoint.PreSubscriptionEntry;
+import com.arm.mbed.restclient.endpoint.PreSubscriptions;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +29,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.mbed.example.MbedClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by mitvah01 on 30.6.2015.
@@ -36,29 +38,37 @@ import org.mbed.example.MbedClientService;
 @Path("/subscriptions")
 @Singleton
 public class SubscriptionResources {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationResource.class);
     private final MbedClientService clientCtr;
 
     @Inject
-    SubscriptionResources(MbedClientService clientCtr) {
-        this.clientCtr = clientCtr;
+    SubscriptionResources(MbedClientService mbedClientService) {
+        this.clientCtr = mbedClientService;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<PreSubscriptionEntry> getSubscriptions() {
-        //client.preSubscriptions().builder().endpointType("Light").path("/3/0/1").path("/3/0/2").create();
-        List<PreSubscriptionEntry> entries = null;
-        entries = clientCtr.client().preSubscriptions().read();
-        return entries;
+        return clientCtr.client().preSubscriptions().read();
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public org.mbed.example.resources.PreSubscriptionEntry putSubscription(org.mbed.example.resources.PreSubscriptionEntry preSubscriptionEntry) {
-        clientCtr.client().preSubscriptions().builder().endpointName(preSubscriptionEntry.getEndpointName()).
-                endpointType(preSubscriptionEntry.getEndpointType());//.path(preSubscriptionEntry.getUriPathPatterns()).create();
-        System.out.print("preSubscriptionEntry" + preSubscriptionEntry.getEndpointName() + ' ' + preSubscriptionEntry.getEndpointType());
-        return preSubscriptionEntry;
+    public void putSubscription(List<PreSubscriptionEntry> preSubscriptionEntryList) {
+        LOGGER.debug("Creating pre subscriptions.");
+        PreSubscriptions.PreSubscriptionsBuilder preSubscriptionsBuilder = clientCtr.client().preSubscriptions().builder();
+
+        if (!preSubscriptionEntryList.isEmpty()) {
+            for (PreSubscriptionEntry preSubscriptionEntry : preSubscriptionEntryList) {
+                preSubscriptionsBuilder.endpointName(preSubscriptionEntry.getEndpointName()).
+                        endpointType(preSubscriptionEntry.getEndpointType());
+                if (preSubscriptionEntry.getUriPathPatterns() != null) {
+                    preSubscriptionsBuilder.path(preSubscriptionEntry.getUriPathPatterns().get(0));
+                }
+                preSubscriptionsBuilder.newEntry();
+            }
+        }
+        preSubscriptionsBuilder.create();
     }
 }

@@ -18,6 +18,7 @@ package org.mbed.example;
 
 import static org.junit.Assert.*;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
+import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import org.junit.Test;
 
 /**
@@ -52,6 +53,9 @@ public class MbedClientServiceTest {
         assertEquals(1, epContainer.getAllEndpoints().size());
 
         notificationListener.onEndpointsExpired(new String[]{"endpoint1"});
+        assertEquals(1, epContainer.getAllEndpoints().size());
+
+        notificationListener.onResourcesUpdated(new ResourceNotification[]{new ResourceNotification("endpoint1", null, null, null, new byte[]{2, 3, 4}, 0, 0)});
         assertEquals(1, epContainer.getAllEndpoints().size());
     }
 

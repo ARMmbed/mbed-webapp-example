@@ -109,22 +109,22 @@
                         </div>
                         <div style="margin-top: 15px; height: 100px">
                             <div class="form-group" ng-show="selection == 'userPass'">
-                            <label for="username" class="col-sm-3 control-label">Username</label>
+                                <label for="username" class="col-sm-3 control-label">Username</label>
 
-                            <div class="col-sm-9">
-                                <input ng-model="data.username" type="text" class="form-control" id="username"
-                                       placeholder="Username" ng-required="selection == 'userPass'">
+                                <div class="col-sm-9">
+                                    <input ng-model="data.username" type="text" class="form-control" id="username"
+                                           placeholder="Username" ng-required="selection == 'userPass'">
+                                </div>
                             </div>
-                        </div>
                             <div class="form-group" ng-show="selection == 'userPass'">
-                            <label for="password" class="col-sm-3 control-label">Password</label>
+                                <label for="password" class="col-sm-3 control-label">Password</label>
 
-                            <div class="col-sm-9">
-                                <input ng-model="data.password" type="password" class="form-control" id="password"
-                                       placeholder="Password"
-                                       ng-required="selection == 'userPass'">
+                                <div class="col-sm-9">
+                                    <input ng-model="data.password" type="password" class="form-control" id="password"
+                                           placeholder="Password"
+                                           ng-required="selection == 'userPass'">
+                                </div>
                             </div>
-                        </div>
                             <div class="form-group" ng-show="selection == 'token'">
                                 <label for="token" class="col-sm-3 control-label">Token</label>
 
@@ -132,8 +132,8 @@
                                     <input ng-model="data.token" type="text" class="form-control" id="token"
                                            placeholder="Token"
                                            ng-required="selection == 'token'">
+                                </div>
                             </div>
-                        </div>
                         </div>
                         <div class="form-group" ng-init="ok=false;error=false;done='false'">
                             <div class="col-sm-offset-3 col-sm-1">
@@ -169,23 +169,48 @@
                         <table class="table table-bordered table-striped table-hover">
                             <thead class="list-group-item-info">
                             <tr>
-                                <th>Pre-Subscription</th>
-                                <th class="td_center">Delete</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Path</th>
+                                <th class="td_center"></th>
                             </tr>
                             </thead>
                             <tfoot>
                             <tr>
-                                <td colspan="2">
-                                    <button class="btn btn-success btn-custom" ng-click="push()">Push</button>
+                                <td colspan="4" ng-init="successfulPush = 'false'">
+                                    <button class="btn btn-success btn-custom col-sm-4" ng-click="push()">Push
+                                        <span ng-hide="successfulPush"><i class="glyphicon glyphicon-refresh spin"></i></span>
+                                    </button>
+                                    <div ng-show="ok" style="margin-left: 5px; line-height: 35px"
+                                         class="col-sm-4 success">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                        <strong ng-bind="ok"></strong>
+                                    </div>
+                                    <div ng-show="error" style="margin-left: 5px;line-height: 35px"
+                                         class="col-sm-4 danger">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                        <strong ng-bind="error"></strong>
+                                    </div>
                                 </td>
                             </tr>
                             </tfoot>
                             <tbody>
                             <tr ng-repeat="x in values = (subscriptions | filter:searchText)">
-                                <td class="col-md-10"><a href="#" ng-click="update(x.endpoint-name,$index)">{{x}}</a>
+                                <td class="col-md-3">
+                                    <!--<a href="#" ng-click="update(x.endpoint-name,$index)">{{x}}</a>-->
+                                    {{x.endpointName}}
                                 </td>
-                                <td class="col-md-1 td_center">
-                                    <span class="btn btn-danger btn-xs" ng-click="delete($index)">Delete</span></td>
+                                <td class="col-md-3">
+                                    {{x.endpointType}}
+                                </td>
+                                <td class="col-md-5">
+                                    {{x.uriPathPatterns[0]}}
+                                </td>
+                                <td class="col-md-1 td_center" style="white-space: nowrap">
+                                    <span class="btn btn-danger btn-xs" ng-click="delete($index)">delete</span>
+                                    <span class="btn btn-success btn-xs"
+                                          ng-click="update(x.endpointName,x.endpointType,x.uriPathPatterns[0],$index)">edit</span>
+                                </td>
                             </tr>
                             </tbody>
                             <em ng-show="!values.length && subscriptions.length" class="danger">There are no matching
@@ -198,41 +223,23 @@
                     <div>
                         <div style="margin-bottom:10px">
                             <div class="input-group">
-
-                            <span class="input-group-btn">
-                            <button class="btn btn-default btn-select"
-                                    ng-class="{'btn btn-default':endpoint_name.state == 'One','btn btn-info':endpoint_name.state == 'Two'}"
-                                    ng-model="endpoint_name" ng-click="active()" type="button">Endpoint name
-                                <span aria-hidden="true"></span>
-                            </button>
-                            </span>
+                                <div class="input-group-addon">
+                                    <div class="fixedSize-130"> Endpoint name</div>
+                                </div>
                                 <input type="text" ng-model="txt_name" class="form-control">
                             </div>
                             <div class="input-group">
-
-                            <span class="input-group-btn">
-
-                            <button class="btn btn-default btn-select"
-                                    ng-class="{'btn btn-default':endpoint_type.state == 'One','btn btn-info':endpoint_type.state == 'Two'}"
-                                    ng-model="endpoint_type" ng-click="active_type()" type="button">Endpoint type
-                                <span aria-hidden="true"></span>
-                            </button>
-                            </span>
+                                <div class="input-group-addon">
+                                    <div class="fixedSize-130"> Endpoint type</div>
+                                </div>
                                 <input type="text" ng-model="txt_type" class="form-control">
                             </div>
                             <div class="input-group">
-
-                            <span class="input-group-btn">
-
-                            <button class="btn btn-default btn-select"
-                                    ng-class="{'btn btn-default':endpoint_path.state == 'One','btn btn-info':endpoint_path.state == 'Two'}"
-                                    ng-model="endpoint_path" ng-click="active_path()" type="button">Resource path
-                                <span aria-hidden="true"></span>
-                            </button>
-                            </span>
+                                <div class="input-group-addon">
+                                    <div class="fixedSize-130"> Resource path</div>
+                                </div>
                                 <input type="text" ng-model="txt_path" class="form-control">
                             </div>
-
                         </div>
                         <div style="margin-top:10px">
                             <button ng-click="addRow()" class="btn btn-info btn-custom">{{btn_text}}</button>

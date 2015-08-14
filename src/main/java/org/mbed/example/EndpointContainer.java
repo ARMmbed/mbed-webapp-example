@@ -21,6 +21,7 @@ import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.ResourceDescription;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceInfo;
+import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import org.mbed.example.common.string.Utf8String;
 import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ResourceValue;
 import org.mbed.example.resources.EndpointsResource;
@@ -72,33 +74,36 @@ public class EndpointContainer {
                     success.set(false);
                     return old;
                 }
-                return new ResourceValue(old.getValue(), isWaitingForResponse, 0, null, null, 0);
+                return new ResourceValue(old.getValue(), isWaitingForResponse, 0, null, null, 0, false);
             } else {
-                return new ResourceValue(null, isWaitingForResponse, 0, null, null, 0);
+                return new ResourceValue(null, isWaitingForResponse, 0, null, null, 0, false);
             }
         });
         return success.get();
     }
 
     public void updateResource(ResourcePath resourcePath, EndpointResponse response) {
-        endpointResourceValues.put(resourcePath, new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null, response.getContentType(), response.getMaxAge()));
+        endpointResourceValues.put(resourcePath, new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null, response.getContentType(), response.getMaxAge(), false));
     }
 
+    public void updateResource(ResourcePath resourcePath, ResourceNotification notification) {
+        endpointResourceValues.put(resourcePath, new ResourceValue(Utf8String.from(notification.getPayload()), false, 200, null, notification.getContentType(), (int) notification.getMaxAge(), true));
+    }
     public void updateResource(ResourcePath resourcePath, EndpointResponse response, String value) {
         String payloadAsString = response.getPayloadAsString();
         if (payloadAsString != null && !payloadAsString.isEmpty()) {
             if (response.getStatus()==200) {
-                endpointResourceValues.put(resourcePath, new ResourceValue(payloadAsString, false, response.getStatus(), null, response.getContentType(), response.getMaxAge()));
+                endpointResourceValues.put(resourcePath, new ResourceValue(payloadAsString, false, response.getStatus(), null, response.getContentType(), response.getMaxAge(), false));
             } else {
-                endpointResourceValues.put(resourcePath, new ResourceValue(null, false, response.getStatus(), payloadAsString, response.getContentType(), response.getMaxAge()));
+                endpointResourceValues.put(resourcePath, new ResourceValue(null, false, response.getStatus(), payloadAsString, response.getContentType(), response.getMaxAge(), false));
             }
         } else {
-            endpointResourceValues.put(resourcePath, new ResourceValue(value, false, response.getStatus(), null, response.getContentType(), response.getMaxAge()));
+            endpointResourceValues.put(resourcePath, new ResourceValue(value, false, response.getStatus(), null, response.getContentType(), response.getMaxAge(), false));
         }
     }
 
     public void updateResource(ResourcePath resourcePath, String errorMessage) {
-        endpointResourceValues.put(resourcePath, new ResourceValue(null, false, 0, errorMessage, null, 0));
+        endpointResourceValues.put(resourcePath, new ResourceValue(null, false, 0, errorMessage, null, 0, false));
     }
     public Map<ResourcePath, ResourceValue> getEndpointResourceValues(String endpointName) {
         EndpointDescription endpointDescription = endpointsList.get(endpointName);

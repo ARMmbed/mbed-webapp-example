@@ -20,8 +20,10 @@ import static org.junit.Assert.*;
 import static org.mbed.example.resources.EndpointsResourceTest.*;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceInfo;
+import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import org.junit.Before;
 import org.junit.Test;
+import org.mbed.example.common.string.Utf8String;
 import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ResourceValue;
 
@@ -50,10 +52,14 @@ public class EndpointContainerTest {
 
         epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), mockEndpointResponse("25 C", 200));
         assertEquals(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")),
-                new ResourceValue("25 C", false, 200, null, null, 0));
+                new ResourceValue("25 C", false, 200, null, null, 0, false));
 
         epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), "Some error");
         assertEquals(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")),
-                new ResourceValue(null, false, 0, "Some error", null, 0));
+                new ResourceValue(null, false, 0, "Some error", null, 0, false));
+
+        epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), new ResourceNotification("endpoint1", null, null, null, new byte[]{2, 3, 4}, 0, 0));
+        assertEquals(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")),
+                new ResourceValue(Utf8String.from(new byte[]{2, 3, 4}), false, 200, null, null, 0, true));
     }
 }

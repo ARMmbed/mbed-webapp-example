@@ -30,9 +30,9 @@ import java.net.URISyntaxException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Path;
+import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ServerConfiguration;
 import org.slf4j.LoggerFactory;
-
 /**
  * @author szymon
  */
@@ -161,7 +161,10 @@ public class MbedClientService {
 
         @Override
         public void onResourcesUpdated(ResourceNotification[] resourceNotifications) {
-            //TODO: add notification handling
+            for (ResourceNotification notification : resourceNotifications) {
+                ResourcePath resourcePath = new ResourcePath(notification.getEndpointName(), notification.getUriPath());
+                endpointContainer.updateResource(resourcePath, notification);
+            }
         }
 
         @Override

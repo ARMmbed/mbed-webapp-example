@@ -104,8 +104,11 @@
                         <tr ng-repeat="x in endresources">
 
                             <td class="col-md-2"><span ng-bind="x.uriPath"></span></td>
-                            <td class="col-md-4" style="white-space: nowrap">
-                                <a ng-success class="glyphicon glyphicon-ok-circle success" ng-show="x.success"
+                            <td class="col-md-4" style="white-space: nowrap"
+                                title="{{x.notification == true?'notification value':'read value'}}">
+                                <a ng-success
+                                   ng-class="{'glyphicon glyphicon-cloud-download success':x.notification == true,'glyphicon glyphicon-ok-circle success':x.notification == false}"
+                                   ng-show="x.success"
                                    href="#"
                                    ng-click="$event.preventDefault()"
                                    title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
@@ -113,16 +116,20 @@
                                    data-placement="top"></a>
                                 <t ng-show="x.success" ng-bind="x.val"></t>
                                 <a ng-error href="#" ng-click="$event.preventDefault()"
-                                   ng-class="{'glyphicon glyphicon-exclamation-sign danger':x.success == false,'':x.success == true}"
+                                   ng-show="!x.success"
+                                   ng-class="{'glyphicon glyphicon-cloud-download danger':x.notification == true,'glyphicon glyphicon-exclamation-sign danger':x.notification == false}"
                                    title="ERROR" data-toggle="popover" data-trigger="focus"
                                    data-content="{{x.lastUpdate}}"
                                    data-placement="top"></a>
                                 <!--<img ng-show="x.show" src="img/loading.gif" index="{{$index}}">-->
                                 <span ng-show="x.show"><i class="glyphicon glyphicon-refresh spin infoColor"></i></span>
                             </td>
-                            <td class="col-md-1 td_center"><span
-                                    ng-class="{'glyphicon glyphicon-ok success':x.obs == 'true','glyphicon glyphicon-remove danger':x.obs == 'false'}"
-                                    aria-hidden="true"></span></td>
+                            <td class="col-md-1 td_center"
+                                title="{{x.obs == true && x.subscribed == true?'observable and subscribed':(x.obs == false?'not observable':'observable but not subscribed')}}">
+                                <span ng-class="{'glyphicon glyphicon-eye-open infoColor':x.obs == true && x.subscribed == true,'glyphicon glyphicon-eye-close':x.obs == false
+                                    , 'glyphicon glyphicon-eye-open gray-light':x.obs == true && x.subscribed == false}"
+                                      aria-hidden="true"></span>
+                            </td>
                             <td class="col-md-1 td_center" style="white-space: nowrap">
                                 <!--<div ng-app="" ng-init="isDisabled=false">-->
                                 <button ng-disabled="isDisabled== 'true'" ng-click="get($event,detail,x.uriPath,x)"

@@ -18,6 +18,7 @@
 package org.mbed.example.resources;
 
 import com.arm.mbed.restclient.endpoint.Entity;
+import com.arm.mbed.restclient.endpoint.PreSubscriptionEntry;
 import com.arm.mbed.restclient.endpoint.ResponseListener;
 import com.arm.mbed.restclient.entity.EndpointResponse;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -99,11 +101,27 @@ public final class EndpointsResource {
             }
         }
 
-        return Arrays.stream(resourceList).map(r -> ResourceMetadata.from(r, isSubscribed(/* r */))).collect(Collectors.toList());
+        return Arrays.stream(resourceList).map(r -> ResourceMetadata.from(r, isSubscribed(r, name, endpoint.getType()))).collect(Collectors.toList());
     }
 
-    private boolean isSubscribed(/* ResourceInfo resourceInfo */) {
-        //TODO: Check if it is subscribed or not
+    private boolean isSubscribed(ResourceInfo resourceInfo, String endpointName, String type) {
+        List<PreSubscriptionEntry> preSubscriptionEntryList = clientCtr.client().preSubscriptions().read();
+        if (resourceInfo.isObs()) {
+            for (PreSubscriptionEntry preSubscriptionEntry : preSubscriptionEntryList) {
+                if ((preSubscriptionEntry.getEndpointType() == null || (type != null && Pattern.matches(preSubscriptionEntry.getEndpointType().replace("*", ".*"), type))) &&
+                        (preSubscriptionEntry.getEndpointName() == null || Pattern.matches(preSubscriptionEntry.getEndpointName().replace("*", ".*"), endpointName))) {
+                    if (preSubscriptionEntry.getUriPathPatterns() == null) {
+                        return true;
+                    } else {
+                        for (String path : preSubscriptionEntry.getUriPathPatterns().get(0).split(",")) {
+                            if (Pattern.matches(path.replace("*", ".*"), resourceInfo.getPath())) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 

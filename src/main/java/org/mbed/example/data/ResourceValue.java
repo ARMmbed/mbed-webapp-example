@@ -28,12 +28,13 @@ public final class ResourceValue {
     private final String errorMessage;
     private final String contentType;
     private final int maxAge;
+    private final boolean isNotification;
 
-    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, String contentType, int maxAge) {
-        this(value, isWaitingForResponse, statusCode, errorMessage, System.currentTimeMillis(), contentType, maxAge);
+    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, String contentType, int maxAge, boolean isNotification) {
+        this(value, isWaitingForResponse, statusCode, errorMessage, System.currentTimeMillis(), contentType, maxAge, isNotification);
     }
 
-    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, long timestamp, String contentType, int maxAge) {
+    public ResourceValue(String value, boolean isWaitingForResponse, int statusCode, String errorMessage, long timestamp, String contentType, int maxAge, boolean isNotification) {
         this.value = value;
         this.isWaitingForResponse = isWaitingForResponse;
         this.statusCode = statusCode;
@@ -41,6 +42,7 @@ public final class ResourceValue {
         this.timestamp = timestamp;
         this.contentType = contentType;
         this.maxAge = maxAge;
+        this.isNotification = isNotification;
     }
 
     public String getValue() {
@@ -71,10 +73,14 @@ public final class ResourceValue {
         return contentType;
     }
 
+    public boolean isNotification() {
+        return isNotification;
+    }
+
     @Override
     public String toString() {
-        return String.format("ResourceValue [value='%s', isWaitingForResponse=%s, statusCode=%d, errorMessage='%s', contentType='%s', maxAge=%d, timestamp=%d]",
-                value, isWaitingForResponse, statusCode, errorMessage, contentType, maxAge, timestamp);
+        return String.format("ResourceValue [value='%s', isWaitingForResponse=%s, statusCode=%d, errorMessage='%s', contentType='%s', maxAge=%d, timestamp=%d, isNotification=%s]",
+                value, isWaitingForResponse, statusCode, errorMessage, contentType, maxAge, timestamp, isNotification);
     }
 
     @Override
@@ -90,6 +96,9 @@ public final class ResourceValue {
         ResourceValue that = (ResourceValue) o;
 
         if (isWaitingForResponse != that.isWaitingForResponse) {
+            return false;
+        }
+        if (isNotification != that.isNotification) {
             return false;
         }
         if (statusCode != that.statusCode) {
@@ -112,6 +121,7 @@ public final class ResourceValue {
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
         result = 31 * result + (isWaitingForResponse ? 1 : 0);
+        result = 31 * result + (isNotification ? 1 : 0);
         result = 31 * result + statusCode;
         result = 31 * result + maxAge;
         result = 31 * result + (contentType != null ? contentType.hashCode() : 0);

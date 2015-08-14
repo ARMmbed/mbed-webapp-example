@@ -49,6 +49,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
     $scope.endresources = Endpoints.query({'endpoint_name': endpoint_name})
         .$promise.then(function (value) {
             $scope.endresources = value;
+            console.log($scope.endresources);
         }, function (data, status) {
             console.error('Error!!', status, data);
         });
@@ -127,6 +128,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
                                     d.success = false;
                                 }
                                 d.show = false;
+                                d.notification = value.notification;
                                 if (waiting_endpoint == endpoint && waiting_uri == path) {
                                     $scope.isDisabled = "false";
                                 }

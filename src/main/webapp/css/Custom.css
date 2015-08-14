@@ -43,7 +43,8 @@ body {
     text-transform: uppercase;
     
 }
-.btn-select {
+
+.fixedSize-130 {
     width: 130px;
 }
 .td_center {
@@ -70,6 +71,10 @@ body {
   top: 30%;
   left: 90%;
   right: 2%;
+}
+
+.gray-light {
+    color: #c0c0c0;
 }
 .success {
     color:#5cb85c;

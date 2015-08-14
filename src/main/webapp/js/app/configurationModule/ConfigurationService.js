@@ -17,13 +17,6 @@ angular.module('App.services').factory('Configuration', function ($resource) {
         }
     });
 });
-//angular.module('App.services').factory('Configuration', function ($http) {
-//    return {
-//        getConfiguration: function () {
-//            return $http.get('webapi/configuration');
-//        }
-//    };
-//});
 angular.module('App.services').factory('ConnectionStatus', function ($http) {
     return {
         getStatus: function () {
