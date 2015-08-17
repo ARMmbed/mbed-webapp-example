@@ -88,29 +88,28 @@ public class MbedClientService {
             this.endpointContainer = new EndpointContainer();
             HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
             if (isSecure) {
-                this.client = MbedClientBuilder.newBuilder().domain("").credentials(token)
+                this.client = MbedClientBuilder.newBuilder().credentials(token)
                         .secure()
                         .notifChannel(httpServletChannel)
                         .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
             } else {
-                this.client = MbedClientBuilder.newBuilder().domain("").credentials(token)
+                this.client = MbedClientBuilder.newBuilder().credentials(token)
                         .notifChannel(httpServletChannel)
                         .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
             }
         } else {
-            String[] clientCreds = clientName.split("/");
-            if (clientCreds.length != 2) {
+            if (clientName.split("/").length != 2) {
                 throw new MbedClientInitializationException("Invalid user credentials");
             }
             this.endpointContainer = new EndpointContainer();
             HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
             if (isSecure) {
-                this.client = MbedClientBuilder.newBuilder().domain(clientCreds[0]).credentials(clientCreds[1], clientSecret)
+                this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
                         .secure()
                         .notifChannel(httpServletChannel)
                         .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
             } else {
-                this.client = MbedClientBuilder.newBuilder().domain(clientCreds[0]).credentials(clientCreds[1], clientSecret)
+                this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
                         .notifChannel(httpServletChannel)
                         .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
             }
