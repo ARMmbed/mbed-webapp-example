@@ -108,16 +108,23 @@ public final class EndpointsResource {
         List<PreSubscriptionEntry> preSubscriptionEntryList = clientCtr.client().preSubscriptions().read();
         if (resourceInfo.isObs()) {
             for (PreSubscriptionEntry preSubscriptionEntry : preSubscriptionEntryList) {
-                if ((preSubscriptionEntry.getEndpointType() == null || (type != null && Pattern.matches(preSubscriptionEntry.getEndpointType().replace("*", ".*"), type))) &&
-                        (preSubscriptionEntry.getEndpointName() == null || Pattern.matches(preSubscriptionEntry.getEndpointName().replace("*", ".*"), endpointName))) {
-                    if (preSubscriptionEntry.getUriPathPatterns() == null) {
+                if (isSubscribed(resourceInfo, endpointName, type, preSubscriptionEntry)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isSubscribed(ResourceInfo resourceInfo, String endpointName, String type, PreSubscriptionEntry preSubscriptionEntry) {
+        if ((preSubscriptionEntry.getEndpointType() == null || (type != null && Pattern.matches(preSubscriptionEntry.getEndpointType().replace("*", ".*"), type))) &&
+                (preSubscriptionEntry.getEndpointName() == null || Pattern.matches(preSubscriptionEntry.getEndpointName().replace("*", ".*"), endpointName))) {
+            if (preSubscriptionEntry.getUriPathPatterns() == null) {
+                return true;
+            } else {
+                for (String path : preSubscriptionEntry.getUriPathPatterns().get(0).split(",")) {
+                    if (Pattern.matches(path.replace("*", ".*"), resourceInfo.getPath())) {
                         return true;
-                    } else {
-                        for (String path : preSubscriptionEntry.getUriPathPatterns().get(0).split(",")) {
-                            if (Pattern.matches(path.replace("*", ".*"), resourceInfo.getPath())) {
-                                return true;
-                            }
-                        }
                     }
                 }
             }
