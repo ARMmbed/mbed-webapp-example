@@ -19,22 +19,30 @@ Development
 - Java 8
 - Maven 3.x
 
-### Run
-Jetty (embedded):
-    
-    mvn jetty:run
-
-Tomcat (embedded):
-
-    mvn tomcat7:run
-    
-Open from browser: http://localhost:8082/example-app    
-
 ### Build:
 
-    mvn clean install
+    mvn clean package
 
-With static code analyses check (findbugs, pmd, cobertura):
+With static code analyses check (findbugs, pmd, jacoco):
 
-    mvn clean install -P static-code-check
+    mvn clean package -P static-code-check
+
+Build executable war (with embedded tomcat):
+
+    mvn clean package tomcat7:exec-war-only
+
+### Run
+- Jetty (embedded):
     
+        mvn jetty:run
+
+- Tomcat (embedded):
+
+        mvn tomcat7:run
+
+- Executable war (with embedded tomcat):
+
+        cd target
+        java -Dcom.arm.mbed.restclient.servlet.server-port=8082 -jar example-app-1.0-SNAPSHOT-war-exec.jar -httpPort=8082
+
+Open from browser: http://localhost:8082

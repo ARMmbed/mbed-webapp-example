@@ -70,12 +70,14 @@
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <!-- note: there is a bug in 2.2 when executing goal exec-war-only: https://issues.apache.org/jira/browse/MTOMCAT-263 -->
+                <version>2.1</version>
                 <configuration>
                     <port>8082</port>
                     <systemProperties>
                         <com.arm.mbed.restclient.servlet.server-port>8082</com.arm.mbed.restclient.servlet.server-port>
                     </systemProperties>
+                    <path>/</path>
                 </configuration>
             </plugin>
             <plugin>
@@ -185,6 +187,12 @@
             <groupId>com.arm.mbed</groupId>
             <artifactId>mbed-client-servlet</artifactId>
             <version>${mbed-client.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javax.servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
