@@ -45,13 +45,15 @@ angular.module('App.controllers').controller('Ctrl',
             function (data) {
                 $scope.isConnected = data.data == true;
                 $scope.isDisonnected = data.data == true;
-                console.log('data', data);
             }, function (data, status) {
                 console.log('Error!!', status, data);
             });
         Configuration.get().$promise.then(function (data) {
             $scope.address = data.address;
+<<<<<<< HEAD
             console.log(data);
+=======
+>>>>>>> ONSP-733:Configure pre-subscriptions (changes in UI and backend)
             $scope.selection = data.token == null ? "userPass" : "token";
             $scope.data = data;
         }, function (data, status) {
@@ -63,11 +65,15 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
     $scope.notSaved = false;
     $scope.show_close = true;
     $scope.subscriptions = Subscriptions.query();
-    console.log($scope.subscriptions);
     $scope.btn_text = 'add';
+<<<<<<< HEAD
     $scope.tst = 'active'
 
     //angular.module('App.controllers').run(['$rootScope','$location', function ($rootScope,$location,$scope) {
+=======
+    $scope.tst = 'active';
+
+>>>>>>> ONSP-733:Configure pre-subscriptions (changes in UI and backend)
     $rootScope.$on('$locationChangeStart', function (event) {
         if (tabName != 'subscription' && $scope.notSaved && !confirm("You have unsaved changes, do you want to continue?")) {
             event.preventDefault();
@@ -80,13 +86,21 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
         if ($scope.notSaved) {
             return "You have unsaved changes, do you want to continue?";
         }
+<<<<<<< HEAD
     }
+=======
+    };
+>>>>>>> ONSP-733:Configure pre-subscriptions (changes in UI and backend)
     var parent;
     var tabName;
     $rootScope.tabclick = function (event, name) {
         parent = event.target;
         tabName = name;
+<<<<<<< HEAD
     }
+=======
+    };
+>>>>>>> ONSP-733:Configure pre-subscriptions (changes in UI and backend)
 
     $scope.addRow = function () {
         var pre_subscription = {};
@@ -143,10 +157,16 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
             };
             preSubscriptionList.push(item);
         });
+<<<<<<< HEAD
         Subscriptions.update({}, preSubscriptionList).$promise.then(function (data) {
             //$scope.subscriptions = Subscriptions.query();
             $scope.ok = "Saved successfully!";
         }, function (data, status) {
+=======
+        Subscriptions.update({}, preSubscriptionList).$promise.then(function () {
+            $scope.ok = "Saved successfully!";
+        }, function (data) {
+>>>>>>> ONSP-733:Configure pre-subscriptions (changes in UI and backend)
             console.log("error in pushing pre-subscription ", data.status, data.statusText);
             $scope.error = data.statusText;
         }).finally(function () {

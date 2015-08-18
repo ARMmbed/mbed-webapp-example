@@ -100,7 +100,8 @@ public final class EndpointsResource {
                 return Collections.emptyList();
             }
         }
-        return Arrays.stream(resourceList).map(r -> ResourceMetadata.from(r, isSubscribed(clientCtr.client().preSubscriptions().read(),r, name, endpoint.getType()))).collect(Collectors.toList());
+        List<PreSubscriptionEntry> preSubscriptionEntryList = clientCtr.client().preSubscriptions().read();
+        return Arrays.stream(resourceList).map(r -> ResourceMetadata.from(r, isSubscribed(preSubscriptionEntryList, r, name, endpoint.getType()))).collect(Collectors.toList());
     }
 
     private boolean isSubscribed(List<PreSubscriptionEntry> preSubscriptionEntryList,ResourceInfo resourceInfo, String endpointName, String type) {
