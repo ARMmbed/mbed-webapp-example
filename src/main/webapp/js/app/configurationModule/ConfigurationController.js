@@ -38,8 +38,9 @@ angular.module('App.controllers').controller('ConfCtrl',
             });
         };
     });
+
 angular.module('App.controllers').controller('Ctrl',
-    function Ctrl($scope, $http, ConnectionStatus, Configuration) {
+    function Ctrl($scope, $http, ConnectionStatus, Configuration, $location) {
         ConnectionStatus.getStatus().then(
             function (data) {
                 $scope.isConnected = data.data == true;
@@ -50,16 +51,42 @@ angular.module('App.controllers').controller('Ctrl',
             });
         Configuration.get().$promise.then(function (data) {
             $scope.address = data.address;
+            console.log(data);
+            $scope.selection = data.token == null ? "userPass" : "token";
             $scope.data = data;
         }, function (data, status) {
             console.log('Error!!', status, data);
         });
+
     });
-angular.module('App.controllers').controller('subCtrl', function ($scope, $filter, Subscriptions) {
+angular.module('App.controllers').controller('subCtrl', function ($scope, $filter, Subscriptions, $location, $rootScope) {
+    $scope.notSaved = false;
     $scope.show_close = true;
     $scope.subscriptions = Subscriptions.query();
     console.log($scope.subscriptions);
     $scope.btn_text = 'add';
+    $scope.tst = 'active'
+
+    //angular.module('App.controllers').run(['$rootScope','$location', function ($rootScope,$location,$scope) {
+    $rootScope.$on('$locationChangeStart', function (event) {
+        if (tabName != 'subscription' && $scope.notSaved && !confirm("You have unsaved changes, do you want to continue?")) {
+            event.preventDefault();
+        }
+        else {
+            $(parent).tab('show');
+        }
+    });
+    window.onbeforeunload = function () {
+        if ($scope.notSaved) {
+            return "You have unsaved changes, do you want to continue?";
+        }
+    }
+    var parent;
+    var tabName;
+    $rootScope.tabclick = function (event, name) {
+        parent = event.target;
+        tabName = name;
+    }
 
     $scope.addRow = function () {
         var pre_subscription = {};
@@ -71,6 +98,9 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
                 $scope.subscriptions.splice(update_index, 1);
             }
             $scope.subscriptions.push(pre_subscription);
+            $scope.notSaved = true;
+            $scope.ok = null;
+            $scope.error = null;
             $scope.refresh();
         }
     };
@@ -96,8 +126,11 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
     $scope.delete = function (row_number) {
         $scope.subscriptions.splice(row_number, 1);
         $scope.refresh();
+        $scope.notSaved = true;
+        $scope.ok = null;
+        $scope.error = null;
     };
-    $scope.push = function () {
+    $scope.save = function () {
         $scope.successfulPush = false;
         $scope.ok = null;
         $scope.error = null;
@@ -112,7 +145,7 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
         });
         Subscriptions.update({}, preSubscriptionList).$promise.then(function (data) {
             //$scope.subscriptions = Subscriptions.query();
-            $scope.ok = "Pushed successfully!";
+            $scope.ok = "Saved successfully!";
         }, function (data, status) {
             console.log("error in pushing pre-subscription ", data.status, data.statusText);
             $scope.error = data.statusText;
@@ -120,5 +153,48 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
             $scope.successfulPush = true;
         });
         $scope.refresh();
+        $scope.notSaved = false;
     };
-});
+})
+;
+//angular.module('App.controllers').run(['$rootScope','$location', function ($rootScope,$location) {
+//    //alert($scope.text);
+//    //alert($scope.text);
+//    var _preventNavigation = false;
+//    var _preventNavigationUrl = null;
+//
+//    $rootScope.allowNavigation = function() {
+//        _preventNavigation = false;
+//    };
+//
+//    $rootScope.preventNavigation = function() {
+//        _preventNavigation = true;
+//        _preventNavigationUrl = $location.absUrl();
+//    }
+//
+//    $rootScope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
+//        // Allow navigation if our old url wasn't where we prevented navigation from
+//        confirm("You have unsaved changes, do you want to continue?")
+//        if (_preventNavigationUrl != oldUrl || _preventNavigationUrl == null) {
+//            $rootScope.allowNavigation();
+//            return;
+//        }
+//
+//        if (_preventNavigation && !confirm("You have unsaved changes, do you want to continue?")) {
+//            event.preventDefault();
+//        }
+//        else {
+//            $rootScope.allowNavigation();
+//        }
+//    });
+//
+//    // Take care of preventing navigation out of our angular app
+//    window.onbeforeunload = function() {
+//        // Use the same data that we've set in our angular app
+//        //if (_preventNavigation && $location.absUrl() == _preventNavigationUrl) {
+//            return "You have unsaved changes, do you want to continue?";
+//        //}
+//    }
+//
+//
+//}]);

@@ -14,12 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-angular.module('App.controllers', []);
-angular.module('App.controllers').controller('Ctrl', function ($scope, Endpoints, ConnectionStatus, Configuration, $window) {
+angular.module('App.controllers',[]);
+angular.module('App.controllers').controller('Ctrl', function ($scope, Endpoints, ConnectionStatus, Configuration, $window,$location) {
 
     $scope.endpoints = Endpoints.query();
     $scope.isConnected = false;
     $scope.isDisonnected = false;
+    $scope.anyDevice = "true";//!$scope.endpoints.length;
+
+    $scope.$on('$locationChangeStart ', function (event) {
+        //event.preventDefault();
+        alert(9);
+        //if (vm.myForm!= null && vm.myForm.$dirty) {
+            if (!confirm("Are you sure you want to leave this page?")) {
+                event.preventDefault();
+            }
+        //}
+         });
     ConnectionStatus.getStatus().then(
         function (data) {
             $scope.isConnected = data.data == true;
@@ -38,3 +49,15 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Endpoints
         $window.open('Resources.html#/?endpoint=' + name, "_self");
     };
 });
+//angular.module('App.controllers').run(['$rootScope', function ($rootScope,$scope) {
+//    $rootScope.$on('$locationChangeStart', function (event,newUrl,oldUrl) {
+//            alert(88);
+//            console.log(newUrl); // http://localhost:3000/#/articles/new
+//            console.log(oldUrl); // http://localhost:3000/#/articles
+//            event.preventDefault(); // This prevents the navigation from happening
+//        }
+//    );
+//
+//
+//
+//}]);

@@ -50,8 +50,8 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="Devices.html">Devices</a></li>
-                    <li><a href="Configuration.html">Configuration</a></li>
+                    <li class="active"><a href="Devices.html#/">Devices</a></li>
+                    <li><a href="Configuration.html#/">Configuration</a></li>
                 </ul>
                 <ul ng-cloak class="nav navbar-nav navbar-right">
                     <li>
@@ -88,8 +88,8 @@
                     </span>
             </div>
             <!-- /input-group -->
-            <div>
-                <div class="table-responsive">
+            <div class="ng-cloak">
+                <div class="table-responsive" ng-init="anyDevice=false">
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <tr class="info">
@@ -107,7 +107,7 @@
                         </tbody>
                         <em ng-show="!values.length && endpoints.length" class="danger">There are no matching
                             devices.</em>
-                        <em ng-show="!endpoints.length" class="danger">There are no devices.</em>
+                        <em ng-show="anyDevice" class="danger">There are no devices.</em>
                     </table>
                 </div>
             </div>

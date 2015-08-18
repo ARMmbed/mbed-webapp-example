@@ -52,8 +52,8 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="Devices.html">Devices</a></li>
-                    <li class="active"><a href="Configuration.html">Configuration</a></li>
+                    <li><a href="Devices.html#/">Devices</a></li>
+                    <li class="active"><a href="Configuration.html#/">Configuration</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -82,22 +82,23 @@
         <!-- Main component with gray background -->
         <div class="jumbotron">
             <ul id="myTab" class="nav nav-tabs">
-                <li class="active"><a href="#server" data-toggle="tab">Server</a></li>
-                <li class=""><a href="#subscription" data-toggle="tab">Pre-Subscription</a></li>
+                <li class="active"><a ng-click="tabclick($event,'server')" href="#server">Server</a></li>
+                <li class=""><a ng-click="tabclick($event,'subscription')" href="#subscription">Pre-Subscription</a>
+                </li>
             </ul>
             <div id="myTabContent" class="tab-content" ng-controller="ConfCtrl">
 
                 <div class="tab-pane fade active in" id="server" style="margin-top:15px">
 
-                    <form class="form-horizontal" ng-submit="save()">
-                        <div class="form-group">
+                    <form class="form-horizontal ng-cloak" ng-submit="save()">
+                        <div class="form-group  ">
                             <label for="address" class="col-sm-3 control-label">Device server address</label>
 
                             <div class="col-sm-9">
                                 <input ng-model="data.address" type="url" class="form-control" id="address" required>
                             </div>
                         </div>
-                        <div class="text-center radio alert alert-info" ng-init="selection='userPass'">
+                        <div class="text-center radio alert alert-info">
                             <label class="radio-inline">
                                 <input type="radio" class="active" name="inlineRadioOptions" id="inlineRadio1"
                                        value="userPass" ng-model="selection"> Basic Authentication
@@ -155,7 +156,7 @@
 
                 </div>
                 <!-- input-group -->
-                <div ng-controller="subCtrl" class="tab-pane fade" id="subscription" style="margin-top:15px">
+                <div ng-controller="subCtrl" class="tab-pane fade ng-cloak" id="subscription" style="margin-top:15px">
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="searchText" placeholder="Search for...">
                     <span class="input-group-btn">
@@ -178,7 +179,8 @@
                             <tfoot>
                             <tr>
                                 <td colspan="4" ng-init="successfulPush = 'false'">
-                                    <button class="btn btn-success btn-custom col-sm-4" ng-click="push()">Push
+                                    <button ng-disabled="notSaved == false" class="btn btn-success btn-custom col-sm-4"
+                                            ng-click="save()">Save
                                         <span ng-hide="successfulPush"><i class="glyphicon glyphicon-refresh spin"></i></span>
                                     </button>
                                     <div ng-show="ok" style="margin-left: 5px; line-height: 35px"
@@ -226,19 +228,21 @@
                                 <div class="input-group-addon">
                                     <div class="fixedSize-130"> Endpoint name</div>
                                 </div>
-                                <input type="text" ng-model="txt_name" class="form-control">
+                                <input type="text" ng-model="txt_name" placeholder="Optional" class="form-control">
                             </div>
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <div class="fixedSize-130"> Endpoint type</div>
                                 </div>
-                                <input type="text" ng-model="txt_type" class="form-control">
+                                <input type="text" ng-model="txt_type" placeholder="Optional" class="form-control">
                             </div>
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <div class="fixedSize-130"> Resource path</div>
                                 </div>
-                                <input type="text" ng-model="txt_path" class="form-control">
+                                <input type="text" ng-model="txt_path"
+                                       placeholder="e.g. /dev/temp (optionally having an * character at the end)"
+                                       class="form-control">
                             </div>
                         </div>
                         <div style="margin-top:10px">
