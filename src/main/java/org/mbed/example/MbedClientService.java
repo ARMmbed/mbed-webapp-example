@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.mbed.example;
 
 import com.arm.mbed.restclient.MbedClient;
@@ -60,7 +61,7 @@ public class MbedClientService {
             try {
                 createConnection(DEFAULT_SERVER_CONFIGURATION);
             } catch (MbedClientInitializationException | URISyntaxException | MbedClientRuntimeException e) {
-                // cannot create connection
+                LOGGER.warn("Cannot create connection:" + e.getMessage());
             }
         }
     }

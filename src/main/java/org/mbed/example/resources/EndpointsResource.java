@@ -116,7 +116,7 @@ public final class EndpointsResource {
     }
 
     private static boolean isSubscribed(ResourceInfo resourceInfo, String endpointName, String type, PreSubscriptionEntry preSubscriptionEntry) {
-        if ((preSubscriptionEntry.getEndpointType() == null || (type != null && Pattern.matches(preSubscriptionEntry.getEndpointType().replace("*", ".*"), type))) &&
+        if ((preSubscriptionEntry.getEndpointType() == null || type != null && Pattern.matches(preSubscriptionEntry.getEndpointType().replace("*", ".*"), type)) &&
                 (preSubscriptionEntry.getEndpointName() == null || Pattern.matches(preSubscriptionEntry.getEndpointName().replace("*", ".*"), endpointName))) {
             if (preSubscriptionEntry.getUriPathPatterns() == null) {
                 return true;

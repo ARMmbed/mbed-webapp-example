@@ -84,7 +84,6 @@ public final class ResourceValue {
     }
 
     @Override
-    @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -117,7 +116,6 @@ public final class ResourceValue {
     }
 
     @Override
-    @SuppressWarnings("PMD.NPathComplexity")
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
         result = 31 * result + (isWaitingForResponse ? 1 : 0);

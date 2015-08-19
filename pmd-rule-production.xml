@@ -1,13 +1,29 @@
 <?xml version="1.0"?>
 
+<!--
+  ~ Copyright (c) 2015, ARM Limited, All Rights Reserved
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License"); you may
+  ~ not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <ruleset name="mbed ruleset" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
     <description>pmd-rule-main.xml</description>
 
-    <rule ref="rulesets/java/basic.xml">
-    </rule>
+    <rule ref="rulesets/java/basic.xml"/>
     <rule ref="rulesets/java/braces.xml"/>
     <rule ref="rulesets/java/clone.xml"/>
 
@@ -31,61 +47,20 @@
         <properties>
             <property name="reportLevel" value="20"/>
         </properties>
+        <properties>
+            <!-- ignore this run on methods: equals and hashCode-->
+            <property name="violationSuppressXPath"
+                      value="./ancestor::ClassOrInterfaceBodyDeclaration/MethodDeclaration[@Name='equals' or @Name='hashCode']"/>
+        </properties>
     </rule>
-
     <rule ref="rulesets/java/codesize.xml/NPathComplexity">
         <properties>
-            <property name="minimum" value="400"/>
+            <!-- ignore this run on methods: equals and hashCode-->
+            <property name="violationSuppressXPath"
+                      value="./ancestor::ClassOrInterfaceBodyDeclaration/MethodDeclaration[@Name='equals' or @Name='hashCode']"/>
         </properties>
     </rule>
 
-    <rule ref="rulesets/java/controversial.xml">
-        <!-- If it's the only place for the literal, a constant is overkill.-->
-        <!-- Besides, this check complains about null checks.-->
-        <exclude name="AvoidLiteralsInIfCondition"/>
-        <!-- Some of these might be good findings, a pity that they cannot be-->
-        <!-- individually enabled. DD makes some good code e.g. in hashCode-->
-        <!-- calculations (no need to declare a new variable for each stage)-->
-        <exclude name="DataflowAnomalyAnalysis"/>
-        <!-- Yeah, "explicit" is a good idea but there is no explicit keyword-->
-        <!-- for package visibility-->
-        <exclude name="DefaultPackage"/>
-        <!-- Null has a meaning and that meaning often needs to be communicated.-->
-        <!-- This is a symptom of the general fear of NPEs that's complete-->
-        <!-- opposite to XP's principle of courage-->
-        <exclude name="NullAssignment"/>
-        <!-- Plain stupid idea in languages that have 'finally' for cleanup.-->
-        <!-- Following this easily increases cyclomatic complexity.-->
-        <exclude name="OnlyOneReturn"/>
-        <!-- TODO explain why-->
-        <exclude name="CallSuperInConstructor"/>
-        <!-- TODO explain why-->
-        <exclude name="DontImportSun"/>
-        <!-- TODO explain why-->
-        <exclude name="UseConcurrentHashMap"/>
-        <!-- Sometimes you need 16 bits, you just need to know-->
-        <!-- how/why to use and not use this type.-->
-        <exclude name="AvoidUsingShortType"/>
-        <!-- Even if JIT is not taking advantage of this hint, it might be useful-->
-        <!-- in reasoning about the correctness of a code-->
-        <exclude name="AvoidFinalLocalVariable"/>
-        <!-- TODO explain why-->
-        <exclude name="AssignmentInOperand"/>
-        <!-- TODO explain why-->
-        <exclude name="UseObjectForClearerAPI"/>
-        <!-- Sometimes the implicit default constructor just is enough.-->
-        <!-- And reducing its visibility is often just extra text,a worse problem than someone unnecessary instantiating a static utility,for example.-->
-        <exclude name="AtLeastOneConstructor"/>
-    </rule>
-    <rule ref="rulesets/java/coupling.xml">
-        <!-- TODO explain why. Really.-->
-        <exclude name="LawOfDemeter"/>
-        <!-- Dependencies are best restricted by splitting to modules-->
-        <!-- and only depending on correct modules-->
-        <exclude name="LoosePackageCoupling"/>
-        <!-- See the explanation for TooManyMethods.-->
-        <exclude name="ExcessiveImports"/>
-    </rule>
     <rule ref="rulesets/java/design.xml">
         <!-- Sometimes important to avoid "DOS attack" but not as a general rule-->
         <exclude name="AvoidSynchronizedAtMethodLevel"/>
@@ -118,43 +93,12 @@
         <!-- TODO enable when all findings have been fixed-->
         <exclude name="UseLocaleWithCaseConversions"/>
     </rule>
+    <rule ref="rulesets/java/empty.xml"/>
     <rule ref="rulesets/java/finalizers.xml"/>
-    <rule ref="rulesets/java/imports.xml">
-        <!-- Good idea, but pmd doesn't detect usage from javadoc.-->
-        <!-- And eclipse checks this anyway, so excluding it here is not a big loss-->
-        <exclude name="UnusedImports"/>
-    </rule>
-    <rule ref="rulesets/java/j2ee.xml">
-        <!-- TODO explain why.-->
-        <exclude name="DoNotUseThreads"/>
-        <!-- TODO explain why.-->
-        <exclude name="DoNotCallSystemExit"/>
-    </rule>
-    <rule ref="rulesets/java/javabeans.xml">
-        <!-- Nonserializable data inside Serializable is bad, but this rule even
-            hits nonserializable classes that happen to look like "beans". Who needs
-            those "beans" and let tests catch serialization problems: -->
-        <exclude name="BeanMembersShouldSerialize"/>
-        <!-- What use is a checksum if it's overridden? -->
-        <exclude name="MissingSerialVersionUID"/>
-    </rule>
-    <rule ref="rulesets/java/junit.xml">
-        <!-- The test code must be readable enough to deliver the message-->
-        <exclude name="JUnitAssertionsShouldIncludeMessage"/>
-        <!-- The idea is good, but this rule doesn't find the assert/fail if it's-->
-        <!-- inside a helper method-->
-        <exclude name="JUnitTestsShouldIncludeAssert"/>
-        <!-- Testing one logical thing in a test is a good idea,-->
-        <!-- but checking it like this may be too low-level.-->
-        <exclude name="JUnitTestContainsTooManyAsserts"/>
-    </rule>
-    <rule ref="rulesets/java/migrating.xml">
-        <!-- The annotation is not as readable and there is no way to state which-->
-        <!-- line should throw the exception and with what message-->
-        <exclude name="JUnitUseExpected"/>
-        <!-- Main code is not junit code-->
-        <exclude name="JUnit4TestShouldUseTestAnnotation"/>
-    </rule>
+    <rule ref="rulesets/java/imports.xml"/>
+    <rule ref="rulesets/java/j2ee.xml"/>
+
+    <rule ref="rulesets/java/migrating.xml"/>
     <rule ref="rulesets/java/naming.xml">
         <!-- Often good to start name with Abstract, but on the other hand this-->
         <!-- rule is a bit too much like Hungarian notation and I in interface names.-->
@@ -163,15 +107,10 @@
         <!-- Opinion, for me a getter is not a command, it's a declarative-->
         <!-- data reference-->
         <exclude name="AvoidFieldNameMatchingMethodName"/>
-        <!-- Why should generics not be named properly, like all other things-->
-        <!-- (well, except Windows filesystem roots)?-->
-        <exclude name="GenericsNaming"/>
         <!-- It can be long if it's the only way to make it good-->
         <exclude name="LongVariable"/>
         <!-- It can be short if it's good-->
         <exclude name="ShortVariable"/>
-        <!-- TODO explain why.-->
-        <exclude name="BooleanGetMethodName"/>
         <!-- It can be short if it's good-->
         <exclude name="ShortClassName"/>
         <!-- It can be short if it's good-->
@@ -184,8 +123,7 @@
         <exclude name="AvoidInstantiatingObjectsInLoops"/>
         <!-- Good principle but too verbose in practice: -->
         <exclude name="MethodArgumentCouldBeFinal"/>
-        <!-- Good principle and maybe sometimes even practical but not in this
-            project: -->
+        <!-- Good principle and maybe sometimes even practical -->
         <exclude name="LocalVariableCouldBeFinal"/>
     </rule>
     <rule ref="rulesets/java/strictexception.xml">
@@ -206,15 +144,9 @@
         <!-- Besides, where's the proof that it affects performance?-->
         <exclude name="ConsecutiveAppendsShouldReuse"/>
     </rule>
-    <rule ref="rulesets/java/sunsecure.xml">
-        <!-- TODO explain why.-->
-        <exclude name="MethodReturnsInternalArray"/>
-        <!-- TODO explain why.-->
-        <exclude name="ArrayIsStoredDirectly"/>
-    </rule>
-    <rule ref="rulesets/java/unusedcode.xml">
-        <!-- Gives false positives. IDEs help here better.-->
-        <exclude name="UnusedPrivateMethod"/>
-    </rule>
+
+    <rule ref="rulesets/java/typeresolution.xml"/>
+    <rule ref="rulesets/java/unnecessary.xml"/>
+    <rule ref="rulesets/java/unusedcode.xml"/>
 
 </ruleset>
