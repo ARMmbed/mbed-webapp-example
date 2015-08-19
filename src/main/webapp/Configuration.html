@@ -236,19 +236,31 @@
                                 </div>
                                 <input type="text" ng-model="txt_type" placeholder="Optional" class="form-control">
                             </div>
-                            <div class="input-group">
+                            <div ng-class="{'input-group':valid == null,'input-group has-error':valid == false,'input-group has-success':valid == true}">
                                 <div class="input-group-addon">
                                     <div class="fixedSize-130"> Resource path</div>
                                 </div>
-                                <input type="text" ng-model="txt_path"
+                                <input type="text" ng-model="txt_path" strong-secret
                                        placeholder="e.g. /dev/temp (optionally having an * character at the end)"
                                        class="form-control">
                             </div>
                         </div>
                         <div style="margin-top:10px">
-                            <button ng-click="addRow()" class="btn btn-info btn-custom">{{btn_text}}</button>
-                            <button ng-hide="show_close" class="btn btn-danger btn-custom" ng-click="refresh()">Close
-                            </button>
+                            <div class="col-sm-1" style="padding: 0px">
+                                <button ng-click="addRow()" class="btn btn-info btn-custom"
+                                        ng-disabled="valid == false">
+                                    {{btn_text}}
+                                </button>
+                            </div>
+                            <div class="col-sm-1" ng-hide="show_close">
+                                <button class="btn btn-danger btn-custom" ng-click="refresh()">
+                                    Close
+                                </button>
+                            </div>
+                            <div ng-show="message" style="margin-left: 5px;line-height: 35px" class="col-sm-4 danger">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                <strong ng-bind="message"></strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -266,6 +278,7 @@
         <script src="js/app/configurationModule/app.js"></script>
         <script src="js/app/configurationModule/ConfigurationService.js"></script>
         <script src="js/app/configurationModule/ConfigurationController.js"></script>
+        <script src="js/app/configurationModule/ConfigurationDirective.js"></script>
 
 
     </div>
