@@ -44,7 +44,7 @@ angular.module('App.controllers').controller('Ctrl',
         ConnectionStatus.getStatus().then(
             function (data) {
                 $scope.isConnected = data.data == true;
-                $scope.isDisonnected = data.data == true;
+                $scope.isDisconnected = data.data == false;
             }, function (data, status) {
                 console.log('Error!!', status, data);
             });

@@ -55,17 +55,17 @@
                     <li><a href="Devices.html#/">Devices</a></li>
                     <li class="active"><a href="Configuration.html#/">Configuration</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
+                <ul ng-cloak class="nav navbar-nav navbar-right" ng-init="isConnected = false;isDisconnected=false">
                     <li>
                         <div data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="isConnected" class="navbar-right myLogo text-center">
+                             style="padding:10px" ng-if="isConnected" class="navbar-right myLogo text-center">
                             <img src="img/connected.png"/>
                             <t class="success">Connected</t>
                         </div>
                     </li>
                     <li>
                         <div data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="isDisconnected" class="navbar-right myLogo">
+                             style="padding:10px" ng-if="isDisconnected" class="navbar-right myLogo">
                             <img style="margin-right:5px" src="img/disconnected.png"/>
                             <t class="danger">Disconnected
                             </t>
@@ -90,7 +90,7 @@
 
                 <div class="tab-pane fade active in" id="server" style="margin-top:15px">
 
-                    <form class="form-horizontal ng-cloak" ng-submit="save()">
+                    <form class="form-horizontal" ng-submit="save()" ng-cloak>
                         <div class="form-group  ">
                             <label for="address" class="col-sm-3 control-label">Device server address</label>
 
@@ -126,7 +126,7 @@
                                            ng-required="selection == 'userPass'">
                                 </div>
                             </div>
-                            <div class="form-group" ng-show="selection == 'token'">
+                            <div class="form-group" ng-if="selection == 'token'">
                                 <label for="token" class="col-sm-3 control-label">Token</label>
 
                                 <div class="col-sm-9">
@@ -136,17 +136,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group" ng-init="ok=false;error=false;done='false'">
+                        <div class="form-group" ng-init="ok=false;error=false;done=true">
                             <div class="col-sm-offset-3 col-sm-1">
                                 <button type="submit" id="submits" class="btn btn-info btn-custom">Save
-                                    <span ng-hide="done"><i class="glyphicon glyphicon-refresh spin"></i></span>
+                                    <span ng-if="!done"><i class="glyphicon glyphicon-refresh spin"></i></span>
                                 </button>
                             </div>
-                            <div ng-show="ok" style="margin-left: 5px; line-height: 35px" class="col-sm-4 success">
+                            <div ng-if="ok" style="margin-left: 5px; line-height: 35px" class="col-sm-4 success">
                                 <span class="glyphicon glyphicon-ok"></span>
                                 <strong ng-bind="ok"></strong>
                             </div>
-                            <div ng-show="error" style="margin-left: 5px;line-height: 35px" class="col-sm-4 danger">
+                            <div ng-if="error" style="margin-left: 5px;line-height: 35px" class="col-sm-4 danger">
                                 <span class="glyphicon glyphicon-remove"></span>
                                 <strong ng-bind="error"></strong>
                             </div>
@@ -252,7 +252,7 @@
                                     {{btn_text}}
                                 </button>
                             </div>
-                            <div class="col-sm-1" ng-hide="show_close">
+                            <div class="col-sm-1" ng-hide="show_close" style="margin-right: 15px">
                                 <button class="btn btn-danger btn-custom" ng-click="refresh()">
                                     Close
                                 </button>
@@ -279,8 +279,6 @@
         <script src="js/app/configurationModule/ConfigurationService.js"></script>
         <script src="js/app/configurationModule/ConfigurationController.js"></script>
         <script src="js/app/configurationModule/ConfigurationDirective.js"></script>
-
-
     </div>
 </div>
 </body>

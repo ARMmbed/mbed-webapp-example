@@ -19,15 +19,18 @@ package org.mbed.example.resources;
 
 import com.arm.mbed.restclient.endpoint.PreSubscriptionEntry;
 import com.arm.mbed.restclient.endpoint.PreSubscriptions;
+import java.net.ConnectException;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.mbed.example.MbedClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +52,17 @@ public class SubscriptionResources {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<PreSubscriptionEntry> getSubscriptions() {
-        return clientCtr.client().preSubscriptions().read();
+        try {
+            return clientCtr.client().preSubscriptions().read();
+        } catch (Exception e) {
+            String message;
+            if (e.getCause() instanceof ConnectException) {
+                message = "Cannot connect to Server";
+            } else {
+                message = e.getMessage();
+            }
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build(), e);
+        }
     }
 
     @PUT
@@ -57,7 +70,18 @@ public class SubscriptionResources {
     @Consumes(MediaType.APPLICATION_JSON)
     public void putSubscription(List<PreSubscriptionEntry> preSubscriptionEntryList) {
         LOGGER.debug("Creating pre subscriptions.");
-        PreSubscriptions.PreSubscriptionsBuilder preSubscriptionsBuilder = clientCtr.client().preSubscriptions().builder();
+        PreSubscriptions.PreSubscriptionsBuilder preSubscriptionsBuilder;
+        try {
+            preSubscriptionsBuilder = clientCtr.client().preSubscriptions().builder();
+        } catch (Exception e) {
+            String message;
+            if (e.getCause() instanceof ConnectException) {
+                message = "Cannot connect to Server";
+            } else {
+                message = e.getMessage();
+            }
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build(), e);
+        }
 
         if (!preSubscriptionEntryList.isEmpty()) {
             for (PreSubscriptionEntry preSubscriptionEntry : preSubscriptionEntryList) {

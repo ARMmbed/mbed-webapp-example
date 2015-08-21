@@ -33,7 +33,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
     ConnectionStatus.getStatus().then(
         function (data) {
             $scope.isConnected = data.data == true;
-            $scope.isDisonnected = data.data == true;
+            $scope.isDisconnected = data.data == false;
             console.log('data', data);
         }, function (data, status) {
             console.log('Error!!', status, data);

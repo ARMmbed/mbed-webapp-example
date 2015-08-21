@@ -62,6 +62,8 @@ public class MbedClientService {
                 createConnection(DEFAULT_SERVER_CONFIGURATION);
             } catch (MbedClientInitializationException | URISyntaxException | MbedClientRuntimeException e) {
                 LOGGER.warn("Cannot create connection:" + e.getMessage());
+            } catch (RuntimeException ex) {
+                LOGGER.error("Unable to invoke client request: " + ex.getMessage());
             }
         }
     }
@@ -117,7 +119,6 @@ public class MbedClientService {
         }
         readAllEndpoints();
         connected = true;
-
     }
 
     public MbedClient client() {

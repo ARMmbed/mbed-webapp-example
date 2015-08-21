@@ -17,24 +17,16 @@
 angular.module('App.controllers',[]);
 angular.module('App.controllers').controller('Ctrl', function ($scope, Endpoints, ConnectionStatus, Configuration, $window,$location) {
 
-    $scope.endpoints = Endpoints.query();
-    $scope.isConnected = false;
-    $scope.isDisonnected = false;
-    $scope.anyDevice = "true";//!$scope.endpoints.length;
-
-    $scope.$on('$locationChangeStart ', function (event) {
-        //event.preventDefault();
-        alert(9);
-        //if (vm.myForm!= null && vm.myForm.$dirty) {
-            if (!confirm("Are you sure you want to leave this page?")) {
-                event.preventDefault();
-            }
-        //}
-         });
+    Endpoints.query().$promise.then(function (data) {
+        $scope.noDevice = data.length == 0 ? true : false;
+        $scope.endpoints = data;
+    }, function (data, status) {
+        console.log('Error!!', status, data);
+    });
     ConnectionStatus.getStatus().then(
         function (data) {
             $scope.isConnected = data.data == true;
-            $scope.isDisonnected = data.data == true;
+            $scope.isDisconnected = data.data == false;
             console.log('data', data);
         }, function (data, status) {
             console.log('Error!!', status, data);
@@ -49,15 +41,22 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Endpoints
         $window.open('Resources.html#/?endpoint=' + name, "_self");
     };
 });
-//angular.module('App.controllers').run(['$rootScope', function ($rootScope,$scope) {
-//    $rootScope.$on('$locationChangeStart', function (event,newUrl,oldUrl) {
-//            alert(88);
-//            console.log(newUrl); // http://localhost:3000/#/articles/new
-//            console.log(oldUrl); // http://localhost:3000/#/articles
-//            event.preventDefault(); // This prevents the navigation from happening
-//        }
-//    );
-//
-//
-//
-//}]);
+angular.module('App.controllers').filter('search', function () {
+    return function (items, str) {
+        if (str == '') return items;
+
+        var filtered = [];
+        var rgx = new RegExp(str, '');
+        var rgxstart = new RegExp(': ?"' + str);
+
+        angular.forEach(items, function (item) {
+            var stringified = JSON.stringify(item);
+            item.points = (stringified.match(rgx) || []).length;
+
+            if (rgxstart.test(stringified)) item.points++;
+
+            if (item.points > 0) filtered.push(item);
+        });
+        return filtered;
+    }
+});

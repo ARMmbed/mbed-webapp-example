@@ -53,17 +53,17 @@
                     <li class="active"><a href="Devices.html#/">Devices</a></li>
                     <li><a href="Configuration.html#/">Configuration</a></li>
                 </ul>
-                <ul ng-cloak class="nav navbar-nav navbar-right">
+                <ul ng-cloak class="nav navbar-nav navbar-right" ng-init="isConnected = false;isDisconnected=false">
                     <li>
                         <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="isConnected" class="navbar-right myLogo text-center">
+                             style="padding:10px" ng-if="isConnected" class="navbar-right myLogo text-center">
                             <img src="img/connected.png"/>
                             <t class="success">Connected</t>
                         </div>
                     </li>
                     <li>
                         <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="isDisconnected" class="navbar-right myLogo">
+                             style="padding:10px" ng-if="isDisconnected" class="navbar-right myLogo">
                             <img style="margin-right:5px" src="img/disconnected.png"/>
                             <t class="danger">Disconnected
                             </t>
@@ -88,8 +88,8 @@
                     </span>
             </div>
             <!-- /input-group -->
-            <div class="ng-cloak">
-                <div class="table-responsive" ng-init="anyDevice=false">
+            <div ng-cloak ng-init="noDevice=false">
+                <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <tr class="info">
@@ -105,9 +105,9 @@
                             <td>{{ x.type }}</td>
                         </tr>
                         </tbody>
-                        <em ng-show="!values.length && endpoints.length" class="danger">There are no matching
+                        <em ng-if="!values.length && endpoints.length" class="danger">There are no matching
                             devices.</em>
-                        <em ng-show="anyDevice" class="danger">There are no devices.</em>
+                        <em ng-if="noDevice" class="danger">There are no devices.</em>
                     </table>
                 </div>
             </div>

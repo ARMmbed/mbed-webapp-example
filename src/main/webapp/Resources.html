@@ -62,17 +62,17 @@
                     <li class="active"><a href="Devices.html">Devices</a></li>
                     <li><a href="Configuration.html">Configuration</a></li>
                 </ul>
-                <ul ng-cloak class="nav navbar-nav navbar-right">
+                <ul ng-cloak class="nav navbar-nav navbar-right" ng-init="isConnected = false;isDisconnected=false">
                     <li>
                         <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="isConnected" class="navbar-right myLogo text-center">
+                             style="padding:10px" ng-if="isConnected" class="navbar-right myLogo text-center">
                             <img src="img/connected.png"/>
                             <t class="success">Connected</t>
                         </div>
                     </li>
                     <li>
                         <div ng-cloak data-toggle="tooltip" data-placement="right" title={{address}}
-                             style="padding:10px" ng-show="isDisconnected" class="navbar-right myLogo">
+                             style="padding:10px" ng-if="isDisconnected" class="navbar-right myLogo">
                             <img style="margin-right:5px" src="img/disconnected.png"/>
                             <t class="danger">Disconnected
                             </t>
@@ -86,10 +86,10 @@
     <div class="container">
         <!-- Main component with gray background -->
         <div class="jumbotron">
-            <h2>{{detail}}</h2>
+            <h2 ng-bind="detail"></h2>
 
             <div>
-                <div class="table-responsive">
+                <div class="table-responsive" ng-cloak>
                     <table
                             class="table table-bordered table-striped table-hover">
                         <thead>
@@ -122,7 +122,7 @@
                                    data-content="{{x.lastUpdate}}"
                                    data-placement="top"></a>
                                 <!--<img ng-show="x.show" src="img/loading.gif" index="{{$index}}">-->
-                                <span ng-show="x.show"><i class="glyphicon glyphicon-refresh spin infoColor"></i></span>
+                                <span ng-if="x.show"><i class="glyphicon glyphicon-refresh spin infoColor"></i></span>
                             </td>
                             <td class="col-md-1 td_center"
                                 title="{{x.obs == true && x.subscribed == true?'observable and subscribed':(x.obs == false?'not observable':'observable but not subscribed')}}">
