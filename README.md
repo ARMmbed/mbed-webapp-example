@@ -55,6 +55,7 @@ Configure with connector
 - Sign up for the first time or login with your credentials. 
 - Click on the Access keys link.
 - Create new access key.
-- Go to Configuration page of example-app.
+- Open the example-app from browser: http://localhost:8082.
+- Select Configuration tab at the top of the page.
 - Select Token Authentication.
 - Enter the access key and save.
