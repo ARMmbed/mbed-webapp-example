@@ -98,7 +98,7 @@
                                 <input ng-model="data.address" type="url" class="form-control" id="address" required>
                             </div>
                         </div>
-                        <div class="text-center radio alert alert-info">
+                        <div class="text-center radio alert alert-info" style="margin-bottom: 10px">
                             <label class="radio-inline">
                                 <input type="radio" class="active" name="inlineRadioOptions" id="inlineRadio1"
                                        value="userPass" ng-model="selection"> Basic Authentication
@@ -108,49 +108,46 @@
                                        value="token"> Token Authentication
                             </label>
                         </div>
-                        <div style="margin-top: 15px; height: 100px">
-                            <div class="form-group" ng-show="selection == 'userPass'">
-                                <label for="username" class="col-sm-3 control-label">Username</label>
 
-                                <div class="col-sm-9">
-                                    <input ng-model="data.username" type="text" class="form-control" id="username"
-                                           placeholder="Username" ng-required="selection == 'userPass'">
-                                </div>
-                            </div>
-                            <div class="form-group" ng-show="selection == 'userPass'">
-                                <label for="password" class="col-sm-3 control-label">Password</label>
+                        <div class="form-group" ng-show="selection == 'userPass'">
+                            <label for="username" class="col-sm-3 control-label">Username</label>
 
-                                <div class="col-sm-9">
-                                    <input ng-model="data.password" type="password" class="form-control" id="password"
-                                           placeholder="Password"
-                                           ng-required="selection == 'userPass'">
-                                </div>
-                            </div>
-                            <div class="form-group" ng-if="selection == 'token'">
-                                <label for="token" class="col-sm-3 control-label">Token</label>
-
-                                <div class="col-sm-9">
-                                    <input ng-model="data.token" type="text" class="form-control" id="token"
-                                           placeholder="Token"
-                                           ng-required="selection == 'token'">
-                                </div>
+                            <div class="col-sm-9">
+                                <input ng-model="data.username" type="text" class="form-control" id="username"
+                                       placeholder="Username" ng-required="selection == 'userPass'">
                             </div>
                         </div>
-                        <div class="form-group" ng-init="ok=false;error=false;done=true">
-                            <div class="col-sm-offset-3 col-sm-1">
-                                <button type="submit" id="submits" class="btn btn-info btn-custom">Save
-                                    <span ng-if="!done"><i class="glyphicon glyphicon-refresh spin"></i></span>
-                                </button>
-                            </div>
-                            <div ng-if="ok" style="margin-left: 5px; line-height: 35px" class="col-sm-4 success">
-                                <span class="glyphicon glyphicon-ok"></span>
-                                <strong ng-bind="ok"></strong>
-                            </div>
-                            <div ng-if="error" style="margin-left: 5px;line-height: 35px" class="col-sm-4 danger">
-                                <span class="glyphicon glyphicon-remove"></span>
-                                <strong ng-bind="error"></strong>
-                            </div>
+                        <div class="form-group" ng-show="selection == 'userPass'">
+                            <label for="password" class="col-sm-3 control-label">Password</label>
 
+                            <div class="col-sm-9">
+                                <input ng-model="data.password" type="password" class="form-control" id="password"
+                                       placeholder="Password"
+                                       ng-required="selection == 'userPass'">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="selection == 'token'">
+                            <label for="token" class="col-sm-3 control-label">Token</label>
+
+                            <div class="col-sm-9">
+                                <input ng-model="data.token" type="text" class="form-control col-sm-9" id="token"
+                                       placeholder="Token"
+                                       ng-required="selection == 'token'">
+                            </div>
+                        </div>
+
+                        <div class="form-group row" ng-init="ok=false;error=false;done=true">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" id="submits" class="btn btn-info btn-custom form-control"
+                                        style="margin-bottom: 10px">Save
+                                    <span ng-if="!done"><i class="glyphicon glyphicon-refresh spin"></i></span>
+                                    <span ng-if="ok" class="glyphicon glyphicon-ok"></span>
+                                    <span ng-if="error" class="glyphicon glyphicon-remove danger"></span>
+                                </button>
+                                <div ng-if="error" class="alert alert-danger">
+                                    <strong ng-bind="error"></strong>
+                                </div>
+                            </div>
                         </div>
                     </form>
 

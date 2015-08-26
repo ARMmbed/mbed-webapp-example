@@ -18,6 +18,7 @@ Development
 ### Requirements
 - Java 8
 - Maven 3.x
+- mbed Device Server (mDS) - where the example application connects to.
 
 ### Build:
 
@@ -46,3 +47,13 @@ Build executable war (with embedded tomcat):
         java -Dcom.arm.mbed.restclient.servlet.server-port=8082 -jar example-app-1.0-SNAPSHOT-war-exec.jar -httpPort=8082
 
 Open from browser: http://localhost:8082
+
+Configure with connector
+==============================
+
+- Open from browser: http://connector-test.dev.mbed.com/
+- Sign up for the first time or login with your credentials. 
+- Click on the Access keys link
+- Create new access key
+- Go to Configuration page of example-app
+- Enter the access key and save.

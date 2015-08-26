@@ -41,6 +41,7 @@ angular.module('App.controllers').controller('ConfCtrl',
 
 angular.module('App.controllers').controller('Ctrl',
     function Ctrl($scope, $http, ConnectionStatus, Configuration, $location, $rootScope) {
+        $scope.selection = "userPass";
         ConnectionStatus.getStatus().then(
             function (data) {
                 $scope.isConnected = data.data == true;
