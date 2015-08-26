@@ -53,7 +53,8 @@ Configure with connector
 
 - Open from browser: http://connector-test.dev.mbed.com/
 - Sign up for the first time or login with your credentials. 
-- Click on the Access keys link
-- Create new access key
-- Go to Configuration page of example-app
+- Click on the Access keys link.
+- Create new access key.
+- Go to Configuration page of example-app.
+- Select Token Authentication.
 - Enter the access key and save.
