@@ -17,31 +17,11 @@
 
 angular.module('App.controllers', ['ngAnimate']);
 angular.module('App.controllers').controller('ConfCtrl',
-    function ConfCtrl($scope, $http, Configuration) {
-        $scope.save = function () {
-            $scope.error = null;
-            $scope.ok = null;
-            $scope.done = false;
-            if ($scope.selection.valueOf() == "userPass") {
-                $scope.data.token = null;
-            }
-            else {
-                $scope.data.username = null;
-                $scope.data.password = null;
-            }
-            Configuration.set({}, $scope.data).$promise.then(function () {
-                $scope.ok = "Success!";
-            }, function (data) {
-                $scope.error = data.data;
-            }).finally(function () {
-                $scope.done = true;
-            });
-        };
-    });
-
-angular.module('App.controllers').controller('Ctrl',
-    function Ctrl($scope, $http, ConnectionStatus, Configuration, $location, $rootScope) {
-        $scope.selection = "userPass";
+    function ConfCtrl($scope, $http, Configuration, ConnectionStatus, $rootScope) {
+        $scope.$on("connection", function (event, args) {
+            $scope.isConnected = args.connected;
+            $scope.isDisconnected = !args.connected;
+        });
         ConnectionStatus.getStatus().then(
             function (data) {
                 $scope.isConnected = data.data == true;
@@ -56,6 +36,32 @@ angular.module('App.controllers').controller('Ctrl',
         }, function (data, status) {
             console.log('Error!!', status, data);
         });
+        $scope.save = function () {
+            $scope.error = null;
+            $scope.ok = null;
+            $scope.done = false;
+            if ($scope.selection.valueOf() == "userPass") {
+                $scope.data.token = null;
+            }
+            else {
+                $scope.data.username = null;
+                $scope.data.password = null;
+            }
+            Configuration.set({}, $scope.data).$promise.then(function () {
+                $scope.ok = "Success!";
+                $rootScope.$broadcast("connection", {connected: true});
+            }, function (data) {
+                $scope.error = data.data;
+                $rootScope.$broadcast("connection", {connected: false});
+            }).finally(function () {
+                $scope.done = true;
+            });
+        };
+    });
+
+angular.module('App.controllers').controller('Ctrl',
+    function Ctrl($scope, $http, $location, $rootScope) {
+        $scope.selection = "userPass";
         $rootScope.$on('$locationChangeStart', function (event) {
             if (!tabClicked && $rootScope.notSaved && !confirm("You have unsaved changes, do you want to continue?")) {
                 event.preventDefault();

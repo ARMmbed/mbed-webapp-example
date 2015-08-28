@@ -180,6 +180,7 @@ public final class EndpointsResource {
     }
 
     private ResourcePath checkConcurrency(String name, String path) {
+        path = path.replace("%2F", "/");
         if (path.charAt(0) != '/') {
             path = "/" + path;
         }

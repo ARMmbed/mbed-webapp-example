@@ -70,7 +70,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
     $scope.put = function (event, name) {
         var value = $('#commandValue')[0].value;
         $(parent).editable('toggle');
-        Endpoints.update({endpoint_name: name, url_path: path}, value).$promise.then(function (data) {
+        Endpoints.update({endpoint_name: name, url_path: path}, value).$promise.then(function () {
             selected_record.show = true;
         }, function (data, status) {
             console.error('Error!!', status, data);
@@ -80,7 +80,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
     $scope.post = function (event, name) {
         var value = $('#commandValue')[0].value;
         $(parent).editable('toggle');
-        Endpoints.set({endpoint_name: name, url_path: path}, value).$promise.then(function (data) {
+        Endpoints.set({endpoint_name: name, url_path: path}, value).$promise.then(function () {
             selected_record.show = true;
         }, function (data, status) {
             console.error('Error!!', status, data);
@@ -89,7 +89,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
     };
     $scope.delete = function (event, name) {
         $(parent).editable('toggle');
-        Endpoints.remove({endpoint_name: name, url_path: path}).$promise.then(function (data) {
+        Endpoints.remove({endpoint_name: name, url_path: path}).$promise.then(function () {
             selected_record.show = true;
         }, function (data, status) {
             console.error('Error!!', status, data);
@@ -102,7 +102,7 @@ angular.module('App.controllers').controller('Ctrl', function ($scope, Request, 
     /*The popup does not have access to path and selected row so we need to keep them in vars.*/
     $scope.action_clicked = function (event, selected_path, record) {
         parent = event.target;
-        path = selected_path;
+        path = selected_path.replace(/\//g, '%2F');
         selected_record = record;
     };
     setInterval(function () {
