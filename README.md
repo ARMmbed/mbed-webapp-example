@@ -51,11 +51,12 @@ Open from browser: http://localhost:8082
 Configure with connector
 ==============================
 
-- Open from browser: http://connector-test.dev.mbed.com/
-- Sign up for the first time or login with your credentials. 
-- Click on the Access keys link.
-- Create new access key.
-- Open the example-app from browser: http://localhost:8082.
-- Select Configuration tab at the top of the page.
-- Select Token Authentication.
-- Enter the access key and save.
+1. Open from browser: http://connector-test.dev.mbed.com/
+2. Sign up for the first time or login with your credentials. 
+3. Click on the Access keys link.
+4. Create new access key.
+5. Mark down the device server address from this page.
+6. Open the example-app from browser: http://localhost:8082.
+7. Select Configuration tab at the top of the page.
+8. Select Token Authentication.
+9. Enter the access key and the server address and save.

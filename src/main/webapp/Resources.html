@@ -105,7 +105,7 @@
 
                             <td class="col-md-2"><span ng-bind="x.uriPath"></span></td>
                             <td class="col-md-4" style="white-space: nowrap"
-                                title="{{x.notification == true?'notification value':'read value'}}">
+                                title="{{x.notification == true?'notification value':(x.notification == false ? 'read value':'')}}">
                                 <a ng-success
                                    ng-class="{'glyphicon glyphicon-cloud-download success':x.notification == true,'glyphicon glyphicon-ok-circle success':x.notification == false}"
                                    ng-show="x.success"
