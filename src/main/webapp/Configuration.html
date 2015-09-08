@@ -176,7 +176,8 @@
                             <tfoot>
                             <tr>
                                 <td colspan="4" ng-init="successfulPush = 'false'">
-                                    <button ng-disabled="notSaved == false" class="btn btn-success btn-custom col-sm-4"
+                                    <button ng-disabled="notSaved == false || isDisconnected"
+                                            class="btn btn-success btn-custom col-sm-4"
                                             ng-click="save()">Save
                                         <span ng-if="!successfulPush"><i
                                                 class="glyphicon glyphicon-refresh spin"></i></span>
@@ -207,9 +208,11 @@
                                     {{x.uriPathPatterns[0]}}
                                 </td>
                                 <td class="col-md-1 td_center" style="white-space: nowrap">
-                                    <span class="btn btn-danger btn-xs" ng-click="delete($index)">delete</span>
+                                    <span class="btn btn-danger btn-xs" ng-click="delete($index)"
+                                          ng-disabled="isDisconnected">delete</span>
                                     <span class="btn btn-success btn-xs"
-                                          ng-click="update(x.endpointName,x.endpointType,x.uriPathPatterns[0],$index)">edit</span>
+                                          ng-click="update(x.endpointName,x.endpointType,x.uriPathPatterns[0],$index)"
+                                          ng-disabled="isDisconnected">edit</span>
                                 </td>
                             </tr>
                             </tbody>
@@ -246,7 +249,7 @@
                         <div style="margin-top:10px">
                             <div class="col-sm-1" style="padding: 0px">
                                 <button ng-click="addRow()" class="btn btn-info btn-custom"
-                                        ng-disabled="valid == false">
+                                        ng-disabled="valid == false || isDisconnected">
                                     {{btn_text}}
                                 </button>
                             </div>
@@ -255,9 +258,11 @@
                                     Close
                                 </button>
                             </div>
-                            <div ng-show="message" style="margin-left: 5px;line-height: 35px" class="col-sm-4 danger">
+                            <div ng-show="message || isDisconnected" style="margin-left: 5px;line-height: 35px"
+                                 class="col-sm-4 danger">
                                 <span class="glyphicon glyphicon-remove"></span>
-                                <strong ng-bind="message"></strong>
+                                <strong ng-if="isConnected" ng-bind="message"></strong>
+                                <strong ng-if="isDisconnected">You are disconnected.</strong>
                             </div>
                         </div>
                     </div>

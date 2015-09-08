@@ -73,7 +73,6 @@ public class SubscriptionResources {
         PreSubscriptions.PreSubscriptionsBuilder preSubscriptionsBuilder;
         try {
             preSubscriptionsBuilder = clientCtr.client().preSubscriptions().builder();
-            System.out.println("clientCtr.isConnected() = " + clientCtr.isConnected());
         } catch (Exception e) {
             String message;
             if (e.getCause() instanceof ConnectException) {
@@ -83,7 +82,6 @@ public class SubscriptionResources {
             }
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build(), e);
         }
-
         if (!preSubscriptionEntryList.isEmpty()) {
             for (PreSubscriptionEntry preSubscriptionEntry : preSubscriptionEntryList) {
                 preSubscriptionsBuilder.endpointName(preSubscriptionEntry.getEndpointName()).

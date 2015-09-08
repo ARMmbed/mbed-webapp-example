@@ -25,7 +25,6 @@ import com.arm.mbed.restclient.NotificationListener;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import com.arm.mbed.restclient.servlet.HttpServletChannel;
-import com.arm.mbed.restclient.servlet.StaticContext;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -108,7 +107,6 @@ public class MbedClientService {
             }
             this.endpointContainer = new EndpointContainer();
             HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
-            System.out.println("StaticContext = " + StaticContext.getServletUrl());
             if (isSecure) {
                 this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
                         .secure()
