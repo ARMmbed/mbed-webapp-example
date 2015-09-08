@@ -139,8 +139,8 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
     };
     $scope.save = function () {
         $scope.successfulPush = false;
-        $scope.ok = null;
-        $scope.error = null;
+        $scope.sub_ok = null;
+        $scope.sub_error = null;
         var preSubscriptionList = [];
         $filter('filter')($scope.subscriptions, function (d) {
             var item = {
@@ -151,10 +151,10 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
             preSubscriptionList.push(item);
         });
         Subscriptions.update({}, preSubscriptionList).$promise.then(function () {
-            $scope.ok = "Saved successfully!";
+            $scope.sub_ok = "Saved successfully!";
         }, function (data) {
             console.log("error in pushing pre-subscription ", data.status, data.statusText);
-            $scope.error = data.statusText;
+            $scope.sub_error = data.statusText;
         }).finally(function () {
             $scope.successfulPush = true;
         });

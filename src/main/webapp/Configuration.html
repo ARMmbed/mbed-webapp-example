@@ -105,7 +105,7 @@
                             </label>
                             <label class="radio-inline">
                                 <input type="radio" name="inlineRadioOptions" ng-model="selection" id="inlineRadio2"
-                                       value="token"> Token Authentication
+                                       value="token"> Access Key Authentication
                             </label>
                         </div>
 
@@ -127,11 +127,11 @@
                             </div>
                         </div>
                         <div class="form-group" ng-if="selection == 'token'">
-                            <label for="token" class="col-sm-3 control-label">Token</label>
+                            <label for="token" class="col-sm-3 control-label">Access key</label>
 
                             <div class="col-sm-9">
                                 <input ng-model="data.token" type="text" class="form-control col-sm-9" id="token"
-                                       placeholder="Token"
+                                       placeholder="Access key"
                                        ng-required="selection == 'token'">
                             </div>
                         </div>
@@ -178,17 +178,18 @@
                                 <td colspan="4" ng-init="successfulPush = 'false'">
                                     <button ng-disabled="notSaved == false" class="btn btn-success btn-custom col-sm-4"
                                             ng-click="save()">Save
-                                        <span ng-hide="successfulPush"><i class="glyphicon glyphicon-refresh spin"></i></span>
+                                        <span ng-if="!successfulPush"><i
+                                                class="glyphicon glyphicon-refresh spin"></i></span>
                                     </button>
-                                    <div ng-show="ok" style="margin-left: 5px; line-height: 35px"
+                                    <div ng-if="sub_ok" style="margin-left: 5px; line-height: 35px"
                                          class="col-sm-4 success">
                                         <span class="glyphicon glyphicon-ok"></span>
-                                        <strong ng-bind="ok"></strong>
+                                        <strong ng-bind="sub_ok"></strong>
                                     </div>
-                                    <div ng-show="error" style="margin-left: 5px;line-height: 35px"
+                                    <div ng-if="sub_error" style="margin-left: 5px;line-height: 35px"
                                          class="col-sm-4 danger">
                                         <span class="glyphicon glyphicon-remove"></span>
-                                        <strong ng-bind="error"></strong>
+                                        <strong ng-bind="sub_error"></strong>
                                     </div>
                                 </td>
                             </tr>

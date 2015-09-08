@@ -25,6 +25,7 @@ import com.arm.mbed.restclient.NotificationListener;
 import com.arm.mbed.restclient.entity.notification.EndpointDescription;
 import com.arm.mbed.restclient.entity.notification.ResourceNotification;
 import com.arm.mbed.restclient.servlet.HttpServletChannel;
+import com.arm.mbed.restclient.servlet.StaticContext;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -68,11 +69,11 @@ public class MbedClientService {
         }
     }
 
-    public final void createConnection(ServerConfiguration configuration) throws MbedClientInitializationException, URISyntaxException {
+    public void createConnection(ServerConfiguration configuration) throws MbedClientInitializationException, URISyntaxException {
         createConnection(configuration.getAddress(), configuration.getUsername(), configuration.getPassword(), configuration.getToken());
     }
 
-    public final void createConnection(String address, String clientName, String clientSecret, String token) throws MbedClientInitializationException, URISyntaxException {
+    public void createConnection(String address, String clientName, String clientSecret, String token) throws MbedClientInitializationException, URISyntaxException {
         connected = false;
         if (client != null) {
             try {
@@ -83,6 +84,7 @@ public class MbedClientService {
         }
         boolean isSecure = false;
         URI uri = new URI(address);
+        int port = checkPort(uri.getPort());
         if (uri.getScheme().equals("https")) {
             isSecure = true;
         }
@@ -94,11 +96,11 @@ public class MbedClientService {
                 this.client = MbedClientBuilder.newBuilder().credentials(token)
                         .secure()
                         .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
+                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
             } else {
                 this.client = MbedClientBuilder.newBuilder().credentials(token)
                         .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
+                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
             }
         } else {
             if (clientName.split("/").length != 2) {
@@ -106,21 +108,25 @@ public class MbedClientService {
             }
             this.endpointContainer = new EndpointContainer();
             HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
+            System.out.println("StaticContext = " + StaticContext.getServletUrl());
             if (isSecure) {
                 this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
                         .secure()
                         .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
+                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
             } else {
                 this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
                         .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), uri.getPort()));
+                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
             }
         }
         readAllEndpoints();
         connected = true;
     }
 
+    private int checkPort(int port) {
+        return port == -1 ? 80 : port;
+    }
     public MbedClient client() {
         return client;
     }

@@ -73,6 +73,7 @@ public class SubscriptionResources {
         PreSubscriptions.PreSubscriptionsBuilder preSubscriptionsBuilder;
         try {
             preSubscriptionsBuilder = clientCtr.client().preSubscriptions().builder();
+            System.out.println("clientCtr.isConnected() = " + clientCtr.isConnected());
         } catch (Exception e) {
             String message;
             if (e.getCause() instanceof ConnectException) {

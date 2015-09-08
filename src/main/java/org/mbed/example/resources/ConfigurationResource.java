@@ -53,6 +53,7 @@ public final class ConfigurationResource {
 
     /**
      * Returns Server Configuration
+     *
      * @return server configuration
      */
     @GET
@@ -63,7 +64,8 @@ public final class ConfigurationResource {
     }
 
     /**
-     * Sets configuration 
+     * Sets configuration
+     *
      * @param newConf new configuration
      */
     @POST
@@ -72,6 +74,10 @@ public final class ConfigurationResource {
         LOGGER.debug("Writing server configuration.");
         this.serverConfiguration = newConf;
         try {
+            String token = newConf.getToken();
+            if (token != null && !token.trim().contains(" ")) {
+                newConf.setToken("bearer " + token.trim());
+            }
             clientCtr.createConnection(serverConfiguration);
         } catch (Exception e) {
             String message;
