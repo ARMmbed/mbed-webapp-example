@@ -59,4 +59,11 @@ public class MbedClientServiceTest {
         assertEquals(1, epContainer.getAllEndpoints().size());
     }
 
+    @Test
+    public void testCheckPort() throws Exception {
+        MbedClientService mbedClientService = new MbedClientService();
+
+        assertEquals(80, mbedClientService.checkPort(-1));
+        assertEquals(8080, mbedClientService.checkPort(8080));
+    }
 }

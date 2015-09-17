@@ -122,7 +122,7 @@ public class MbedClientService {
         connected = true;
     }
 
-    private int checkPort(int port) {
+    int checkPort(int port) {
         return port == -1 ? 80 : port;
     }
     public MbedClient client() {

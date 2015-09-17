@@ -60,7 +60,7 @@ angular.module('App.controllers').controller('ConfCtrl',
     });
 
 angular.module('App.controllers').controller('Ctrl',
-    function Ctrl($scope, $http, $location, $rootScope) {
+    function Ctrl($scope, $http, $location, $rootScope, Subscriptions) {
         $scope.selection = "userPass";
         $rootScope.$on('$locationChangeStart', function (event) {
             if (!tabClicked && $rootScope.notSaved && !confirm("You have unsaved changes, do you want to continue?")) {
@@ -87,12 +87,16 @@ angular.module('App.controllers').controller('Ctrl',
                 $(parent).tab('show');
             }
         };
-
+        $scope.refresh_sub = function () {
+            $rootScope.subscriptions = Subscriptions.query();
+            $rootScope.sub_ok = null;
+            $rootScope.sub_error = null;
+        }
     });
 angular.module('App.controllers').controller('subCtrl', function ($scope, $filter, Subscriptions, $rootScope) {
     $rootScope.notSaved = false;
     $scope.show_close = true;
-    $scope.subscriptions = Subscriptions.query();
+    $rootScope.subscriptions = Subscriptions.query();
     $scope.btn_text = 'add';
 
     $scope.addRow = function () {
@@ -139,8 +143,8 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
     };
     $scope.save = function () {
         $scope.successfulPush = false;
-        $scope.sub_ok = null;
-        $scope.sub_error = null;
+        $rootScope.sub_ok = null;
+        $rootScope.sub_error = null;
         var preSubscriptionList = [];
         $filter('filter')($scope.subscriptions, function (d) {
             var item = {
@@ -151,10 +155,10 @@ angular.module('App.controllers').controller('subCtrl', function ($scope, $filte
             preSubscriptionList.push(item);
         });
         Subscriptions.update({}, preSubscriptionList).$promise.then(function () {
-            $scope.sub_ok = "Saved successfully!";
+            $rootScope.sub_ok = "Saved successfully!";
         }, function (data) {
             console.log("error in pushing pre-subscription ", data.status, data.statusText);
-            $scope.sub_error = data.statusText;
+            $rootScope.sub_error = data.statusText;
         }).finally(function () {
             $scope.successfulPush = true;
         });

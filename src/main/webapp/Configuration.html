@@ -83,7 +83,7 @@
         <div class="jumbotron">
             <ul id="myTab" class="nav nav-tabs">
                 <li class="active"><a ng-click="tabclick($event,'server')" href="#server">Server</a></li>
-                <li class=""><a ng-click="tabclick($event,'subscription')" href="#subscription">Pre-Subscription</a>
+                <li class=""><a ng-click="tabclick($event,'subscription');refresh_sub()" href="#subscription">Pre-Subscription</a>
                 </li>
             </ul>
             <div id="myTabContent" class="tab-content" ng-controller="ConfCtrl">
@@ -208,11 +208,13 @@
                                     {{x.uriPathPatterns[0]}}
                                 </td>
                                 <td class="col-md-1 td_center" style="white-space: nowrap">
-                                    <span class="btn btn-danger btn-xs" ng-click="delete($index)"
-                                          ng-disabled="isDisconnected">delete</span>
-                                    <span class="btn btn-success btn-xs"
+                                    <button class="btn btn-danger btn-xs" ng-click="delete($index)"
+                                            ng-disabled="isDisconnected">delete
+                                    </button>
+                                    <button class="btn btn-success btn-xs"
                                           ng-click="update(x.endpointName,x.endpointType,x.uriPathPatterns[0],$index)"
-                                          ng-disabled="isDisconnected">edit</span>
+                                            ng-disabled="isDisconnected">edit
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>

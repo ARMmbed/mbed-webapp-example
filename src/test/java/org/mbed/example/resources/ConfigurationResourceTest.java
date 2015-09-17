@@ -51,8 +51,10 @@ public class ConfigurationResourceTest extends TestCase {
         serverConfiguration.setUsername("domain/app2");
         serverConfiguration.setPassword("secret");
         serverConfiguration.setAddress("http://localhost:8080");
-
         rest.setConfiguration(serverConfiguration);
+        assertEquals("domain/app2", rest.getConfiguration().getUsername());
+        assertEquals("secret", rest.getConfiguration().getPassword());
+        assertEquals("http://localhost:8080", rest.getConfiguration().getAddress());
 
         serverConfiguration.setToken("UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR");
         rest.setConfiguration(serverConfiguration);
