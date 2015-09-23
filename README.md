@@ -1,11 +1,11 @@
 mbed web application - example
 ==============================
 
-This is a simple web application that connects to mbed Device Server (mDS). 
+This is a simple web application that connects to mbed Device Server (mbed DS). 
 
 ### Features
 
-- Configure connection to mDS
+- Configure connection to mbed DS
 - List all devices
 - List device resources
 - Invoke proxy requests (GET, PUT, POST, DELETE) 
@@ -18,7 +18,7 @@ Development
 ### Requirements
 - Java 8
 - Maven 3.x
-- mDS - where the example application connects to
+- mbed DS - where the example application connects to
 
 ### Build:
 
@@ -48,15 +48,15 @@ Build executable war (with embedded tomcat):
 
 Open from browser: http://localhost:8082
 
-Configure with Connector
+Configure with mbed Connector
 ==============================
 
 1. Open in browser: http://connector-test.dev.mbed.com/.
 2. Sign up for the first time or login with your credentials. 
 3. Click the **Access keys** link.
 4. Create new access key.
-5. Copy the mDS address from this page.
+5. Copy the mbed DS address from this page.
 6. Open the example-app in browser: http://localhost:8082.
 7. Select **Configuration** tab at the top of the page.
 8. Select **Token Authentication**.
-9. Enter the access key and the copied mDS address and save.
+9. Enter the access key and the copied mbed DS address and save.
