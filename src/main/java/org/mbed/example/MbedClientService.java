@@ -97,59 +97,67 @@ public class MbedClientService {
 		}
 
 		if (token != null && !token.isEmpty()) {
-			if (usePush) {
-				if (isSecure) {
-					this.client = MbedClientBuilder.newBuilder().credentials(token)
-							.secure()
-							.notifChannel(httpServletChannel)
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				} else {
-					this.client = MbedClientBuilder.newBuilder().credentials(token)
-							.notifChannel(httpServletChannel)
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				}
-			} else {
-				if (isSecure) {
-					this.client = MbedClientBuilder.newBuilder().credentials(token)
-							.secure()
-							.notifChannelLongPolling()
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				} else {
-					this.client = MbedClientBuilder.newBuilder().credentials(token)
-							.notifChannelLongPolling()
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				}
-			}
+			createClientWithToken(usePush, isSecure, token, httpServletChannel, uri, port);
 		} else {
-			if (clientName.split("/").length != 2) {
-				throw new MbedClientInitializationException("Invalid user credentials");
-			}
-			if (usePush) {
-				if (isSecure) {
-					this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
-							.secure()
-							.notifChannel(httpServletChannel)
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				} else {
-					this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
-							.notifChannel(httpServletChannel)
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				}
-			} else {
-				if (isSecure) {
-					this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
-							.secure()
-							.notifChannelLongPolling()
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				} else {
-					this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
-							.notifChannelLongPolling()
-							.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-				}
-			}
+			createClientWithBasicAuth(clientName, usePush, isSecure, clientSecret, httpServletChannel, uri, port);
 		}
 		readAllEndpoints();
 		connected = true;
+	}
+
+	private void createClientWithBasicAuth(String clientName, boolean usePush, boolean isSecure, String clientSecret, HttpServletChannel httpServletChannel, URI uri, int port) throws MbedClientInitializationException {
+		if (clientName.split("/").length != 2) {
+			throw new MbedClientInitializationException("Invalid user credentials");
+		}
+		if (usePush) {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.secure()
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		} else {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.secure()
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		}
+	}
+
+	private void createClientWithToken(boolean usePush, boolean isSecure, String token, HttpServletChannel httpServletChannel, URI uri, int port) throws MbedClientInitializationException {
+		if (usePush) {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.secure()
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		} else {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.secure()
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		}
 	}
 
 	int checkPort(int port) {
