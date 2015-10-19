@@ -59,4 +59,6 @@ Configure with mbed Connector
 6. Open the example-app in browser: http://localhost:8082.
 7. Select **Configuration** tab at the top of the page.
 8. Select **Token Authentication**.
-9. Enter the access key and the copied mbed DS address and save.
+9. Enter the access key and the copied mbed DS address.
+10. Select Pull or Push notification channel. Pull is recommended. Push Notifications requires publicly available URL for the example app (example value: http://REMOTE_HOST:8082/mds-notif)
+11. Save.

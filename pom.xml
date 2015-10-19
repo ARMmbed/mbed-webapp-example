@@ -29,7 +29,7 @@
     <properties>
         <jersey.version>2.18</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mbed-client.version>2.5.0-657</mbed-client.version>
+        <mbed-client.version>3.0.0-323</mbed-client.version>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
@@ -180,12 +180,12 @@
         </dependency>
         <!-- LOGGING -->
         <dependency>
-            <groupId>com.arm.mbed</groupId>
+            <groupId>com.mbed</groupId>
             <artifactId>mbed-client</artifactId>
             <version>${mbed-client.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.arm.mbed</groupId>
+            <groupId>com.mbed</groupId>
             <artifactId>mbed-client-servlet</artifactId>
             <version>${mbed-client.version}</version>
             <exclusions>

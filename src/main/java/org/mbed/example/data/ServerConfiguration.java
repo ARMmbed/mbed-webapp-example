@@ -26,17 +26,19 @@ public class ServerConfiguration {
     private String username;
     private String password;
     private String token;
+	private String pushurl;
 
     public ServerConfiguration() {
         //empty constructor for JSON parsing
     }
 
     
-    public ServerConfiguration(String address, String username, String password, String token) {
+    public ServerConfiguration(String address, String username, String password, String token, String pushurl) {
         this.address = address;
         this.username = username;
         this.password = password;
         this.token = token;
+		this.pushurl = pushurl;
     }
 
     public String getAddress() {
@@ -70,5 +72,8 @@ public class ServerConfiguration {
     public void setToken(String token) {
         this.token = token;
     }
-            
+
+	public String getPushurl() {
+		return pushurl;
+	}
 }

@@ -32,6 +32,7 @@ angular.module('App.controllers').controller('ConfCtrl',
         Configuration.get().$promise.then(function (data) {
             $scope.address = data.address;
             $scope.selection = data.token == null ? "userPass" : "token";
+			$scope.notifselection = data.pushurl == null ? "pull" : "push";
             $scope.data = data;
         }, function (data, status) {
             console.log('Error!!', status, data);
@@ -47,6 +48,11 @@ angular.module('App.controllers').controller('ConfCtrl',
                 $scope.data.username = null;
                 $scope.data.password = null;
             }
+			
+			if ($scope.notifselection.valueOf() == "pull") {
+                $scope.data.pushurl = null;
+            }
+			
             Configuration.set({}, $scope.data).$promise.then(function () {
                 $scope.ok = "Success!";
                 $rootScope.$broadcast("connection", {connected: true});
