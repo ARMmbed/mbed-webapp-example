@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.mbed.example;
 
 import com.arm.mbed.restclient.MbedClient;
@@ -34,146 +33,187 @@ import javax.ws.rs.Path;
 import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ServerConfiguration;
 import org.slf4j.LoggerFactory;
+
 /**
  * @author szymon
  */
 @Singleton
 @Path("mbed-client-service") //it's a DI hack
 public class MbedClientService {
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MbedClientService.class);
-    public static final ServerConfiguration DEFAULT_SERVER_CONFIGURATION = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null);
-    private MbedClient client;
-    private boolean connected;
-    private EndpointContainer endpointContainer;
 
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MbedClientService.class);
+	public static final ServerConfiguration DEFAULT_SERVER_CONFIGURATION = new ServerConfiguration("http://localhost:8080", "domain/app2", "secret", null, null);
+	private MbedClient client;
+	private boolean connected;
+	private EndpointContainer endpointContainer;
 
-    @Inject
-    public MbedClientService() {
-        this(null);
-    }
+	@Inject
+	public MbedClientService() {
+		this(null);
+	}
 
-    public MbedClientService(MbedClient mbedClient) {
-        this.endpointContainer = new EndpointContainer();
-        if (mbedClient != null) {
-            this.client = mbedClient;
-            this.connected = true;
-        } else {
-            try {
-                createConnection(DEFAULT_SERVER_CONFIGURATION);
-            } catch (MbedClientInitializationException | URISyntaxException | MbedClientRuntimeException e) {
-                LOGGER.warn("Cannot create connection:" + e.getMessage());
-            } catch (RuntimeException ex) {
-                LOGGER.error("Unable to invoke client request: " + ex.getMessage());
-            }
-        }
-    }
+	public MbedClientService(MbedClient mbedClient) {
+		this.endpointContainer = new EndpointContainer();
+		if (mbedClient != null) {
+			this.client = mbedClient;
+			this.connected = true;
+		} else {
+			try {
+				createConnection(DEFAULT_SERVER_CONFIGURATION);
+			} catch (MbedClientInitializationException | URISyntaxException | MbedClientRuntimeException e) {
+				LOGGER.warn("Cannot create connection:" + e.getMessage());
+			} catch (RuntimeException ex) {
+				LOGGER.error("Unable to invoke client request: " + ex.getMessage());
+			}
+		}
+	}
 
-    public void createConnection(ServerConfiguration configuration) throws MbedClientInitializationException, URISyntaxException {
-        createConnection(configuration.getAddress(), configuration.getUsername(), configuration.getPassword(), configuration.getToken());
-    }
+	public void createConnection(ServerConfiguration configuration) throws MbedClientInitializationException, URISyntaxException {
+		createConnection(configuration.getAddress(), configuration.getUsername(), configuration.getPassword(), configuration.getToken(), configuration.getPushurl());
+	}
 
-    public void createConnection(String address, String clientName, String clientSecret, String token) throws MbedClientInitializationException, URISyntaxException {
-        connected = false;
-        if (client != null) {
-            try {
-                client.close();
-            } catch (Exception e) {
-                LOGGER.warn("Connection did not close properly: " + e.getMessage());
-            }
-        }
-        boolean isSecure = false;
-        URI uri = new URI(address);
-        if (uri.getScheme().equals("https")) {
-            isSecure = true;
-        }
-        int port = checkPort(uri.getPort(), isSecure);
-        if (token != null && !token.isEmpty()) {
-            this.endpointContainer = new EndpointContainer();
-            HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
-            if (isSecure) {
-                this.client = MbedClientBuilder.newBuilder().credentials(token)
-                        .secure()
-                        .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-            } else {
-                this.client = MbedClientBuilder.newBuilder().credentials(token)
-                        .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-            }
-        } else {
-            if (clientName.split("/").length != 2) {
-                throw new MbedClientInitializationException("Invalid user credentials");
-            }
-            this.endpointContainer = new EndpointContainer();
-            HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
-            if (isSecure) {
-                this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
-                        .secure()
-                        .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-            } else {
-                this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
-                        .notifChannel(httpServletChannel)
-                        .notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
-            }
-        }
-        readAllEndpoints();
-        connected = true;
-    }
+	public void createConnection(String address, String clientName, String clientSecret, String token, String pushURL) throws MbedClientInitializationException, URISyntaxException {
+		connected = false;
+		if (client != null) {
+			try {
+				client.close();
+			} catch (Exception e) {
+				LOGGER.warn("Connection did not close properly: " + e.getMessage());
+			}
+		}
+		boolean isSecure = false;
+		URI uri = new URI(address);
+		if (uri.getScheme().equals("https")) {
+			isSecure = true;
+		}
+		int port = checkPort(uri.getPort(),isSecure);
 
-    int checkPort(int port, boolean isSecure) {
-        return port == -1 ? (isSecure ? 443 : 80) : port;
-    }
-    public MbedClient client() {
-        return client;
-    }
+		this.endpointContainer = new EndpointContainer();
+		HttpServletChannel httpServletChannel = null;
+		boolean usePush = false;
+		if (pushURL != null && !pushURL.isEmpty()) {
+			usePush = true;
+			httpServletChannel = new HttpServletChannel(pushURL, 30, 2000);
+		}
 
-    public boolean isConnected() {
-        return connected;
-    }
+		if (token != null && !token.isEmpty()) {
+			createClientWithToken(usePush, isSecure, token, httpServletChannel, uri, port);
+		} else {
+			createClientWithBasicAuth(clientName, usePush, isSecure, clientSecret, httpServletChannel, uri, port);
+		}
+		readAllEndpoints();
+		connected = true;
+	}
 
-    public void readAllEndpoints() {
-        endpointContainer.updateEndpointsList(client.endpoints().readAll());
-    }
+	private void createClientWithBasicAuth(String clientName, boolean usePush, boolean isSecure, String clientSecret, HttpServletChannel httpServletChannel, URI uri, int port) throws MbedClientInitializationException {
+		if (clientName.split("/").length != 2) {
+			throw new MbedClientInitializationException("Invalid user credentials");
+		}
+		if (usePush) {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.secure()
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		} else {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.secure()
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(clientName, clientSecret)
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		}
+	}
 
-    public EndpointContainer endpointContainer() {
-        return this.endpointContainer;
-    }
+	private void createClientWithToken(boolean usePush, boolean isSecure, String token, HttpServletChannel httpServletChannel, URI uri, int port) throws MbedClientInitializationException {
+		if (usePush) {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.secure()
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.notifChannel(httpServletChannel)
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		} else {
+			if (isSecure) {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.secure()
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			} else {
+				this.client = MbedClientBuilder.newBuilder().credentials(token)
+						.notifChannelLongPolling()
+						.notifListener(new NotificationListenerImpl(endpointContainer)).build(new InetSocketAddress(uri.getHost(), port));
+			}
+		}
+	}
 
-    static class NotificationListenerImpl implements NotificationListener {
+	int checkPort(int port, boolean isSecure) {
+		return port == -1 ? (isSecure ? 443 : 80) : port;
+	}
 
-        private final EndpointContainer endpointContainer;
+	public MbedClient client() {
+		return client;
+	}
 
-        NotificationListenerImpl(EndpointContainer endpointContainer) {
-            this.endpointContainer = endpointContainer;
-        }
+	public boolean isConnected() {
+		return connected;
+	}
 
-        @Override
-        public void onEndpointsRegistered(EndpointDescription[] endpoints) {
-            endpointContainer.putEndpoints(endpoints);
-        }
+	public void readAllEndpoints() {
+		endpointContainer.updateEndpointsList(client.endpoints().readAll());
+	}
 
-        @Override
-        public void onEndpointsUpdated(EndpointDescription[] endpoints) {
-            endpointContainer.putEndpoints(endpoints);
-        }
+	public EndpointContainer endpointContainer() {
+		return this.endpointContainer;
+	}
 
-        @Override
-        public void onEndpointsRemoved(String[] endpointsRemoved) {
-            endpointContainer.removeEndpoints(endpointsRemoved);
-        }
+	static class NotificationListenerImpl implements NotificationListener {
 
-        @Override
-        public void onResourcesUpdated(ResourceNotification[] resourceNotifications) {
-            for (ResourceNotification notification : resourceNotifications) {
-                ResourcePath resourcePath = new ResourcePath(notification.getEndpointName(), notification.getUriPath());
-                endpointContainer.updateResource(resourcePath, notification);
-            }
-        }
+		private final EndpointContainer endpointContainer;
 
-        @Override
-        public void onEndpointsExpired(String[] endpointsExpired) {
-            endpointContainer.removeEndpoints(endpointsExpired);
-        }
-    }
+		NotificationListenerImpl(EndpointContainer endpointContainer) {
+			this.endpointContainer = endpointContainer;
+		}
+
+		@Override
+		public void onEndpointsRegistered(EndpointDescription[] endpoints) {
+			endpointContainer.putEndpoints(endpoints);
+		}
+
+		@Override
+		public void onEndpointsUpdated(EndpointDescription[] endpoints) {
+			endpointContainer.putEndpoints(endpoints);
+		}
+
+		@Override
+		public void onEndpointsRemoved(String[] endpointsRemoved) {
+			endpointContainer.removeEndpoints(endpointsRemoved);
+		}
+
+		@Override
+		public void onResourcesUpdated(ResourceNotification[] resourceNotifications) {
+			for (ResourceNotification notification : resourceNotifications) {
+				ResourcePath resourcePath = new ResourcePath(notification.getEndpointName(), notification.getUriPath());
+				endpointContainer.updateResource(resourcePath, notification);
+			}
+		}
+
+		@Override
+		public void onEndpointsExpired(String[] endpointsExpired) {
+			endpointContainer.removeEndpoints(endpointsExpired);
+		}
+	}
 }
