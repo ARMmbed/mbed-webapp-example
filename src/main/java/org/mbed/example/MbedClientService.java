@@ -83,11 +83,10 @@ public class MbedClientService {
         }
         boolean isSecure = false;
         URI uri = new URI(address);
-        int port = checkPort(uri.getPort());
         if (uri.getScheme().equals("https")) {
             isSecure = true;
         }
-
+        int port = checkPort(uri.getPort(), isSecure);
         if (token != null && !token.isEmpty()) {
             this.endpointContainer = new EndpointContainer();
             HttpServletChannel httpServletChannel = new HttpServletChannel(30, 2000);
@@ -122,8 +121,8 @@ public class MbedClientService {
         connected = true;
     }
 
-    int checkPort(int port) {
-        return port == -1 ? 80 : port;
+    int checkPort(int port, boolean isSecure) {
+        return port == -1 ? (isSecure ? 443 : 80) : port;
     }
     public MbedClient client() {
         return client;

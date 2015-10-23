@@ -63,7 +63,9 @@ public class MbedClientServiceTest {
     public void testCheckPort() throws Exception {
         MbedClientService mbedClientService = new MbedClientService();
 
-        assertEquals(80, mbedClientService.checkPort(-1));
-        assertEquals(8080, mbedClientService.checkPort(8080));
+        assertEquals(80, mbedClientService.checkPort(-1, false));
+        assertEquals(443, mbedClientService.checkPort(-1, true));
+        assertEquals(8080, mbedClientService.checkPort(8080, false));
+        assertEquals(8080, mbedClientService.checkPort(8080, true));
     }
 }
