@@ -74,14 +74,14 @@ mbed DS sends subscription requests to the device automatically.
 3. Select **Pre-Subscription** tab in the page.
 4. Set the Pre-subscription pattern by entering the **Endpoint name**, **Endpoint type** and/or **Resource path**.
     - The pattern may include the endpoint name (optionally having an * character at the end), endpoint type, a list of resources or expressions with an * character at the end.
-
+    
     _Example_
     
         endpoint-type: "Light",
-        resource-path: ["/sen/*"]  
-
+        resource-path: ["/sen/*"]
+        
 5. Click the **ADD**.
 6. Click the **delete** to delete the pattern.
 7. Click the **edit** to edit the pattern.
-6. When you finished the Pre-subscription patterns click **SAVE**.
+8. When you finished the Pre-subscription patterns click **SAVE**.
     - Changing the pre-subscription data overwrites the previous subscriptions. To remove the pre-subscription data, put an empty array as a rule.
