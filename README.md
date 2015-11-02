@@ -62,3 +62,26 @@ Configure with mbed Connector
 9. Enter the access key and the copied mbed DS address.
 10. Select Pull or Push notification channel. Pull is recommended. Push Notifications requires publicly available URL for the example app (example value: http://REMOTE_HOST:8082/mds-notif)
 11. Save.
+
+Pre-subscription
+==============================
+
+Pre-subscription is a set of rules and patterns put by the application. When an endpoint registers and its name, type and/or registered resources match the pre-subscription data, 
+mbed DS sends subscription requests to the device automatically. 
+
+1. Open the example-app in browser: http://localhost:8082.
+2. Select **Configuration** tab at the top of the page.
+3. Select **Pre-Subscription** tab in the page.
+4. Set the Pre-subscription pattern by entering the **Endpoint name**, **Endpoint type** and/or **Resource path**.
+    - The pattern may include the endpoint name (optionally having an * character at the end), endpoint type, a list of resources or expressions with an * character at the end.
+
+    _Example_
+    
+        endpoint-type: "Light",
+        resource-path: ["/sen/*"]  
+
+5. Click the **ADD**.
+6. Click the **delete** to delete the pattern.
+7. Click the **edit** to edit the pattern.
+6. When you finished the Pre-subscription patterns click **SAVE**.
+    - Changing the pre-subscription data overwrites the previous subscriptions. To remove the pre-subscription data, put an empty array as a rule.
