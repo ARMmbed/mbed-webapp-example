@@ -76,7 +76,7 @@ public final class ConfigurationResource {
         try {
             String token = newConf.getToken();
             if (token != null && !token.trim().contains(" ")) {
-                newConf.setToken("Bearer " + token.trim());
+                newConf.setToken("bearer " + token.trim());
             }
             clientCtr.createConnection(serverConfiguration);
         } catch (Exception e) {

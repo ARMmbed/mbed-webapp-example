@@ -58,11 +58,11 @@ public class ConfigurationResourceTest extends TestCase {
 
         serverConfiguration.setToken("UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR");
         rest.setConfiguration(serverConfiguration);
-        assertEquals("Bearer UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR", rest.getConfiguration().getToken());
+        assertEquals("bearer UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR", rest.getConfiguration().getToken());
 
-        serverConfiguration.setToken("Bearer UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR");
+        serverConfiguration.setToken("bearer UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR");
         rest.setConfiguration(serverConfiguration);
-        assertEquals("Bearer UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR", rest.getConfiguration().getToken());
+        assertEquals("bearer UR35WWWS5CBAQ4SCTOZPF6XY9K0YSTU1NP6LMTLR", rest.getConfiguration().getToken());
 
     }
 }
