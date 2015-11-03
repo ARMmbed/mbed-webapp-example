@@ -9,7 +9,11 @@ This is a simple web application that connects to [mbed Device Server (mbed DS)]
 - List all devices
 - List device resources
 - Invoke proxy requests (GET, PUT, POST, DELETE) 
- 
+
+### Dependency on mbed Device Server Java Client
+
+Example app build has a dependency to mbed Device Server Java Client used for calling mbed Device Server HTTP REST API. You can find the dependency defined in POM.xml that you can use on your own
+web application to ease up and streamline development.
 
 Development
 -----------
