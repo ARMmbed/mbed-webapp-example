@@ -1,7 +1,7 @@
 mbed web application - example
 ==============================
 
-This is a simple web application that connects to mbed Device Server (mbed DS). 
+This is a simple web application that connects to [mbed Device Server (mbed DS)](https://www.mbed.com/en/development/cloud/mbed-device-server/) and [mbed Device Connector Service](https://www.mbed.com/en/development/cloud/mbed-device-connector-service/).  
 
 ### Features
 
@@ -48,10 +48,10 @@ Build executable war (with embedded tomcat):
 
 Open from browser: http://localhost:8082
 
-Configure with mbed Connector
+Configure with mbed Device Connector
 ==============================
 
-1. Open in browser: http://connector-test.dev.mbed.com/.
+1. Open in browser: https://connector.mbed.com.
 2. Sign up for the first time or login with your credentials. 
 3. Click the **Access keys** link.
 4. Create new access key.
@@ -66,8 +66,12 @@ Configure with mbed Connector
 Pre-subscription
 ==============================
 
-Pre-subscription is a set of rules and patterns put by the application. When an endpoint registers and its name, type and/or registered resources match the pre-subscription data, 
-mbed DS sends subscription requests to the device automatically. 
+The mbed Device Server (mbed DS) eventing model consists of observable resources, which enables endpoints to deliver updated resource content, periodically or with a more sophisticated solution dependent logic. 
+Applications can subscribe to every individual resource or can set a pre-subscription data to receive a notification update.
+
+Pre-subscription is an advanced feature supported by mbed Device Server (mbed DS) along with the basic subscription feature. Pre-subscription allows an application to define a set of rules and patterns put 
+by the application. When an endpoint registers and its name, type and/or registered resources match the pre-subscription data, mbed DS sends subscription requests to the device automatically.
+The pre-subscription concerns all the endpoints that are already registered and the server sends subscription requests to the devices immediately when the patterns are set.
 
 1. Open the example-app in browser: http://localhost:8082.
 2. Select **Configuration** tab at the top of the page.
