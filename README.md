@@ -12,7 +12,7 @@ This is a simple web application that connects to [mbed Device Server (mbed DS)]
 
 ### Dependency on mbed Device Server Java Client
 
-Example app build has a dependency to mbed Device Server Java Client used for calling mbed Device Server HTTP REST API. You can find the dependency defined in POM.xml that you can use on your own
+Example app build has a dependency to mbed Device Server Java Client library used for calling mbed Device Server HTTP REST API. You can find the dependency defined in the POM.xml file that you can use on your own
 web application to ease up and streamline development.
 
 Development
