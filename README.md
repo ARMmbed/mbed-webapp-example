@@ -10,11 +10,47 @@ This is a simple web application that connects to [mbed Device Server (mbed DS)]
 - List device resources
 - Invoke proxy requests (GET, PUT, POST, DELETE) 
 
-### Dependency on mbed Device Server Java Client
+### REST Client (mbed Device Server Java Client) dependency
 
-Example app build has a dependency to mbed Device Server Java Client library used for calling mbed Device Server HTTP REST API. You can find the dependency defined in the POM.xml file that you can use on your own
+Example app build has a dependency to mbed Device Server Java Client libraries used for calling mbed Device Server HTTP REST API. You can find the dependency defined in the pom.xml file that you can use in your own
 web application to ease up and streamline development.
 
+REST Client libraries can be found in http://maven.mbed.com repository as defined in pom.xml:
+        
+        ...
+        <mbed-client.version>3.0.0-434</mbed-client.version>
+        ...
+        <dependency>
+            <groupId>com.mbed</groupId>
+            <artifactId>mbed-client</artifactId>
+            <version>${mbed-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mbed</groupId>
+            <artifactId>mbed-client-servlet</artifactId>
+            <version>${mbed-client.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javax.servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        ...
+        <repositories>
+            <repository>
+                <id>mbed repository</id>
+                <url>http://maven.mbed.com</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+        
+        
 Development
 -----------
 [![Build Status](https://magnum.travis-ci.com/ARMmbed/mbed-webapp-example.svg?token=dwQ5RVGhwvjYBMfR1k6t&branch=master)](https://magnum.travis-ci.com/ARMmbed/mbed-webapp-example)
