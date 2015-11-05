@@ -18,7 +18,7 @@ web application to ease up and streamline development.
 REST Client libraries can be found in http://maven.mbed.com repository as defined in pom.xml:
         
         ...
-        <mbed-client.version>3.0.0-434</mbed-client.version>
+        <mbed-client.version>3.0.0-464</mbed-client.version>
         ...
         <dependency>
             <groupId>com.mbed</groupId>
