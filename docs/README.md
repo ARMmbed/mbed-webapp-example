@@ -3,17 +3,17 @@ mbed Web Application - Example
 
 ## Features
 
-- Configure connection to mbed DS
-- List all devices
-- List device resources
-- Invoke proxy requests (GET, PUT, POST, DELETE) 
+- Configure connection to mbed Device Server (mbed DS).
+- List all devices.
+- List device resources.
+- Invoke proxy requests (GET, PUT, POST, DELETE).
 
 ## REST Client (mbed Device Server Java Client) dependency
 
-Example app build has a dependency to mbed Device Server Java Client libraries used for calling mbed Device Server HTTP REST API. You can find the dependency defined in the pom.xml file that you can use in your own
+The example app build has a dependency on mbed Device Server Java Client libraries (used for calling mbed Device Server HTTP REST API). The dependency is defined in the `pom.xml` file that you can use in your own
 web application to ease up and streamline development.
 
-REST Client libraries can be found in http://maven.mbed.com repository as defined in pom.xml:
+The REST Client libraries can be found in http://maven.mbed.com repository as defined in `pom.xml`:
         
         ...
         <mbed-client.version>3.0.0-464</mbed-client.version>
@@ -52,7 +52,7 @@ REST Client libraries can be found in http://maven.mbed.com repository as define
 ## Requirements
 - Java 8
 - Maven 3.x
-- mbed DS - where the example application connects to
+- mbed DS - to which the example application connects.
 
 ## Build:
 
@@ -82,11 +82,11 @@ Build executable war (with embedded tomcat):
 
 Open from browser: http://localhost:8082
 
-Configure with mbed Device Connector
+Configuring with mbed Device Connector
 ==============================
 
-1. Open in browser: https://connector.mbed.com.
-2. Sign up for the first time or login with your credentials. 
+1. Open https://connector.mbed.com in your browser
+2. Log in with your credentials, or sign up to get credentials. 
 3. Click the **Access keys** link.
 4. Create new access key.
 5. Copy the mbed DS address (https://api.connector.mbed.com) from this page.
@@ -101,25 +101,25 @@ Pre-subscription
 ==============================
 
 The mbed Device Server (mbed DS) eventing model consists of observable resources, which enables endpoints to deliver updated resource content, periodically or with a more sophisticated solution dependent logic. 
-Applications can subscribe to every individual resource or can set a pre-subscription data to receive a notification update.
+Applications can subscribe to every individual resource or set a pre-subscription data to receive a notification update.
 
-Pre-subscription is an advanced feature supported by mbed Device Server (mbed DS) along with the basic subscription feature. Pre-subscription allows an application to define a set of rules and patterns put 
-by the application. When an endpoint registers and its name, type and/or registered resources match the pre-subscription data, mbed DS sends subscription requests to the device automatically.
-The pre-subscription concerns all the endpoints that are already registered and the server sends subscription requests to the devices immediately when the patterns are set.
+Pre-subscription is an advanced feature supported by mbed DS along with the basic subscription feature. Pre-subscription allows an application to define a set of rules and patterns put 
+by the application. When an endpoint registers and its name, type or registered resources match the pre-subscription data, mbed DS sends subscription requests to the device automatically.
+The pre-subscription concerns all the endpoints that are already registered and the server sends subscription requests to the devices as soon as the patterns are set.
 
-1. Open the example-app in browser: http://localhost:8082.
+1. Open the example-app in your browser: http://localhost:8082.
 2. Select **Configuration** tab at the top of the page.
 3. Select **Pre-Subscription** tab in the page.
-4. Set the Pre-subscription pattern by entering the **Endpoint name**, **Endpoint type** and/or **Resource path**.
-    - The pattern may include the endpoint name (optionally having an * character at the end), endpoint type, a list of resources or expressions with an * character at the end.
+4. Set the Pre-subscription pattern:
+    - The pattern may include the endpoint name (optionally having an `*` character at the end), endpoint type, a list of resources or expressions with an `*` character at the end.
     
     _Example_
     
         endpoint-type: "Light",
         resource-path: ["/sen/*"]
         
-5. Click the **ADD**.
-6. Click the **delete** to delete the pattern.
-7. Click the **edit** to edit the pattern.
-8. When you finished the Pre-subscription patterns click **SAVE**.
+5. Click **ADD** to create the pattern.
+6. Click **delete** to delete the pattern.
+7. Click **edit** to edit the pattern.
+8. When you are ready to save your pre-subscription patterns, click **SAVE**.
     - Changing the pre-subscription data overwrites the previous subscriptions. To remove the pre-subscription data, put an empty array as a rule.
