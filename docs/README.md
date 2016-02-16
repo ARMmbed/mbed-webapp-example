@@ -89,7 +89,7 @@ Configure with mbed Device Connector
 2. Sign up for the first time or login with your credentials. 
 3. Click the **Access keys** link.
 4. Create new access key.
-5. Copy the mbed DS address from this page.
+5. Copy the mbed DS address (https://api.connector.mbed.com) from this page.
 6. Open the example-app in browser: http://localhost:8082.
 7. Select **Configuration** tab at the top of the page.
 8. Select **Token Authentication**.
