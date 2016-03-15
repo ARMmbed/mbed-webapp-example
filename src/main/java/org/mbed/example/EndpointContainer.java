@@ -32,6 +32,10 @@ import java.util.stream.Collectors;
 import org.mbed.example.common.string.Utf8String;
 import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ResourceValue;
+import org.mbed.example.data.tlv.LWM2MObjectInstance;
+import org.mbed.example.data.tlv.LWM2MResource;
+import org.mbed.example.data.tlv.TLV;
+import org.mbed.example.data.tlv.TLVDeserializer;
 import org.mbed.example.resources.EndpointsResource;
 import org.slf4j.LoggerFactory;
 
@@ -83,14 +87,39 @@ public class EndpointContainer {
     }
 
     public void updateResource(ResourcePath resourcePath, EndpointResponse response) {
-        endpointResourceValues.put(resourcePath, new ResourceValue(response.getPayloadAsString(), false, response.getStatus(), null, response.getContentType(), response.getMaxAge(), false));
+        endpointResourceValues.put(resourcePath, new ResourceValue(getAndCheckPayloadForTlv(response), false, response.getStatus(), null, response.getContentType(), response.getMaxAge(), false));
+    }
+
+    private String getAndCheckPayloadForTlv(EndpointResponse response) {
+        String contentType = response.getContentType();
+        if (contentType != null && contentType.equals(TLV.CT_APPLICATION_LWM2M_TLV) && response.getPayload().length > 0) {
+            StringBuilder payload = new StringBuilder();
+
+            if(TLVDeserializer.isObjectInstance(response.getPayload())){
+                List<LWM2MObjectInstance> objectInstances = TLVDeserializer.deserialiseObjectInstances(response.getPayload());
+                payload.append(objectInstances.stream()
+                        .map(LWM2MObjectInstance::toString)
+                        .collect(Collectors.joining("\r\n")));
+            }else if(TLVDeserializer.isResource(response.getPayload()) || TLVDeserializer.isMultipleResource(response.getPayload())){
+                List<LWM2MResource> resources = TLVDeserializer.deserializeResources(response.getPayload());
+                payload.append(resources.stream()
+                        .map(LWM2MResource::toString)
+                        .collect(Collectors.joining("\r\n")));
+            }else{
+                payload.append(response.getPayloadAsString());
+            }
+            return payload.toString();
+        } else {
+            return response.getPayloadAsString();
+        }
     }
 
     public void updateResource(ResourcePath resourcePath, ResourceNotification notification) {
         endpointResourceValues.put(resourcePath, new ResourceValue(Utf8String.from(notification.getPayload()), false, 200, null, notification.getContentType(), (int) notification.getMaxAge(), true));
     }
+
     public void updateResource(ResourcePath resourcePath, EndpointResponse response, String value) {
-        String payloadAsString = response.getPayloadAsString();
+        String payloadAsString = getAndCheckPayloadForTlv(response);
         if (payloadAsString != null && !payloadAsString.isEmpty()) {
             if (response.getStatus()==200) {
                 endpointResourceValues.put(resourcePath, new ResourceValue(payloadAsString, false, response.getStatus(), null, response.getContentType(), response.getMaxAge(), false));

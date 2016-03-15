@@ -249,6 +249,14 @@ public class EndpointsResourceTest {
         return endpointResponse;
     }
 
+    public static EndpointResponse mockEndpointResponse(byte[] payload, int status, String contentType) {
+        EndpointResponse endpointResponse = mock(EndpointResponse.class);
+        when(endpointResponse.getPayload()).thenReturn(payload);
+        when(endpointResponse.getStatus()).thenReturn(status);
+        when(endpointResponse.getContentType()).thenReturn(contentType);
+        return endpointResponse;
+    }
+
     private void mockResponseListener_onResponse(String endpointName, String path, Exception exception) {
         ArgumentCaptor<ResponseListener> respCapture = ArgumentCaptor.forClass(ResponseListener.class);
         verify(mbedClient.endpoint(endpointName).resource(path)).get(respCapture.capture());

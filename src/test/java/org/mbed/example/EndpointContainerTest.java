@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.mbed.example.common.string.Utf8String;
 import org.mbed.example.data.ResourcePath;
 import org.mbed.example.data.ResourceValue;
+import org.mbed.example.data.tlv.TLV;
 
 /**
  * Created by mitvah01 on 15.7.2015.
@@ -61,5 +62,56 @@ public class EndpointContainerTest {
         epContainer.updateResource(ResourcePath.of("dev-01", "/temp"), new ResourceNotification("endpoint1", null, null, null, new byte[]{2, 3, 4}, 0, 0));
         assertEquals(epContainer.getEndpointResourceValues("dev-01").get(ResourcePath.of("dev-01", "/temp")),
                 new ResourceValue(Utf8String.from(new byte[]{2, 3, 4}), false, 200, null, null, 0, true));
+    }
+
+    @Test
+    public void updateTlvResource() throws Exception {
+        epContainer.putEndpoints(new EndpointDescription[]{new EndpointDescription("dev-02", null, false, new ResourceInfo[]{new ResourceInfo("/tlv", null, null, null, null)})});
+
+        epContainer.updateResource(ResourcePath.of("dev-02", "/tlv"), mockEndpointResponse(createResourceTLV(), 200, TLV.CT_APPLICATION_LWM2M_TLV));
+        assertEquals(epContainer.getEndpointResourceValues("dev-02").get(ResourcePath.of("dev-02", "/tlv")),
+                new ResourceValue("\t/0\t\t\tARM\r\n\t/1\t\t\tmbed\r\n\t/6/0\t\t\t0x01\r\n\t/6/1\t\t\t0x14", false, 200, null, TLV.CT_APPLICATION_LWM2M_TLV, 0, false));
+
+        epContainer.updateResource(ResourcePath.of("dev-02", "/tlv"), mockEndpointResponse(createObjectInstanceTLV(), 200, TLV.CT_APPLICATION_LWM2M_TLV));
+        assertEquals(epContainer.getEndpointResourceValues("dev-02").get(ResourcePath.of("dev-02", "/tlv")),
+                new ResourceValue("\t/0/0\t\t\t0x03\r\n" +
+                                    "\t/0/2/1\t\t\t0xe0\r\n" +
+                                    "\t/0/2/2\t\t\t0x80\r\n" +
+                                    "\t/0/3\t\t\t0x01\r\n" +
+                                    "\t/1/0\t\t\t0x04\r\n" +
+                                    "\t/1/2/1\t\t\t0x80\r\n" +
+                                    "\t/1/2/2\t\t\t0xe0\r\n" +
+                                    "\t/1/3\t\t\t0x02", false, 200, null, TLV.CT_APPLICATION_LWM2M_TLV, 0, false));
+    }
+
+    private static byte[] createResourceTLV() {
+        return new byte[]{
+                (byte) 0b11_0_00_011,
+                (byte) 0,
+                'A', 'R', 'M',
+                (byte) 0b11_0_01_000,
+                (byte) 1,
+                (byte) 4,
+                'm', 'b', 'e', 'd',
+                (byte) 0b10_0_00_110,
+                (byte) 6,
+                (byte) 0b01_0_00_001,
+                (byte) 0,
+                (byte) 0x01,
+                (byte) 0b01_0_00_001,
+                (byte) 1,
+                (byte) 0x14,};
+    }
+
+    private static byte[] createObjectInstanceTLV(){
+        //  /0/0        0x03
+        //  /0/2/1      0xe0
+        //  /0/2/2      0x80
+        //  /0/3        0x01
+        //  /1/0        0x04
+        //  /1/2/1      0x80
+        //  /1/2/2      0xe0
+        //  /1/3        0x02
+        return new byte[] {8,0,14,-63,0,3,-122,2,65,1,-32,65,2,-128,-63,3,1,8,1,14,-63,0,4,-122,2,65,1,-128,65,2,-32,-63,3,2};
     }
 }

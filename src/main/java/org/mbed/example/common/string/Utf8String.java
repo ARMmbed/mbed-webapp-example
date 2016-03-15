@@ -24,7 +24,11 @@ import java.nio.charset.Charset;
  */
 public class Utf8String {
     public static String from(byte[] bytes) {
-        return new String(bytes, Charset.forName("UTF-8"));
+        if(isAscii(bytes)) {
+            return new String(bytes, Charset.forName("UTF-8"));
+        } else {
+            return "0x" + HexArray.toHex(bytes);
+        }
     }
 
     public static String from(int... bytes) {
@@ -33,5 +37,14 @@ public class Utf8String {
             byteArray[i] = (byte) bytes[i];
         }
         return from(byteArray);
+    }
+
+    private static boolean isAscii(byte[] bytes) {
+        for (byte aByte : bytes) {
+            if (aByte < 32 || aByte > 126) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -89,7 +89,7 @@
             <h2 ng-bind="detail"></h2>
 
             <div>
-                <div class="table-responsive" ng-cloak>
+                <div  ng-cloak>
                     <table
                             class="table table-bordered table-striped table-hover">
                         <thead>
@@ -114,7 +114,7 @@
                                    title="SUCCEEDED" data-toggle="popover" data-trigger="focus"
                                    data-content="{{x.lastUpdate|amCalendar}}{{x.content}}"
                                    data-placement="top"></a>
-                                <t ng-show="x.success" ng-bind="x.val"></t>
+                                <t style="white-space: pre" ng-show="x.success" ng-bind="x.val"></t>
                                 <a ng-error href="#" ng-click="$event.preventDefault()"
                                    ng-show="!x.success"
                                    ng-class="{'glyphicon glyphicon-cloud-download danger':x.notification == true,'glyphicon glyphicon-exclamation-sign danger':x.notification == false}"
