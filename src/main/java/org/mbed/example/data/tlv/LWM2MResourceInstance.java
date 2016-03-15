@@ -23,8 +23,6 @@ public class LWM2MResourceInstance {
 
     private final LWM2MID id;
     private byte[] value;
-    private LWM2MResourceType type;
-    private LWM2MResourceType repType;
 
     protected LWM2MResourceInstance(LWM2MID id) {
         if (id != null) {
@@ -41,7 +39,6 @@ public class LWM2MResourceInstance {
         if (value == null) {
             throw new IllegalArgumentException("Missing value from resource instance.");
         }
-        this.repType = LWM2MResourceType.OPAQUE;
     }
 
     public LWM2MID getId() {

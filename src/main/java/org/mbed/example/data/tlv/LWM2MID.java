@@ -22,7 +22,7 @@ import java.util.Objects;
 public class LWM2MID implements Comparable<LWM2MID> {
     
     private final String stringId;
-    private int intId;
+    private final int intId;
     
     public static LWM2MID from (int intId) {
         return new LWM2MID(intId);

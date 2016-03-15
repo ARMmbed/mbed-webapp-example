@@ -17,7 +17,6 @@
 package org.mbed.example.data.tlv;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.mbed.example.common.string.Utf8String;
