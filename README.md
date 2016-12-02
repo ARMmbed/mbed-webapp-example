@@ -1,13 +1,13 @@
 mbed web application - example
 ==============================
 
-This is a simple web application that connects to [mbed Device Server (mbed DS)](https://www.mbed.com/en/development/cloud/mbed-device-server/) and [mbed Device Connector Service](https://www.mbed.com/en/development/cloud/mbed-device-connector-service/).  
+This is a simple web application that connects to [mbed Device Connector Service](https://www.mbed.com/en/development/cloud/mbed-device-connector-service/).  
 
 ### Features
 
 - Configure connection to mbed DS.
 - List all devices,
-- List device resources.
+- List device resources,
 - Invoke proxy requests (GET, PUT, POST, DELETE).
 
 ### REST Client (mbed Device Server Java Client) dependency
@@ -52,7 +52,6 @@ The REST Client libraries can be found in the [http://maven.mbed.com](http://mav
         
 Development
 -----------
-[![Build Status](https://magnum.travis-ci.com/ARMmbed/mbed-webapp-example.svg?token=dwQ5RVGhwvjYBMfR1k6t&branch=master)](https://magnum.travis-ci.com/ARMmbed/mbed-webapp-example)
 
 ### Requirements
 - Java 8
